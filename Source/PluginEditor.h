@@ -11,16 +11,21 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+
+#include "ControlBarPanel.h"
+#include "OscillatorPanel.h"
+#include "OutputPanel.h"
 #include "PluginProcessor.h"
+#include "ScopePanel.h"
 
 //==============================================================================
 /**
 */
-class BasicJuceSynthAudioProcessorEditor  : public AudioProcessorEditor
+class NanoSynthAudioProcessorEditor : public AudioProcessorEditor
 {
 public:
-    BasicJuceSynthAudioProcessorEditor (BasicJuceSynthAudioProcessor&);
-    ~BasicJuceSynthAudioProcessorEditor();
+    NanoSynthAudioProcessorEditor (NanoSynthAudioProcessor&);
+    ~NanoSynthAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -29,7 +34,14 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    BasicJuceSynthAudioProcessor& processor;
+    NanoSynthAudioProcessor& processor;
+    
+    ControlBarPanel controlBarComponent;
+    MidiKeyboardComponent midiKeyboardComponent;
+    OutputPanel outputComponent;
+    OscillatorPanel oscillatorComponent;
+    ScopePanel scopeComponent;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicJuceSynthAudioProcessorEditor)
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NanoSynthAudioProcessorEditor)
 };

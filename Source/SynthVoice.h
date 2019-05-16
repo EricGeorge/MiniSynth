@@ -11,21 +11,28 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+
 #include "TrivialOscillator.h"
 
-struct SynthSound : public SynthesiserSound
+class SynthSound : public SynthesiserSound
 {
+public:
     SynthSound() {}
     
     bool appliesToNote(int midiNoteNumber) override { return true; }
     bool appliesToChannel(int midiChannel) override { return true; }
 };
 
-struct SynthVoice : public SynthesiserVoice
+class SynthVoice : public SynthesiserVoice
 {
+public:
     SynthVoice();
     ~SynthVoice();
     
+    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
+    void addParameterListeners(AudioProcessorValueTreeState& state);
+    void removeParameterListeners(AudioProcessorValueTreeState& state);
+
     bool canPlaySound(SynthesiserSound* sound) override;
     
     void startNote(int midiNoteNumber,
@@ -42,7 +49,7 @@ struct SynthVoice : public SynthesiserVoice
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
 private:
-    double level = 0.0;
     
+    float level;
     TrivialOscillator osc;
 };

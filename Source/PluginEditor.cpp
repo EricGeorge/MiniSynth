@@ -8,35 +8,47 @@
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-//==============================================================================
-BasicJuceSynthAudioProcessorEditor::BasicJuceSynthAudioProcessorEditor (BasicJuceSynthAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
-{
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
-}
+#include "PluginLayout.h"
 
-BasicJuceSynthAudioProcessorEditor::~BasicJuceSynthAudioProcessorEditor()
-{
-}
 
 //==============================================================================
-void BasicJuceSynthAudioProcessorEditor::paint (Graphics& g)
+NanoSynthAudioProcessorEditor::NanoSynthAudioProcessorEditor (NanoSynthAudioProcessor& p)
+:   AudioProcessorEditor (&p),
+    processor (p),
+    midiKeyboardComponent(processor.getMidiKeyboardstate(), MidiKeyboardComponent::horizontalKeyboard),
+    scopeComponent(processor.getAudioBufferQueue())
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    addAndMakeVisible(controlBarComponent);
+    addAndMakeVisible(oscillatorComponent);
+    addAndMakeVisible(outputComponent);
+    addAndMakeVisible(scopeComponent);
+    addAndMakeVisible(midiKeyboardComponent);
+
+    setSize(pluginEditorWidth, pluginEditorHeight);
+    
+    midiKeyboardComponent.setKeyWidth(midiKeyboardKeyWidth);
+    
+    outputComponent.setupAttachments(p.getValueTreeState());
+    oscillatorComponent.setupAttachments(p.getValueTreeState());
+}
+
+NanoSynthAudioProcessorEditor::~NanoSynthAudioProcessorEditor()
+{
+}
+
+//==============================================================================
+void NanoSynthAudioProcessorEditor::paint (Graphics& g)
+{
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
-
-    g.setColour (Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
 }
 
-void BasicJuceSynthAudioProcessorEditor::resized()
+void NanoSynthAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    controlBarComponent.setBounds(controlBarX, controlBarY, controlBarWidth, controlBarHeight);
+    outputComponent.setBounds(outputX, outputY, outputWidth, outputHeight);
+    oscillatorComponent.setBounds(oscillatorX, oscillatorY, oscillatorWidth, oscillatorHeight);
+    scopeComponent.setBounds(scopeX, scopeY, scopeWidth, scopeHeight);
+    midiKeyboardComponent.setBounds(midiKeyboardX, midiKeyboardY, midiKeyboardWidth, midiKeyboardHeight);
 }

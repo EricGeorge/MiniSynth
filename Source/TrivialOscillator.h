@@ -10,18 +10,26 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
 enum Waveform {
-    Waveform_Sine,
+    Waveform_Sine = 1,
     Waveform_Saw,
     Waveform_Triangle,
-    Waveform_Square
+    Waveform_Pulse
 };
 
-class TrivialOscillator
+class TrivialOscillator : public AudioProcessorValueTreeState::Listener
 {
 public:
     TrivialOscillator(double sampleRate);
     ~TrivialOscillator();
+    
+    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
+    void addParameterListeners(AudioProcessorValueTreeState& state);
+    void removeParameterListeners(AudioProcessorValueTreeState& state);
+
+    void parameterChanged (const String& parameterID, float newValue) override;
     
     void reset(double sampleRate);
     
@@ -32,11 +40,17 @@ public:
     
 private:
     double sampleRate;
+    
     double phaseInc;
     double phase;
     
+    // parameters
     Waveform waveform;
-    
+    int octaves;
+    int semitones;
+    int cents;
+    float pulseWidth;
+
     // poor man's envelope - replace with ADSR
     bool noteOn;
 };

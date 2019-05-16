@@ -11,12 +11,28 @@
 #include "SynthVoice.h"
 
 SynthVoice::SynthVoice()
-:   osc(getSampleRate())
+:   level(0.0f),
+    osc(getSampleRate())
 {
 }
 
 SynthVoice::~SynthVoice()
 {
+}
+
+void SynthVoice::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
+{
+    TrivialOscillator::createParameterLayout(layout);
+}
+
+void SynthVoice::addParameterListeners(AudioProcessorValueTreeState& state)
+{
+    osc.addParameterListeners(state);
+}
+
+void SynthVoice::removeParameterListeners(AudioProcessorValueTreeState& state)
+{
+    osc.removeParameterListeners(state);
 }
 
 bool SynthVoice::canPlaySound(SynthesiserSound* sound)
@@ -27,9 +43,8 @@ bool SynthVoice::canPlaySound(SynthesiserSound* sound)
 void SynthVoice::startNote(int midiNoteNumber, float velocity,
                            SynthesiserSound* sound, int currentPitchWheelPosition)
 {
-    // will be replaced with a proper level control
-    level = velocity * 0.3;
-    
+    level = velocity * 0.25;
+
     osc.startNote(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
 }
 
@@ -49,12 +64,13 @@ void SynthVoice::controllerMoved(int controllerNumber, int newControllerValue)
 
 void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    while (--numSamples >= 0)
+    for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
     {
-        float sample = osc.getNextSample() * level;
-        
-        outputBuffer.addSample(0, startSample, sample);
-        outputBuffer.addSample(1, startSample, sample);
-        ++startSample;
+        while (--numSamples >= 0)
+        {
+            float sample = osc.getNextSample() * level;
+            outputBuffer.addSample(channel, startSample, sample);
+            ++startSample;
+        }
     }
 }

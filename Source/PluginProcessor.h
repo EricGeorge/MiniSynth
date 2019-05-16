@@ -12,19 +12,29 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "AudioBufferQueue.h"
+#include "Gain.h"
+#include "ScopeDataCollector.h"
+#include "Synth.h"
+
 //==============================================================================
 /**
 */
-class BasicJuceSynthAudioProcessor  : public AudioProcessor
+class NanoSynthAudioProcessor : public AudioProcessor
 {
 public:
     //==============================================================================
-    BasicJuceSynthAudioProcessor();
-    ~BasicJuceSynthAudioProcessor();
+    NanoSynthAudioProcessor();
+    ~NanoSynthAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
+
+    #ifndef JucePlugin_PreferredChannelConfigurations
+        bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
+    #endif
+    
 
     void processBlock (AudioBuffer<float>&, MidiBuffer&) override;
 
@@ -51,9 +61,25 @@ public:
     void getStateInformation(MemoryBlock& destData) override;
     void setStateInformation(const void* data, int sizeInBytes) override;
 
+    AudioBufferQueue& getAudioBufferQueue() noexcept  { return audioBufferQueue; }
+    AudioProcessorValueTreeState& getParameters() noexcept { return state; }
+    MidiKeyboardState& getMidiKeyboardstate() noexcept { return midiKeyboardState; }
+    AudioProcessorValueTreeState& getValueTreeState() noexcept { return state; }
+ 
+    
 private:
     //==============================================================================
-    Synthesiser synth;
+    AudioBufferQueue audioBufferQueue;
+    ScopeDataCollector scopeDataCollector { audioBufferQueue };
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (BasicJuceSynthAudioProcessor)
+    MidiKeyboardState midiKeyboardState;
+    
+    AudioProcessorValueTreeState state;
+    
+    Gain outputGain;
+    Synth synth;
+    
+    AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NanoSynthAudioProcessor)
 };

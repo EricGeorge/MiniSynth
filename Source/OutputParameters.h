@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    BasicJuceConstants.h
-    Created: 13 May 2019 8:09:10pm
+    OutputParameters.h
+    Created: 19 May 2019 4:24:55pm
     Author:  Eric
 
   ==============================================================================
@@ -10,4 +10,4 @@
 
 #pragma once
 
-static const int kNumVoices = 16;
+static const String outputGain_ParameterID =    "Output_Gain";
