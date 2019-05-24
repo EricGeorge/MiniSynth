@@ -1,2 +1,2 @@
-# NanoSynth
-Building the NanoSynth from "Designing Software Synthesizer Plugins" using JUCE
+# MiniSynth
+Building the MiniSynth from "Designing Software Synthesizer Plugins" using JUCE

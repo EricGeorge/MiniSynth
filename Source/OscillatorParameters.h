@@ -10,8 +10,10 @@
 
 #pragma once
 
-static const String oscillatorWaveform_ParameterID =    "Oscillator_Waveform";
-static const String oscillatorOctave_ParameterID =      "Oscillator_Octave";
-static const String oscillatorSemitone_ParameterID =    "Oscillator_Semitone";
-static const String oscillatorCents_ParameterID =       "Oscillator_Cents";
-static const String oscillatorPulseWidth_ParameterID =  "Oscillator_PulseWidth";
+static const String oscillatorWaveform_ParameterID =                "Oscillator_Waveform";
+static const String oscillatorOctave_ParameterID =                  "Oscillator_Octave";
+static const String oscillatorSemitone_ParameterID =                "Oscillator_Semitone";
+static const String oscillatorCents_ParameterID =                   "Oscillator_Cents";
+static const String oscillatorPulseWidth_ParameterID =              "Oscillator_PulseWidth";
+static const String oscillatorPolyBLEPMix_ParameterID =             "Oscillator_PolyBLEPMix";
+static const String oscillatorWaveShapeSaturation_ParameterID =     "Oscillator_WaveShapeSaturation";

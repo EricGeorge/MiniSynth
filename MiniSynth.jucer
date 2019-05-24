@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mlOIfD" name="NanoSynth" projectType="audioplug" jucerVersion="5.4.3"
+<JUCERPROJECT id="mlOIfD" name="MiniSynth" projectType="audioplug" jucerVersion="5.4.3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
-              pluginFormats="buildAU,buildStandalone" pluginName="NanoSynth">
-  <MAINGROUP id="KGzO72" name="NanoSynth">
+              pluginFormats="buildAU,buildStandalone" pluginName="MiniSynth">
+  <MAINGROUP id="KGzO72" name="MiniSynth">
     <GROUP id="{D50AC048-F71A-EB46-9AF5-B3C0CB4EF8AD}" name="Core">
       <GROUP id="{F33627D7-B1F2-45D3-922A-2258C4973DAF}" name="Helpers">
         <FILE id="c94Ki2" name="PluginCommonStyling.h" compile="0" resource="0"
@@ -39,6 +39,8 @@
               file="Source/OscillatorParameters.h"/>
         <FILE id="MKtCYV" name="OscillatorHelpers.h" compile="0" resource="0"
               file="Source/OscillatorHelpers.h"/>
+        <FILE id="SORazD" name="OscillatorBLEPTables.h" compile="0" resource="0"
+              file="Source/OscillatorBLEPTables.h"/>
         <FILE id="YRy81X" name="BandLimitedOscillator.h" compile="0" resource="0"
               file="Source/BandLimitedOscillator.h"/>
         <FILE id="oong0y" name="BandLimitedOscillator.cpp" compile="1" resource="0"

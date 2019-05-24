@@ -25,9 +25,9 @@ public:
     
 private:
     // waveform
-    Label waveformLabel { {}, "Waveform:" };
-    Slider waveformSlider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> waveformAttachment;
+    Label wavetypeLabel { {}, "Waveform:" };
+    Slider wavetypeSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> wavetypeAttachment;
     
     // octaves
     Label semitonesLabel { {}, "Semitones:" };
@@ -48,5 +48,15 @@ private:
     Label pulseWidthLabel { {}, "Pulse width:" };
     Slider pulseWidthSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> pulseWidthAttachment;
+    
+    // polyBLEP mix
+    Label polyBLEPMixLabel { {}, "PolyBLEP mix:" };
+    Slider polyBLEPMixSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> polyBLEPMixAttachment;
+    
+    // waveshape saturation
+    Label waveShapeSaturationLabel { {}, "Saturation:" };
+    Slider waveShapeSaturationSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> waveShapeSaturationAttachment;
     
 };

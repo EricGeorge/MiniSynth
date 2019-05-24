@@ -15,7 +15,7 @@
 #include "SynthVoice.h"
 
 //==============================================================================
-NanoSynthAudioProcessor::NanoSynthAudioProcessor()
+MiniSynthAudioProcessor::MiniSynthAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
     : AudioProcessor (BusesProperties()
     #if ! JucePlugin_IsMidiEffect
@@ -35,13 +35,13 @@ NanoSynthAudioProcessor::NanoSynthAudioProcessor()
     outputGain.addParameterListeners(state);
 }
 
-NanoSynthAudioProcessor::~NanoSynthAudioProcessor()
+MiniSynthAudioProcessor::~MiniSynthAudioProcessor()
 {
     synth.removeParameterListeners(state);
     outputGain.removeParameterListeners(state);
 }
 
-AudioProcessorValueTreeState::ParameterLayout NanoSynthAudioProcessor::createParameterLayout()
+AudioProcessorValueTreeState::ParameterLayout MiniSynthAudioProcessor::createParameterLayout()
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
     Synth::createParameterLayout(layout);
@@ -50,12 +50,12 @@ AudioProcessorValueTreeState::ParameterLayout NanoSynthAudioProcessor::createPar
  }
 
 //==============================================================================
-const String NanoSynthAudioProcessor::getName() const
+const String MiniSynthAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool NanoSynthAudioProcessor::acceptsMidi() const
+bool MiniSynthAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -64,7 +64,7 @@ bool NanoSynthAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool NanoSynthAudioProcessor::producesMidi() const
+bool MiniSynthAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -73,7 +73,7 @@ bool NanoSynthAudioProcessor::producesMidi() const
    #endif
 }
 
-bool NanoSynthAudioProcessor::isMidiEffect() const
+bool MiniSynthAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -82,49 +82,49 @@ bool NanoSynthAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double NanoSynthAudioProcessor::getTailLengthSeconds() const
+double MiniSynthAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int NanoSynthAudioProcessor::getNumPrograms()
+int MiniSynthAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int NanoSynthAudioProcessor::getCurrentProgram()
+int MiniSynthAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void NanoSynthAudioProcessor::setCurrentProgram (int index)
+void MiniSynthAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const String NanoSynthAudioProcessor::getProgramName (int index)
+const String MiniSynthAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void NanoSynthAudioProcessor::changeProgramName (int index, const String& newName)
+void MiniSynthAudioProcessor::changeProgramName (int index, const String& newName)
 {
 }
 
 //==============================================================================
-void NanoSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void MiniSynthAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     synth.setCurrentPlaybackSampleRate(sampleRate);
     midiKeyboardState.reset();
 }
 
-void NanoSynthAudioProcessor::releaseResources()
+void MiniSynthAudioProcessor::releaseResources()
 {
     midiKeyboardState.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool NanoSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool MiniSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
 #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
@@ -147,7 +147,7 @@ bool NanoSynthAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void NanoSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void MiniSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
     // clear any unused output channels that may contain garbage
     for (auto i = getTotalNumInputChannels(); i < getTotalNumOutputChannels(); ++i)
@@ -162,18 +162,18 @@ void NanoSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
 }
 
 //==============================================================================
-bool NanoSynthAudioProcessor::hasEditor() const
+bool MiniSynthAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-AudioProcessorEditor* NanoSynthAudioProcessor::createEditor()
+AudioProcessorEditor* MiniSynthAudioProcessor::createEditor()
 {
-    return new NanoSynthAudioProcessorEditor (*this);
+    return new MiniSynthAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void NanoSynthAudioProcessor::getStateInformation (MemoryBlock& destData)
+void MiniSynthAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
     // Store an xml representation of our state.
     std::unique_ptr<XmlElement>xmlState(state.copyState().createXml());
@@ -182,7 +182,7 @@ void NanoSynthAudioProcessor::getStateInformation (MemoryBlock& destData)
         copyXmlToBinary(*xmlState, destData);
 }
 
-void NanoSynthAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void MiniSynthAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // Restore our plug-in's state from the xml representation stored in the above
     // method.
@@ -196,5 +196,5 @@ void NanoSynthAudioProcessor::setStateInformation (const void* data, int sizeInB
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new NanoSynthAudioProcessor();
+    return new MiniSynthAudioProcessor();
 }

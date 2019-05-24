@@ -91,9 +91,7 @@ void TrivialOscillator::reset(double sampleRate)
 
 void TrivialOscillator::startNote(double frequency)
 {
-    float pitchShift = (octaves * 12) + semitones + ((float)cents / 100.0f);
-    float modFreq = pitchShiftMultiplier(pitchShift);
-    phaseInc = frequency * modFreq / sampleRate;
+    phaseInc = frequency * getPitchFreqMod(octaves, semitones, cents) / sampleRate;
     noteOn = true;
 }
 

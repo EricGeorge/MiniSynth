@@ -20,12 +20,12 @@
 //==============================================================================
 /**
 */
-class NanoSynthAudioProcessor : public AudioProcessor
+class MiniSynthAudioProcessor : public AudioProcessor
 {
 public:
     //==============================================================================
-    NanoSynthAudioProcessor();
-    ~NanoSynthAudioProcessor();
+    MiniSynthAudioProcessor();
+    ~MiniSynthAudioProcessor();
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -81,5 +81,5 @@ private:
     
     AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NanoSynthAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MiniSynthAudioProcessor)
 };

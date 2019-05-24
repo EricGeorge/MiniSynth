@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "TrivialOscillator.h"
+#include "BandLimitedOscillator.h"
 
 class SynthSound : public SynthesiserSound
 {
@@ -51,5 +51,5 @@ public:
 private:
     
     float level;
-    TrivialOscillator osc;
+    BLOsc osc;
 };

@@ -14,7 +14,7 @@
 
 
 //==============================================================================
-NanoSynthAudioProcessorEditor::NanoSynthAudioProcessorEditor (NanoSynthAudioProcessor& p)
+MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor& p)
 :   AudioProcessorEditor (&p),
     processor (p),
     midiKeyboardComponent(processor.getMidiKeyboardstate(), MidiKeyboardComponent::horizontalKeyboard),
@@ -34,17 +34,17 @@ NanoSynthAudioProcessorEditor::NanoSynthAudioProcessorEditor (NanoSynthAudioProc
     oscillatorComponent.setupAttachments(p.getValueTreeState());
 }
 
-NanoSynthAudioProcessorEditor::~NanoSynthAudioProcessorEditor()
+MiniSynthAudioProcessorEditor::~MiniSynthAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void NanoSynthAudioProcessorEditor::paint (Graphics& g)
+void MiniSynthAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 }
 
-void NanoSynthAudioProcessorEditor::resized()
+void MiniSynthAudioProcessorEditor::resized()
 {
     controlBarComponent.setBounds(controlBarX, controlBarY, controlBarWidth, controlBarHeight);
     outputComponent.setBounds(outputX, outputY, outputWidth, outputHeight);

@@ -16,18 +16,20 @@
 
 OscillatorPanel::OscillatorPanel()
 {
-    addAndMakeVisible(waveformSlider);
+    addAndMakeVisible(wavetypeSlider);
     addAndMakeVisible(octavesSlider);
     addAndMakeVisible(semitonesSlider);
     addAndMakeVisible(centsSlider);
     addAndMakeVisible(pulseWidthSlider);
+    addAndMakeVisible(polyBLEPMixSlider);
+    addAndMakeVisible(waveShapeSaturationSlider);
 
-    waveformLabel.attachToComponent(&waveformSlider, true);
-    waveformLabel.setFont(Font(sliderLabelFontSize));
-    waveformLabel.setColour(Label::textColourId, getCommonColours().detail);
-    waveformSlider.setTextBoxStyle(Slider::TextBoxRight, false, waveformSlider.getTextBoxWidth(), waveformSlider.getTextBoxHeight());
-    waveformSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
-    waveformSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
+    wavetypeLabel.attachToComponent(&wavetypeSlider, true);
+    wavetypeLabel.setFont(Font(sliderLabelFontSize));
+    wavetypeLabel.setColour(Label::textColourId, getCommonColours().detail);
+    wavetypeSlider.setTextBoxStyle(Slider::TextBoxRight, false, wavetypeSlider.getTextBoxWidth(), wavetypeSlider.getTextBoxHeight());
+    wavetypeSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
+    wavetypeSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
 
     octavesLabel.attachToComponent(&octavesSlider, true);
     octavesLabel.setFont(Font(sliderLabelFontSize));
@@ -57,6 +59,21 @@ OscillatorPanel::OscillatorPanel()
     pulseWidthSlider.setTextValueSuffix("%");
     pulseWidthSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
     pulseWidthSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
+
+    polyBLEPMixLabel.attachToComponent(&polyBLEPMixSlider, true);
+    polyBLEPMixLabel.setFont(Font(sliderLabelFontSize));
+    polyBLEPMixLabel.setColour(Label::textColourId, getCommonColours().detail);
+    polyBLEPMixSlider.setTextBoxStyle(Slider::TextBoxRight, false, polyBLEPMixSlider.getTextBoxWidth(), polyBLEPMixSlider.getTextBoxHeight());
+    polyBLEPMixSlider.setTextValueSuffix("%");
+    polyBLEPMixSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
+    polyBLEPMixSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
+
+    waveShapeSaturationLabel.attachToComponent(&waveShapeSaturationSlider, true);
+    waveShapeSaturationLabel.setFont(Font(sliderLabelFontSize));
+    waveShapeSaturationLabel.setColour(Label::textColourId, getCommonColours().detail);
+    waveShapeSaturationSlider.setTextBoxStyle(Slider::TextBoxRight, false, waveShapeSaturationSlider.getTextBoxWidth(), waveShapeSaturationSlider.getTextBoxHeight());
+    waveShapeSaturationSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
+    waveShapeSaturationSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
 }
 
 OscillatorPanel::~OscillatorPanel()
@@ -66,18 +83,32 @@ OscillatorPanel::~OscillatorPanel()
 
 void OscillatorPanel::setupAttachments(AudioProcessorValueTreeState& state)
 {
-    waveformAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorWaveform_ParameterID, waveformSlider));
+    wavetypeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorWaveform_ParameterID, wavetypeSlider));
     octavesAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorOctave_ParameterID, octavesSlider));
     semitonesAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorSemitone_ParameterID, semitonesSlider));
     centsAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorCents_ParameterID, centsSlider));
     pulseWidthAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorPulseWidth_ParameterID, pulseWidthSlider));
-    
+    polyBLEPMixAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorPolyBLEPMix_ParameterID, polyBLEPMixSlider));
+    waveShapeSaturationAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorWaveShapeSaturation_ParameterID, waveShapeSaturationSlider));
+
     // setNumDecimalPlacesToDisplay doesn't seem to work so setup this lambda instead AFTER setting up the attachment!
     pulseWidthSlider.textFromValueFunction = [](double value)
     {
         return juce::String(value, 2);
     };
     pulseWidthSlider.updateText();
+    
+    polyBLEPMixSlider.textFromValueFunction = [](double value)
+    {
+        return juce::String(value, 2);
+    };
+    polyBLEPMixSlider.updateText();
+    
+    waveShapeSaturationSlider.textFromValueFunction = [](double value)
+    {
+        return juce::String(value, 2);
+    };
+    waveShapeSaturationSlider.updateText();
 }
 
 void OscillatorPanel::resized()
@@ -85,9 +116,9 @@ void OscillatorPanel::resized()
     auto sliderArea = getLocalBounds().reduced(8);
     sliderArea.removeFromTop(50);
     sliderArea.removeFromLeft(120);
-    sliderArea.removeFromRight(getWidth() / 2);
+    sliderArea.removeFromRight(50);
     
-    waveformSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    wavetypeSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
     sliderArea.removeFromTop(oscillatorSliderSpacing);
     octavesSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
     sliderArea.removeFromTop(oscillatorSliderSpacing);
@@ -96,6 +127,10 @@ void OscillatorPanel::resized()
     centsSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
     sliderArea.removeFromTop(oscillatorSliderSpacing);
     pulseWidthSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
+    polyBLEPMixSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
+    waveShapeSaturationSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
 }
 
 void OscillatorPanel::paint(Graphics& g)

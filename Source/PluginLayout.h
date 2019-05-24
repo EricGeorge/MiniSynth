@@ -10,8 +10,8 @@
 
 #pragma once
 
-const int pluginEditorWidth = 1200;
-const int pluginEditorHeight = 800;
+const int pluginEditorWidth = 800;
+const int pluginEditorHeight = 600;
 
 const int controlBarX = 0;
 const int controlBarY = 0;

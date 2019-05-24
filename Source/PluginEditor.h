@@ -21,11 +21,11 @@
 //==============================================================================
 /**
 */
-class NanoSynthAudioProcessorEditor : public AudioProcessorEditor
+class MiniSynthAudioProcessorEditor : public AudioProcessorEditor
 {
 public:
-    NanoSynthAudioProcessorEditor (NanoSynthAudioProcessor&);
-    ~NanoSynthAudioProcessorEditor();
+    MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor&);
+    ~MiniSynthAudioProcessorEditor();
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -34,7 +34,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    NanoSynthAudioProcessor& processor;
+    MiniSynthAudioProcessor& processor;
     
     ControlBarPanel controlBarComponent;
     MidiKeyboardComponent midiKeyboardComponent;
@@ -43,5 +43,5 @@ private:
     ScopePanel scopeComponent;
 
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (NanoSynthAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MiniSynthAudioProcessorEditor)
 };

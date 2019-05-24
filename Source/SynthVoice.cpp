@@ -22,7 +22,7 @@ SynthVoice::~SynthVoice()
 
 void SynthVoice::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
 {
-    TrivialOscillator::createParameterLayout(layout);
+    BLOsc::createParameterLayout(layout);
 }
 
 void SynthVoice::addParameterListeners(AudioProcessorValueTreeState& state)
