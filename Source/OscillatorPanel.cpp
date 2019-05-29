@@ -23,6 +23,7 @@ OscillatorPanel::OscillatorPanel()
     addAndMakeVisible(pulseWidthSlider);
     addAndMakeVisible(polyBLEPMixSlider);
     addAndMakeVisible(waveShapeSaturationSlider);
+    addAndMakeVisible(volumeSlider);
 
     wavetypeLabel.attachToComponent(&wavetypeSlider, true);
     wavetypeLabel.setFont(Font(sliderLabelFontSize));
@@ -74,6 +75,13 @@ OscillatorPanel::OscillatorPanel()
     waveShapeSaturationSlider.setTextBoxStyle(Slider::TextBoxRight, false, waveShapeSaturationSlider.getTextBoxWidth(), waveShapeSaturationSlider.getTextBoxHeight());
     waveShapeSaturationSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
     waveShapeSaturationSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
+    
+    volumeLabel.attachToComponent(&volumeSlider, true);
+    volumeLabel.setFont(Font(sliderLabelFontSize));
+    volumeLabel.setColour(Label::textColourId, getCommonColours().detail);
+    volumeSlider.setTextBoxStyle(Slider::TextBoxRight, false, volumeSlider.getTextBoxWidth(), volumeSlider.getTextBoxHeight());
+    volumeSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
+    volumeSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
 }
 
 OscillatorPanel::~OscillatorPanel()
@@ -83,13 +91,14 @@ OscillatorPanel::~OscillatorPanel()
 
 void OscillatorPanel::setupAttachments(AudioProcessorValueTreeState& state)
 {
-    wavetypeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorWaveform_ParameterID, wavetypeSlider));
+    wavetypeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorWavetype_ParameterID, wavetypeSlider));
     octavesAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorOctave_ParameterID, octavesSlider));
     semitonesAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorSemitone_ParameterID, semitonesSlider));
     centsAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorCents_ParameterID, centsSlider));
     pulseWidthAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorPulseWidth_ParameterID, pulseWidthSlider));
     polyBLEPMixAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorPolyBLEPMix_ParameterID, polyBLEPMixSlider));
     waveShapeSaturationAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorWaveShapeSaturation_ParameterID, waveShapeSaturationSlider));
+    volumeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, oscillatorVolume_ParameterID, volumeSlider));
 
     // setNumDecimalPlacesToDisplay doesn't seem to work so setup this lambda instead AFTER setting up the attachment!
     pulseWidthSlider.textFromValueFunction = [](double value)
@@ -109,6 +118,13 @@ void OscillatorPanel::setupAttachments(AudioProcessorValueTreeState& state)
         return juce::String(value, 2);
     };
     waveShapeSaturationSlider.updateText();
+    
+    volumeSlider.textFromValueFunction = [](double value)
+    {
+        return juce::String(value, 2);
+    };
+    volumeSlider.updateText();
+
 }
 
 void OscillatorPanel::resized()
@@ -131,6 +147,8 @@ void OscillatorPanel::resized()
     polyBLEPMixSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
     sliderArea.removeFromTop(oscillatorSliderSpacing);
     waveShapeSaturationSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
+    volumeSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
 }
 
 void OscillatorPanel::paint(Graphics& g)

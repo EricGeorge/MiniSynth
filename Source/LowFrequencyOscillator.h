@@ -10,24 +10,58 @@
 
 #pragma once
 
-class LowFrequencyOscillator
+#include "../JuceLibraryCode/JuceHeader.h"
+
+#include "OscillatorHelpers.h"
+
+class LowFrequencyOscillator : public AudioProcessorValueTreeState::Listener
 {
-    LowFrequencyOscillator();
+public:
+    LowFrequencyOscillator(double sampleRate);
     ~LowFrequencyOscillator();
     
     enum WaveType
     {
-        Saw,
+        Saw = 1,
         ReverseSaw,
         Triangle,
-        Square,
-        Sine,
-        Exponential,
-        SampleHold,
-        SampleHold2
+        Pulse,
+        Sine
     };
     
+    enum RunState
+    {
+        Free,
+        Sync,
+        OneShot
+    };
+    
+    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
+    void addParameterListeners(AudioProcessorValueTreeState& state);
+    void removeParameterListeners(AudioProcessorValueTreeState& state);
+    void parameterChanged (const String& parameterID, float newValue) override;
+
+    void reset(double sampleRate);
+
     float getNextSample();
+    
+private:
+    double sampleRate;
+    
+    PhaseAccumulator phaseAccumulator;
+    
+    // parameters
+    WaveType waveType;
+    RunState runState;
+    double pulseWidth;
+    double phaseOffset;
+    double amount;
+    double polarityOffset;
+    double rate;
+    bool sync;
+    double fadeInTime;
+    double delay;
+    
 };
 
 using LFO = LowFrequencyOscillator;

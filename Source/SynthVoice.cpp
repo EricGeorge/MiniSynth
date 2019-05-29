@@ -12,7 +12,8 @@
 
 SynthVoice::SynthVoice()
 :   level(0.0f),
-    osc(getSampleRate())
+    osc1(getSampleRate()),
+    osc2(getSampleRate())
 {
 }
 
@@ -27,12 +28,14 @@ void SynthVoice::createParameterLayout(AudioProcessorValueTreeState::ParameterLa
 
 void SynthVoice::addParameterListeners(AudioProcessorValueTreeState& state)
 {
-    osc.addParameterListeners(state);
+    osc1.addParameterListeners(state);
+    osc2.addParameterListeners(state);
 }
 
 void SynthVoice::removeParameterListeners(AudioProcessorValueTreeState& state)
 {
-    osc.removeParameterListeners(state);
+    osc1.removeParameterListeners(state);
+    osc2.removeParameterListeners(state);
 }
 
 bool SynthVoice::canPlaySound(SynthesiserSound* sound)
@@ -45,12 +48,14 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity,
 {
     level = velocity * 0.25;
 
-    osc.startNote(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    osc1.startNote(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    osc2.startNote(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
-    osc.stopNote();
+    osc1.stopNote();
+    osc2.stopNote();
     clearCurrentNote();
 }
 
@@ -64,13 +69,14 @@ void SynthVoice::controllerMoved(int controllerNumber, int newControllerValue)
 
 void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+    for (int index = 0; index < numSamples; ++index)
     {
-        while (--numSamples >= 0)
+        float sample1 = osc1.getNextSample() * level;
+        float sample2 = osc2.getNextSample() * level;
+        for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
         {
-            float sample = osc.getNextSample() * level;
-            outputBuffer.addSample(channel, startSample, sample);
-            ++startSample;
+            outputBuffer.addSample(channel, startSample, sample1 * 0.5 + sample2 * 0.5);
         }
+        ++startSample;
     }
 }

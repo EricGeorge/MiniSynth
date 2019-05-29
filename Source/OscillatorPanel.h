@@ -59,4 +59,9 @@ private:
     Slider waveShapeSaturationSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> waveShapeSaturationAttachment;
     
+    // volume
+    Label volumeLabel { {}, "Volume:" };
+    Slider volumeSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> volumeAttachment;
+    
 };

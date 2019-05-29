@@ -10,5 +10,5 @@
 
 #pragma once
 
-const int oscillatorSliderHeight = 30;
-const int oscillatorSliderSpacing = 10;
+const int oscillatorSliderHeight = 20;
+const int oscillatorSliderSpacing = 5;

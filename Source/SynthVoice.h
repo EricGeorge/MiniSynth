@@ -51,5 +51,6 @@ public:
 private:
     
     float level;
-    BLOsc osc;
+    BLOsc osc1;
+    BLOsc osc2;
 };

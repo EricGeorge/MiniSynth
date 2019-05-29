@@ -39,7 +39,8 @@ private:
     ControlBarPanel controlBarComponent;
     MidiKeyboardComponent midiKeyboardComponent;
     OutputPanel outputComponent;
-    OscillatorPanel oscillatorComponent;
+    OscillatorPanel oscillatorComponent1;
+    OscillatorPanel oscillatorComponent2;
     ScopePanel scopeComponent;
 
 

@@ -51,14 +51,14 @@ void Gain::process(AudioBuffer<float>& buffer, int numSamplesToProcess)
     double gainMapped = (double)jmap(gain, 0.0f, 1.0f, -24.0f, 0.0f);
     gainMapped = Decibels::decibelsToGain(gainMapped, kMinimumDecibels);
     
-    for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+    for (int index = 0; index < numSamplesToProcess; ++index)
     {
-        for (int sampleIndex = 0; sampleIndex < numSamplesToProcess; ++sampleIndex)
+        gainSmoothed = gainSmoothed - kParameterSmoothingCoeff_Fine * (gainSmoothed - gainMapped);
+        
+        for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
         {
-            gainSmoothed = gainSmoothed - kParameterSmoothingCoeff_Fine * (gainSmoothed - gainMapped);
-
-            float processedSample = buffer.getSample(channel, sampleIndex) * gainSmoothed;
-            buffer.setSample(channel, sampleIndex, processedSample);
+            float processedSample = buffer.getSample(channel, index) * gainSmoothed;
+            buffer.setSample(channel, index, processedSample);
         }
     }
 }

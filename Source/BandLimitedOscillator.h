@@ -12,6 +12,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "PluginHelpers.h"
+#include "OscillatorHelpers.h"
+
 class BandLimitedOscillator : public AudioProcessorValueTreeState::Listener
 {
 public:
@@ -34,7 +37,6 @@ public:
     static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
     void addParameterListeners(AudioProcessorValueTreeState& state);
     void removeParameterListeners(AudioProcessorValueTreeState& state);
-    
     void parameterChanged (const String& parameterID, float newValue) override;
 
     void reset(double sampleRate);
@@ -47,13 +49,14 @@ public:
 private:
     double sampleRate;
     
-    double phaseInc;
-    double phase;
-    bool phaseReset;
+    PhaseAccumulator phaseAccumulator;
     double modFrequency;
+
+    // for Differentiated Parabolic Waveform
+    PhaseAccumulator dpwPhaseAccumulator;
+    Differentiator dpwDifferentiator;
     
-    double dpwSquareModulator;
-    double dpwRegister;
+    // for random based oscillators
     unsigned int seed;
     
     // parameters
@@ -64,6 +67,8 @@ private:
     float pulseWidth;
     float polyBLEPMix;
     float waveShapeSaturation;
+    float volume;
+    float pitchBend;
     
     // poor man's envelope - replace with ADSR
     bool noteOn;
@@ -77,6 +82,8 @@ private:
     float getNextParabolicSineSample();
     float getNextWhiteNoiseSample();
     float getNextRandomNoiseSample();
+    
+    double getStartingPhaseOffset();    
 };
 
 using BLOsc = BandLimitedOscillator;

@@ -53,10 +53,6 @@
               file="Source/WavetableOscillator.h"/>
         <FILE id="cYUxcv" name="WavetableOscillator.cpp" compile="1" resource="0"
               file="Source/WavetableOscillator.cpp"/>
-        <FILE id="ZUSEbX" name="TrivialOscillator.h" compile="0" resource="0"
-              file="Source/TrivialOscillator.h"/>
-        <FILE id="lVrEju" name="TrivialOscillator.cpp" compile="1" resource="0"
-              file="Source/TrivialOscillator.cpp"/>
       </GROUP>
       <GROUP id="{D9CB52B1-521F-FDF9-9A3F-28F24206D762}" name="ScopeProcessor">
         <FILE id="nNKKDL" name="AudioBufferQueue.h" compile="0" resource="0"

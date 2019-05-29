@@ -26,12 +26,6 @@ inline double getPitchFreqMod(float octaves, float semitones, float cents)
     return pitchShiftMultiplier(octaves * 12 + semitones + cents / 100.0f);
 }
 
-// calculates the bipolar (-1 -> +1) value from a unipolar (0 -> 1) value
-inline double unipolarToBipolar(double value)
-{
-    return 2.0 * value - 1.0;
-}
-
 inline double tanh_clip(double x)
 {
     return x * (27 + x * x) / (27 + 9 * x * x);
@@ -41,4 +35,23 @@ inline float linear_interp(float v0, float v1, float t)
 {
     return (1 - t) * v0 + t * v1;
 }
+
+class Differentiator
+{
+public:
+    Differentiator(double value)
+    :   priorValue(value) {}
+    
+    double process(double value)
+    {
+        double  result = value - priorValue;
+        priorValue = value;
+        return result;
+    }
+    
+    void reset(double value) { priorValue = value; }
+    
+private:
+    double priorValue;
+};
 

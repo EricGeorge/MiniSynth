@@ -29,7 +29,7 @@ const double pi = MathConstants<double>::pi;
 //    t^2 + 2t + 1;  -1 <= t <= 0
 //    2t - t - 1; 0 < t <= 1
 
-float polyBLEP(float t, float phaseInc)
+inline float polyBLEP(float t, float phaseInc)
 {
     if (t < phaseInc)
     {
@@ -74,3 +74,60 @@ inline unsigned int extractBits(unsigned int value, unsigned int start, unsigned
 {
     return (value >> (start - 1)) & ((1 << length) - 1);
 }
+
+// calculates the bipolar (-1 -> +1) value from a unipolar (0 -> 1) value
+inline double unipolarToBipolar(double value)
+{
+    return 2.0 * value - 1.0;
+}
+
+inline double getTrivialSawSample(double phase)
+{
+    return unipolarToBipolar(phase);
+}
+
+inline double getTrivialPulseSample(double phase, double pulseWidth)
+{
+    return phase > pulseWidth ? -1.0 : 1.0;
+}
+
+inline double getTrivialTriangleSample(double phase)
+{
+    return 2.0f * fabs(2.0f * phase - 1.0f) - 1.0f;
+}
+
+class PhaseAccumulator
+{
+public:
+    PhaseAccumulator()
+    :   phase(0.0),
+        phaseInc(0.0) {};
+    
+    void IncrementPhase()
+    {
+        phase += phaseInc;
+        
+        if (phase > 1.0)
+            phase -= 1.0;
+    }
+    
+    double getPhase()
+    {
+        return phase;
+    }
+    
+    double getPhaseInc()
+    {
+        return phaseInc;
+    }
+    
+    void reset(double inPhase, double inPhaseInc)
+    {
+        phase = inPhase;
+        phaseInc = inPhaseInc;
+    }
+    
+private:
+    double phase;
+    double phaseInc;
+};

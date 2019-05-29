@@ -21,7 +21,8 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
     scopeComponent(processor.getAudioBufferQueue())
 {
     addAndMakeVisible(controlBarComponent);
-    addAndMakeVisible(oscillatorComponent);
+    addAndMakeVisible(oscillatorComponent1);
+    addAndMakeVisible(oscillatorComponent2);
     addAndMakeVisible(outputComponent);
     addAndMakeVisible(scopeComponent);
     addAndMakeVisible(midiKeyboardComponent);
@@ -31,7 +32,8 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
     midiKeyboardComponent.setKeyWidth(midiKeyboardKeyWidth);
     
     outputComponent.setupAttachments(p.getValueTreeState());
-    oscillatorComponent.setupAttachments(p.getValueTreeState());
+    oscillatorComponent1.setupAttachments(p.getValueTreeState());
+    oscillatorComponent2.setupAttachments(p.getValueTreeState());
 }
 
 MiniSynthAudioProcessorEditor::~MiniSynthAudioProcessorEditor()
@@ -48,7 +50,8 @@ void MiniSynthAudioProcessorEditor::resized()
 {
     controlBarComponent.setBounds(controlBarX, controlBarY, controlBarWidth, controlBarHeight);
     outputComponent.setBounds(outputX, outputY, outputWidth, outputHeight);
-    oscillatorComponent.setBounds(oscillatorX, oscillatorY, oscillatorWidth, oscillatorHeight);
+    oscillatorComponent1.setBounds(oscillatorX, oscillatorY, oscillatorWidth, oscillatorHeight / 2);
+    oscillatorComponent2.setBounds(oscillatorX, oscillatorY + oscillatorHeight / 2 , oscillatorWidth, oscillatorHeight / 2);
     scopeComponent.setBounds(scopeX, scopeY, scopeWidth, scopeHeight);
     midiKeyboardComponent.setBounds(midiKeyboardX, midiKeyboardY, midiKeyboardWidth, midiKeyboardHeight);
 }
