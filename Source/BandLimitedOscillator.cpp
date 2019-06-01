@@ -10,9 +10,12 @@
 
 #include "BandLimitedOscillator.h"
 
+#include <cstdlib>
+#include <cstdint>
+
 #include "OscillatorBLEPTables.h"
 #include "OscillatorHelpers.h"
-#include "OscillatorParameters.h"
+
 
 BandLimitedOscillator::BandLimitedOscillator(double sampleRate)
 :   sampleRate(sampleRate),
@@ -26,7 +29,6 @@ BandLimitedOscillator::BandLimitedOscillator(double sampleRate)
     polyBLEPMix(0.0),
     waveShapeSaturation(1.0),
     volume(1.0),
-    pitchBend(0.5),
     noteOn(false)
 {
     seed = arc4random();
@@ -37,79 +39,44 @@ BandLimitedOscillator::~BandLimitedOscillator()
     
 }
 
-void BandLimitedOscillator::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
+void BandLimitedOscillator::setWaveType(float newValue)
 {
-    layout.add(std::make_unique<AudioParameterInt>(oscillatorWavetype_ParameterID, "Wavetype", 1, 9, 1));
-    layout.add(std::make_unique<AudioParameterInt>(oscillatorOctave_ParameterID, "Octave", -4, 4, 0));
-    layout.add(std::make_unique<AudioParameterInt>(oscillatorSemitone_ParameterID, "Semitones", -12, 12, 0));
-    layout.add(std::make_unique<AudioParameterInt>(oscillatorCents_ParameterID, "Cents", -100, 100, 0));
-    layout.add(std::make_unique<AudioParameterFloat>(oscillatorPulseWidth_ParameterID, "Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f));
-    layout.add(std::make_unique<AudioParameterFloat>(oscillatorPolyBLEPMix_ParameterID, "PolyBLEP Mix", NormalisableRange<float> (0.0f, 100.0f), 0.0f));
-    layout.add(std::make_unique<AudioParameterFloat>(oscillatorWaveShapeSaturation_ParameterID, "Waveshape Saturation", NormalisableRange<float> (1.0f, 5.0f), 1.0f));
-    layout.add(std::make_unique<AudioParameterFloat>(oscillatorVolume_ParameterID, "Volume", NormalisableRange<float> (0.0f, 1.0f), 1.0f));
+    waveType = static_cast<WaveType>(newValue);
+    reset(sampleRate);
 }
 
-void BandLimitedOscillator::addParameterListeners(AudioProcessorValueTreeState& state)
+void BandLimitedOscillator::setOctaves(float newValue)
 {
-    state.addParameterListener(oscillatorWavetype_ParameterID, this);
-    state.addParameterListener(oscillatorOctave_ParameterID, this);
-    state.addParameterListener(oscillatorSemitone_ParameterID, this);
-    state.addParameterListener(oscillatorCents_ParameterID, this);
-    state.addParameterListener(oscillatorPulseWidth_ParameterID, this);
-    state.addParameterListener(oscillatorPolyBLEPMix_ParameterID, this);
-    state.addParameterListener(oscillatorWaveShapeSaturation_ParameterID, this);
-    state.addParameterListener(oscillatorVolume_ParameterID, this);
+    octaves = static_cast<int>(newValue);
 }
 
-void BandLimitedOscillator::removeParameterListeners(AudioProcessorValueTreeState& state)
+void BandLimitedOscillator::setSemitones(float newValue)
 {
-    state.removeParameterListener(oscillatorWavetype_ParameterID, this);
-    state.removeParameterListener(oscillatorOctave_ParameterID, this);
-    state.removeParameterListener(oscillatorSemitone_ParameterID, this);
-    state.removeParameterListener(oscillatorCents_ParameterID, this);
-    state.removeParameterListener(oscillatorPulseWidth_ParameterID, this);
-    state.removeParameterListener(oscillatorPolyBLEPMix_ParameterID, this);
-    state.removeParameterListener(oscillatorWaveShapeSaturation_ParameterID, this);
-    state.removeParameterListener(oscillatorVolume_ParameterID, this);
-
+    semitones = static_cast<int>(newValue);
 }
 
-void BandLimitedOscillator::parameterChanged (const String& parameterID, float newValue)
+void BandLimitedOscillator::setCents(float newValue)
 {
-    if (parameterID == oscillatorWavetype_ParameterID)
-    {
-        waveType = static_cast<WaveType>(newValue);
-        reset(sampleRate);
-    }
-    else if (parameterID == oscillatorOctave_ParameterID)
-    {
-        octaves = static_cast<int>(newValue);
-    }
-    else if (parameterID == oscillatorSemitone_ParameterID)
-    {
-        semitones = static_cast<int>(newValue);
-    }
-    else if (parameterID == oscillatorCents_ParameterID)
-    {
-        cents = static_cast<int>(newValue);
-    }
-    else if (parameterID == oscillatorPulseWidth_ParameterID)
-    {
-        pulseWidth = newValue / 100.0f;
-    }
-    else if (parameterID == oscillatorPolyBLEPMix_ParameterID)
-    {
-        polyBLEPMix = newValue / 100.0f;
-    }
-    else if (parameterID == oscillatorWaveShapeSaturation_ParameterID)
-    {
-        waveShapeSaturation = newValue;
-    }
-    else if (parameterID == oscillatorVolume_ParameterID)
-    {
-        volume = newValue;
-    }
+    cents = static_cast<int>(newValue);
+}
 
+void BandLimitedOscillator::setPulseWidth(float newValue)
+{
+    pulseWidth = newValue / 100.0f;
+}
+
+void BandLimitedOscillator::setPolyBLEPMix(float newValue)
+{
+    polyBLEPMix = newValue / 100.0f;
+}
+void BandLimitedOscillator::setWaveShapeSaturation(float newValue)
+{
+    waveShapeSaturation = newValue;
+}
+
+void BandLimitedOscillator::setVolume(float newValue)
+{
+    volume = newValue;
 }
 
 void BandLimitedOscillator::reset(double inSampleRate)
@@ -153,9 +120,9 @@ void BandLimitedOscillator::stopNote()
     modFrequency = 0.0;
 }
 
-float BandLimitedOscillator::getNextSample()
+double BandLimitedOscillator::getNextSample()
 {
-    float sample = 0.0f;
+    double sample = 0.0;
     
     if (noteOn)
     {
@@ -197,25 +164,25 @@ float BandLimitedOscillator::getNextSample()
     return sample * volume;
 }
 
-float BandLimitedOscillator::getNextPolyBLEPSawSquareModSample()
+double BandLimitedOscillator::getNextPolyBLEPSawSquareModSample()
 {
     double phase = phaseAccumulator.getPhase();
     double phaseInc = phaseAccumulator.getPhaseInc();
     
-    float alternatePhase = phase + 0.5f;
-    if (alternatePhase > 1.0f)
-        alternatePhase -= 1.0f;
+    double alternatePhase = phase + 0.5;
+    if (alternatePhase > 1.0)
+        alternatePhase -= 1.0;
 
-    float sawSample =  getTrivialSawSample(phase) - polyBLEP(phase, phaseInc);
+    double sawSample =  getTrivialSawSample(phase) - polyBLEP(phase, phaseInc);
     
-    float squareSample = phase > 0.5f ? 1.0f : -1.0f;
+    double squareSample = phase > 0.5 ? 1.0 : -1.0;
     squareSample += polyBLEP(alternatePhase, phaseInc) - polyBLEP(phase, phaseInc);
     
     // Mix the square and saw waves together
-    return squareSample * polyBLEPMix + (sawSample * (1.0f - polyBLEPMix));
+    return squareSample * polyBLEPMix + (sawSample * (1.0 - polyBLEPMix));
 }
 
-float BandLimitedOscillator::getNextBLEPSawSample()
+double BandLimitedOscillator::getNextBLEPSawSample()
 {
     const double* blepTable = nullptr;
     size_t pointsPerSide = 0;
@@ -244,8 +211,8 @@ float BandLimitedOscillator::getNextBLEPSawSample()
         if (phase > 1.0 - i * phaseInc)
         {
             double t = (phase - 1) / (pointsPerSide * phaseInc);
-            float index = (1.0 + t) * tableCenter;
-            float frac = index - int(index);
+            double index = (1.0 + t) * tableCenter;
+            double frac = index - int(index);
             blep = linear_interp(blepTable[(int)index], blepTable[(int)index + 1], frac);
         }
     }
@@ -257,8 +224,8 @@ float BandLimitedOscillator::getNextBLEPSawSample()
         if (phase < i * phaseInc)
         {
             double t = phase / (pointsPerSide * phaseInc);
-            float index = t * tableCenter + (tableCenter + 1.0);
-            float frac = index - int(index);
+            double index = t * tableCenter + (tableCenter + 1.0);
+            double frac = index - int(index);
             blep = linear_interp(blepTable[(int)index], blepTable[(int)index + 1], frac);
         }
     }
@@ -266,25 +233,25 @@ float BandLimitedOscillator::getNextBLEPSawSample()
     return getTrivialSawSample(phase) - blep;
 }
 
-float BandLimitedOscillator::getNextUnipolarWaveShapedSawSample()
+double BandLimitedOscillator::getNextUnipolarWaveShapedSawSample()
 {
     double phase = phaseAccumulator.getPhase();
     double phaseInc = phaseAccumulator.getPhaseInc();
 
-    float waveShapedSawSample = tanh(waveShapeSaturation * phase) / tanh(waveShapeSaturation);
+    double waveShapedSawSample = tanh(waveShapeSaturation * phase) / tanh(waveShapeSaturation);
     return getTrivialSawSample(waveShapedSawSample) - polyBLEP(phase, phaseInc);
 }
 
-float BandLimitedOscillator::getNextBipolarWaveShapedSawSample()
+double BandLimitedOscillator::getNextBipolarWaveShapedSawSample()
 {
     double phase = phaseAccumulator.getPhase();
     double phaseInc = phaseAccumulator.getPhaseInc();
 
-    float trivialSawSample = getTrivialSawSample(phase);
+    double trivialSawSample = getTrivialSawSample(phase);
     return tanh(waveShapeSaturation * trivialSawSample) / tanh(waveShapeSaturation) - polyBLEP(phase, phaseInc);
 }
 
-float BandLimitedOscillator::getNextSumOfSawSquarePWMSample()
+double BandLimitedOscillator::getNextSumOfSawSquarePWMSample()
 {
     double phase = phaseAccumulator.getPhase();
     double phaseInc = phaseAccumulator.getPhaseInc();
@@ -314,7 +281,7 @@ float BandLimitedOscillator::getNextSumOfSawSquarePWMSample()
     return sample *= correction;
 }
 
-float BandLimitedOscillator::getNextDPWTriangleSample()
+double BandLimitedOscillator::getNextDPWTriangleSample()
 {
     double phase = phaseAccumulator.getPhase();
 
@@ -330,17 +297,17 @@ float BandLimitedOscillator::getNextDPWTriangleSample()
     return differentiatedSquareMod * c;
 }
 
-float BandLimitedOscillator::getNextParabolicSineSample()
+double BandLimitedOscillator::getNextParabolicSineSample()
 {
     return (float)(parabolicSine(phaseAccumulator.getPhase() * 2.0 * pi - pi));
 }
 
-float BandLimitedOscillator::getNextWhiteNoiseSample()
+double BandLimitedOscillator::getNextWhiteNoiseSample()
 {
     return unipolarToBipolar(arc4random_uniform(UINT32_MAX) / (double)UINT32_MAX);
 }
 
-float BandLimitedOscillator::getNextRandomNoiseSample()
+double BandLimitedOscillator::getNextRandomNoiseSample()
 {
     // get the bits
     unsigned int b0 = extractBits(seed, 1, 1); // 1 = b0 is FIRST bit from right
@@ -363,7 +330,7 @@ float BandLimitedOscillator::getNextRandomNoiseSample()
     
     // convert the output into a floating point number, scaled by experimentation
     // to a range of o to +2.0
-    float sample = (float)(seed) / (pow(2.0f, 32.0f) / 16.0);
+    double sample = (float)(seed) / (pow(2.0, 32.0) / 16.0);
     
     // shift down to form a result from -1.0 to +1.0
     sample -= 1.0;

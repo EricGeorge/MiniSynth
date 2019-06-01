@@ -12,16 +12,26 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Synth : public Synthesiser
+#include "Gain.h"
+
+class Synth :   public Synthesiser,
+                public AudioProcessorValueTreeState::Listener
 {
 public:
     Synth();
-    ~Synth();
+    ~Synth() override;
     
-    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
+    void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
     void addParameterListeners(AudioProcessorValueTreeState& state);
     void removeParameterListeners(AudioProcessorValueTreeState& state);
-    
+    void parameterChanged (const String& parameterID, float newValue) override;
+
+    void renderNextBlock (AudioBuffer<float>& outputAudio,
+                          const MidiBuffer& inputMidi,
+                          int startSample,
+                          int numSamples);
+
 private:
-    
+    // synth components external to the voice
+    Gain outputGain;
 };

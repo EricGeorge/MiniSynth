@@ -10,8 +10,10 @@
 
 #pragma once
 
+#include <cmath>
+
 const int kNumVoices = 16;
-const float kParameterSmoothingCoeff_Fine = 0.005f;
+const double kParameterSmoothingCoeff_Fine = 0.005f;
 const double kMinimumDecibels = -24.0;
 
 inline double pitchShiftMultiplier(double semitonesToShift)
@@ -21,14 +23,14 @@ inline double pitchShiftMultiplier(double semitonesToShift)
 }
 
 // returns the frequency multiplier for the pitch change
-inline double getPitchFreqMod(float octaves, float semitones, float cents)
+inline double getPitchFreqMod(double octaves, double semitones, double cents)
 {
-    return pitchShiftMultiplier(octaves * 12 + semitones + cents / 100.0f);
+    return pitchShiftMultiplier(octaves * 12 + semitones + cents / 100.0);
 }
 
 inline double tanh_clip(double x)
 {
-    return x * (27 + x * x) / (27 + 9 * x * x);
+    return x * (27.0 + x * x) / (27.0 + 9.0 * x * x);
 }
 
 inline float linear_interp(float v0, float v1, float t)

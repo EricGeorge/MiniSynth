@@ -11,6 +11,12 @@
         <FILE id="YruKQ3" name="PluginHelpers.h" compile="0" resource="0" file="Source/PluginHelpers.h"/>
         <FILE id="pf4Qb5" name="PluginLayout.h" compile="0" resource="0" file="Source/PluginLayout.h"/>
       </GROUP>
+      <GROUP id="{2A21BA41-6655-215F-A822-1631B9D499F7}" name="Parameters">
+        <FILE id="BuTILn" name="OscillatorParameters.h" compile="0" resource="0"
+              file="Source/OscillatorParameters.h"/>
+        <FILE id="QkGBlo" name="OutputParameters.h" compile="0" resource="0"
+              file="Source/OutputParameters.h"/>
+      </GROUP>
       <GROUP id="{3CCD9624-A5FD-D540-6600-B2F8A440F15C}" name="PluginCore">
         <FILE id="Ad78YY" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
         <FILE id="sq2bL0" name="PluginEditor.cpp" compile="1" resource="0"
@@ -29,14 +35,10 @@
     </GROUP>
     <GROUP id="{3EE8477B-9BED-6B30-96F7-C82E736C24C7}" name="Processors">
       <GROUP id="{F906826B-FEEF-34D0-2EC7-7974502AFEEB}" name="GainProcessor">
-        <FILE id="QkGBlo" name="OutputParameters.h" compile="0" resource="0"
-              file="Source/OutputParameters.h"/>
         <FILE id="MZTNbY" name="Gain.h" compile="0" resource="0" file="Source/Gain.h"/>
         <FILE id="gQgD4G" name="Gain.cpp" compile="1" resource="0" file="Source/Gain.cpp"/>
       </GROUP>
       <GROUP id="{1FC4E91F-15C1-4CD6-11F6-9E4B5DCBEFEA}" name="OscillatorProcessors">
-        <FILE id="BuTILn" name="OscillatorParameters.h" compile="0" resource="0"
-              file="Source/OscillatorParameters.h"/>
         <FILE id="MKtCYV" name="OscillatorHelpers.h" compile="0" resource="0"
               file="Source/OscillatorHelpers.h"/>
         <FILE id="SORazD" name="OscillatorBLEPTables.h" compile="0" resource="0"

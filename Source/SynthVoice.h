@@ -13,6 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "BandLimitedOscillator.h"
+#include "LowFrequencyOscillator.h"
 
 class SynthSound : public SynthesiserSound
 {
@@ -27,12 +28,8 @@ class SynthVoice : public SynthesiserVoice
 {
 public:
     SynthVoice();
-    ~SynthVoice();
+    ~SynthVoice() override;
     
-    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
-    void addParameterListeners(AudioProcessorValueTreeState& state);
-    void removeParameterListeners(AudioProcessorValueTreeState& state);
-
     bool canPlaySound(SynthesiserSound* sound) override;
     
     void startNote(int midiNoteNumber,
@@ -48,9 +45,15 @@ public:
     
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
+    void parameterChanged (const String& parameterID, float newValue);
+    void osc1ParameterChanged (const String& parameterID, float newValue);
+    void osc2ParameterChanged (const String& parameterID, float newValue);
+    void lfo1ParameterChanged (const String& parameterID, float newValue);
+
 private:
     
     float level;
     BLOsc osc1;
     BLOsc osc2;
+    LFO lfo1;
 };

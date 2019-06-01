@@ -10,22 +10,74 @@
 
 #pragma once
 
-static const String oscillatorWavetype_ParameterID =                "Oscillator_Wavetype";
-static const String oscillatorOctave_ParameterID =                  "Oscillator_Octave";
-static const String oscillatorSemitone_ParameterID =                "Oscillator_Semitone";
-static const String oscillatorCents_ParameterID =                   "Oscillator_Cents";
-static const String oscillatorPulseWidth_ParameterID =              "Oscillator_PulseWidth";
-static const String oscillatorPolyBLEPMix_ParameterID =             "Oscillator_PolyBLEPMix";
-static const String oscillatorWaveShapeSaturation_ParameterID =     "Oscillator_WaveShapeSaturation";
-static const String oscillatorVolume_ParameterID =                  "Oscillator_Volume";
+#include <cstring>
 
-static const String lfoWavetype_ParameterID =                       "LFO_Wavetype";
-static const String lfoRunState_ParameterID =                       "LFO_RunState";
-static const String lfoPulseWidth_ParameterID =                     "LFO_PulseWidth";
-static const String lfoPhaseOffset_ParameterID =                    "LFO_PhaseOffset";
-static const String lfoAmount_ParameterID =                         "LFO_Amount";
-static const String lfoPolarityOffset_ParameterID =                 "LFO_PolarityOffset";
-static const String lfoRate_ParameterID =                           "LFO_Rate";
-static const String lfoSync_ParameterID =                           "LFO_Sync";
-static const String lfoFadeInTime_ParameterID =                     "LFO_FadeInTime";
-static const String lfoDelay_ParameterID =                          "LFO_Delay";
+// Band Limited Oscillators
+enum OscillatorParameters
+{
+    kOscParam_WaveType = 0,
+    kOscParam_Octave,
+    kOscParam_Semitone,
+    kOscParam_Cents,
+    kOscParam_PulseWidth,
+    kOscParam_PolyBLEPMix,
+    kOscParam_WaveShapeSaturation,
+    kOscParam_Volume
+};
+
+static String oscillator1ParamIDPrefix = "Oscillator1_";
+static String oscillator1_ParamIDs[] =
+{
+    "Oscillator1_Wavetype",
+    "Oscillator1_Octave",
+    "Oscillator1_Semitone",
+    "Oscillator1_Cents",
+    "Oscillator1_PulseWidth",
+    "Oscillator1_PolyBLEPMix",
+    "Oscillator1_WaveShapeSaturation",
+    "Oscillator1_Volume"
+};
+
+static String oscillator2ParamIDPrefix = "Oscillator2_";
+static String oscillator2_ParamIDs[] =
+{
+    "Oscillator2_Wavetype",
+    "Oscillator2_Octave",
+    "Oscillator2_Semitone",
+    "Oscillator2_Cents",
+    "Oscillator2_PulseWidth",
+    "Oscillator2_PolyBLEPMix",
+    "Oscillator2_WaveShapeSaturation",
+    "Oscillator2_Volume"
+};
+
+// Low Frequency Oscillators
+
+enum LfoParameters
+{
+    kLfoParam_WaveType = 0,
+    kLfoParam_RunState,
+    kLfoParam_PulseWidth,
+    kLfoParam_PhaseOffset,
+    kLfoParam_Amount,
+    kLfoParam_PolarityOffset,
+    kLfoParam_Rate,
+    kLfoParam_Sync,
+    kLfoParam_FadeInTime,
+    kLfoParam_Delay
+};
+
+static String lfo1ParamIDPrefix = "LFO1_";
+static String lfo1_ParamIDs[] =
+{
+    "LFO1_Wavetype",
+    "LFO1_RunState",
+    "LFO1_PulseWidth",
+    "LFO1_PhaseOffset",
+    "LFO1_Amount",
+    "LFO1_PolarityOffset",
+    "LFO1_Rate",
+    "LFO1_Sync",
+    "LFO1_FadeInTime",
+    "LFO1_Delay"
+};

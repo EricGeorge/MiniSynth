@@ -12,24 +12,20 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Gain : public AudioProcessorValueTreeState::Listener
+class Gain
 {
 public:
     Gain();
     ~Gain();
     
-    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
-    void addParameterListeners(AudioProcessorValueTreeState& state);
-    void removeParameterListeners(AudioProcessorValueTreeState& state);
+    void setGain(float newValue) { gain = newValue; };
     
-    void parameterChanged (const String& parameterID, float newValue) override;
-    
-    void process(AudioBuffer<float>& buffer,
+    void process(juce::AudioBuffer<float>& buffer,
                  int inNumSamplesToRender);
     
 private:
     // parameters
-    float gain;
+    double gain;
     
-    float gainSmoothed;
+    double gainSmoothed;
 };

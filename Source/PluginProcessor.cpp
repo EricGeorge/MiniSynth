@@ -12,7 +12,6 @@
 
 #include "PluginEditor.h"
 #include "PluginHelpers.h"
-#include "SynthVoice.h"
 
 //==============================================================================
 MiniSynthAudioProcessor::MiniSynthAudioProcessor()
@@ -32,20 +31,17 @@ MiniSynthAudioProcessor::MiniSynthAudioProcessor()
 #endif
 {
     synth.addParameterListeners(state);
-    outputGain.addParameterListeners(state);
 }
 
 MiniSynthAudioProcessor::~MiniSynthAudioProcessor()
 {
     synth.removeParameterListeners(state);
-    outputGain.removeParameterListeners(state);
 }
 
 AudioProcessorValueTreeState::ParameterLayout MiniSynthAudioProcessor::createParameterLayout()
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
-    Synth::createParameterLayout(layout);
-    Gain::createParameterLayout(layout);
+    synth.createParameterLayout(layout);
     return layout;
  }
 
@@ -156,7 +152,6 @@ void MiniSynthAudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     midiKeyboardState.processNextMidiBuffer (midiMessages, 0, buffer.getNumSamples(), true);
 
     synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
-    outputGain.process(buffer, buffer.getNumSamples());
     
     scopeDataCollector.process(buffer.getReadPointer(0), (size_t)buffer.getNumSamples());
 }

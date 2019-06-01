@@ -10,9 +10,9 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <cmath>
 
-const double pi = MathConstants<double>::pi;
+const double pi = M_PI;
 
 //    Taken from Will Pirkle's Designing Software Synthesizers in C++
 //    book.  This polynomial was derived by taking a unipolar triangle pulse
@@ -29,18 +29,18 @@ const double pi = MathConstants<double>::pi;
 //    t^2 + 2t + 1;  -1 <= t <= 0
 //    2t - t - 1; 0 < t <= 1
 
-inline float polyBLEP(float t, float phaseInc)
+inline double polyBLEP(double t, double phaseInc)
 {
     if (t < phaseInc)
     {
         t = t / phaseInc;
-        return (t + t) - (t * t) - 1.0f;
+        return (t + t) - (t * t) - 1.0;
     }
 
-    if (t > (1.0f - phaseInc))
+    if (t > (1.0 - phaseInc))
     {
-        t = (t - 1.0f) / phaseInc;
-        return (t * t) + (t + t) + 1.0f;
+        t = (t - 1.0) / phaseInc;
+        return (t * t) + (t + t) + 1.f;
     }
 
     return 0;
@@ -93,7 +93,7 @@ inline double getTrivialPulseSample(double phase, double pulseWidth)
 
 inline double getTrivialTriangleSample(double phase)
 {
-    return 2.0f * fabs(2.0f * phase - 1.0f) - 1.0f;
+    return 2.0 * fabs(2.0 * phase - 1.0) - 1.0;
 }
 
 class PhaseAccumulator

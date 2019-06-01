@@ -14,7 +14,7 @@
 #include "PluginHelpers.h"
 
 Gain::Gain()
-:   gain(Decibels::decibelsToGain(-3.0f)),
+:   gain(juce::Decibels::decibelsToGain(-3.0f)),
     gainSmoothed(gain)
 {
 }
@@ -23,33 +23,10 @@ Gain::~Gain()
 {
 }
 
-void Gain::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
+void Gain::process(juce::AudioBuffer<float>& buffer, int numSamplesToProcess)
 {
-    layout.add(std::make_unique<AudioParameterFloat>(outputGain_ParameterID, "Output Gain", NormalisableRange<float> (0.0f, 1.0f), Decibels::decibelsToGain(-3.0f)));
-}
-
-void Gain::addParameterListeners(AudioProcessorValueTreeState& state)
-{
-    state.addParameterListener(outputGain_ParameterID, this);
-}
-
-void Gain::removeParameterListeners(AudioProcessorValueTreeState& state)
-{
-    state.removeParameterListener(outputGain_ParameterID, this);
-}
-
-void Gain::parameterChanged (const String& parameterID, float newValue)
-{
-    if (parameterID == outputGain_ParameterID)
-    {
-        gain = newValue;
-    }
-}
-
-void Gain::process(AudioBuffer<float>& buffer, int numSamplesToProcess)
-{
-    double gainMapped = (double)jmap(gain, 0.0f, 1.0f, -24.0f, 0.0f);
-    gainMapped = Decibels::decibelsToGain(gainMapped, kMinimumDecibels);
+    double gainMapped = juce::jmap(gain, 0.0, 1.0, -24.0, 0.0);
+    gainMapped = juce::Decibels::decibelsToGain(gainMapped, kMinimumDecibels);
     
     for (int index = 0; index < numSamplesToProcess; ++index)
     {
@@ -57,7 +34,7 @@ void Gain::process(AudioBuffer<float>& buffer, int numSamplesToProcess)
         
         for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
         {
-            float processedSample = buffer.getSample(channel, index) * gainSmoothed;
+            double processedSample = buffer.getSample(channel, index) * gainSmoothed;
             buffer.setSample(channel, index, processedSample);
         }
     }

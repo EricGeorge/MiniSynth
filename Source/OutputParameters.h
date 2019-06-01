@@ -10,4 +10,6 @@
 
 #pragma once
 
+#include <cstring>
+
 static const String outputGain_ParameterID =    "Output_Gain";

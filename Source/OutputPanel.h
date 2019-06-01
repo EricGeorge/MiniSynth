@@ -16,7 +16,7 @@ class OutputPanel : public Component
 {
 public:
     OutputPanel();
-    ~OutputPanel();
+    ~OutputPanel() override;
     
     void paint(Graphics& g) override;
     void resized() override;

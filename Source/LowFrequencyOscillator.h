@@ -10,11 +10,9 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "OscillatorHelpers.h"
 
-class LowFrequencyOscillator : public AudioProcessorValueTreeState::Listener
+class LowFrequencyOscillator
 {
 public:
     LowFrequencyOscillator(double sampleRate);
@@ -36,15 +34,21 @@ public:
         OneShot
     };
     
-    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
-    void addParameterListeners(AudioProcessorValueTreeState& state);
-    void removeParameterListeners(AudioProcessorValueTreeState& state);
-    void parameterChanged (const String& parameterID, float newValue) override;
-
     void reset(double sampleRate);
-
-    float getNextSample();
+    double getNextSample();
     
+    // parameter setters
+    void setWaveType(float newValue);
+    void setRunState(float newValue);
+    void setPulseWidth(float newValue);
+    void setPhaseOffset(float newValue);
+    void setAmount(float newValue);
+    void setPolarityOffset(float newValue);
+    void setRate(float newValue);
+    void setSync(float newValue);
+    void setFadeInTime(float newValue);
+    void setDelay(float newValue);
+
 private:
     double sampleRate;
     

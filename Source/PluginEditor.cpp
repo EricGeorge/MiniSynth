@@ -10,6 +10,7 @@
 
 #include "PluginEditor.h"
 
+#include "OscillatorParameters.h"
 #include "PluginLayout.h"
 
 
@@ -18,6 +19,8 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
 :   AudioProcessorEditor (&p),
     processor (p),
     midiKeyboardComponent(processor.getMidiKeyboardstate(), MidiKeyboardComponent::horizontalKeyboard),
+    oscillatorComponent1("Oscillator 1", oscillator1_ParamIDs),
+    oscillatorComponent2("Oscillator 2", oscillator2_ParamIDs),
     scopeComponent(processor.getAudioBufferQueue())
 {
     addAndMakeVisible(controlBarComponent);

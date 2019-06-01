@@ -10,12 +10,10 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "PluginHelpers.h"
 #include "OscillatorHelpers.h"
 
-class BandLimitedOscillator : public AudioProcessorValueTreeState::Listener
+class BandLimitedOscillator
 {
 public:
     BandLimitedOscillator(double sampleRate);
@@ -34,18 +32,27 @@ public:
         RandomNoise
     };
     
-    static void createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout);
-    void addParameterListeners(AudioProcessorValueTreeState& state);
-    void removeParameterListeners(AudioProcessorValueTreeState& state);
-    void parameterChanged (const String& parameterID, float newValue) override;
 
     void reset(double sampleRate);
     
     void startNote(double frequency);
     void stopNote();
     
-    float getNextSample();
+    double getNextSample();
     
+    // parameter setters
+    void setWaveType(float newValue);
+    void setOctaves(float newValue);
+    void setSemitones(float newValue);
+    void setCents(float newValue);
+    void setPulseWidth(float newValue);
+    void setPolyBLEPMix(float newValue);
+    void setWaveShapeSaturation(float newValue);
+    void setVolume(float newValue);
+    
+    // parameter getters
+    float getVolume() { return volume; };
+
 private:
     double sampleRate;
     
@@ -64,24 +71,23 @@ private:
     int octaves;
     int semitones;
     int cents;
-    float pulseWidth;
-    float polyBLEPMix;
-    float waveShapeSaturation;
-    float volume;
-    float pitchBend;
+    double pulseWidth;
+    double polyBLEPMix;
+    double waveShapeSaturation;
+    double volume;
     
     // poor man's envelope - replace with ADSR
     bool noteOn;
     
-    float getNextPolyBLEPSawSquareModSample();
-    float getNextBLEPSawSample();
-    float getNextUnipolarWaveShapedSawSample();
-    float getNextBipolarWaveShapedSawSample();
-    float getNextSumOfSawSquarePWMSample();
-    float getNextDPWTriangleSample();
-    float getNextParabolicSineSample();
-    float getNextWhiteNoiseSample();
-    float getNextRandomNoiseSample();
+    double getNextPolyBLEPSawSquareModSample();
+    double getNextBLEPSawSample();
+    double getNextUnipolarWaveShapedSawSample();
+    double getNextBipolarWaveShapedSawSample();
+    double getNextSumOfSawSquarePWMSample();
+    double getNextDPWTriangleSample();
+    double getNextParabolicSineSample();
+    double getNextWhiteNoiseSample();
+    double getNextRandomNoiseSample();
     
     double getStartingPhaseOffset();    
 };

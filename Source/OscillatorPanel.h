@@ -15,8 +15,8 @@
 class OscillatorPanel : public Component
 {
 public:
-    OscillatorPanel();
-    ~OscillatorPanel();
+    OscillatorPanel(const String panelName, const String* parameterList);
+    ~OscillatorPanel() override;
     
     void paint(Graphics& g) override;
     void resized() override;
@@ -24,6 +24,10 @@ public:
     void setupAttachments(AudioProcessorValueTreeState& state);
     
 private:
+    // panel label
+    const String panelName;
+    const String* parameterList;
+    
     // waveform
     Label wavetypeLabel { {}, "Waveform:" };
     Slider wavetypeSlider;

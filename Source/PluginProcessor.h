@@ -13,7 +13,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "AudioBufferQueue.h"
-#include "Gain.h"
 #include "ScopeDataCollector.h"
 #include "Synth.h"
 
@@ -76,7 +75,6 @@ private:
     
     AudioProcessorValueTreeState state;
     
-    Gain outputGain;
     Synth synth;
     
     AudioProcessorValueTreeState::ParameterLayout createParameterLayout();

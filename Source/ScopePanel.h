@@ -21,7 +21,7 @@ public:
     using Queue = AudioBufferQueue;
     
     ScopePanel(Queue& queueToUse);
-    ~ScopePanel();
+    ~ScopePanel() override;
     
     void setFramesPerSecond(int framesPerSecond);
     
