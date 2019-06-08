@@ -77,11 +77,7 @@ void SynthVoice::osc1ParameterChanged (const String& parameterID, float newValue
 
 void SynthVoice::osc2ParameterChanged (const String& parameterID, float newValue)
 {
-    if (parameterID == oscillator2_ParamIDs[kOscParam_WaveType])
-    {
-        osc2.setWaveType(newValue);
-    }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_Octave])
+    if (parameterID == oscillator2_ParamIDs[kOscParam_Octave])
     {
         osc2.setOctaves(newValue);
     }
@@ -92,18 +88,6 @@ void SynthVoice::osc2ParameterChanged (const String& parameterID, float newValue
     else if (parameterID == oscillator2_ParamIDs[kOscParam_Cents])
     {
         osc2.setCents(newValue);
-    }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_PulseWidth])
-    {
-        osc2.setPulseWidth(newValue);
-    }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_PolyBLEPMix])
-    {
-        osc2.setPolyBLEPMix(newValue);
-    }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_WaveShapeSaturation])
-    {
-        osc2.setWaveShapeSaturation(newValue);
     }
     else if (parameterID == oscillator2_ParamIDs[kOscParam_Volume])
     {
@@ -166,14 +150,14 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity,
 {
     level = velocity * 0.25;
 
-    osc1.startNote(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
-    osc2.startNote(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    osc1.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    osc2.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
-    osc1.stopNote();
-    osc2.stopNote();
+    osc1.stop();
+    osc2.stop();
     clearCurrentNote();
 }
 
@@ -193,7 +177,7 @@ void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSampl
         double sample2 = osc2.getNextSample() * level;
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
         {
-            outputBuffer.addSample(channel, startSample, sample1 * osc1.getVolume() + sample2 * osc2.getVolume());
+            outputBuffer.addSample(channel, startSample, sample1 + sample2);
         }
         ++startSample;
     }

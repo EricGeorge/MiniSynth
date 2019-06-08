@@ -35,8 +35,8 @@ public:
 
     void reset(double sampleRate);
     
-    void startNote(double frequency);
-    void stopNote();
+    void start(double frequency);
+    void stop();
     
     double getNextSample();
     
@@ -50,9 +50,6 @@ public:
     void setWaveShapeSaturation(float newValue);
     void setVolume(float newValue);
     
-    // parameter getters
-    float getVolume() { return volume; };
-
 private:
     double sampleRate;
     

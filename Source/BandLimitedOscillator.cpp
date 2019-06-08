@@ -28,7 +28,7 @@ BandLimitedOscillator::BandLimitedOscillator(double sampleRate)
     pulseWidth(0.5),
     polyBLEPMix(0.0),
     waveShapeSaturation(1.0),
-    volume(1.0),
+    volume(0.0),
     noteOn(false)
 {
     seed = arc4random();
@@ -106,7 +106,7 @@ double BandLimitedOscillator::getStartingPhaseOffset()
     }
 }
 
-void BandLimitedOscillator::startNote(double frequency)
+void BandLimitedOscillator::start(double frequency)
 {
     modFrequency = frequency * getPitchFreqMod(octaves, semitones, cents);
     phaseAccumulator.reset(getStartingPhaseOffset(), modFrequency / sampleRate);
@@ -114,7 +114,7 @@ void BandLimitedOscillator::startNote(double frequency)
     noteOn = true;
 }
 
-void BandLimitedOscillator::stopNote()
+void BandLimitedOscillator::stop()
 {
     noteOn = false;
     modFrequency = 0.0;
@@ -212,8 +212,8 @@ double BandLimitedOscillator::getNextBLEPSawSample()
         {
             double t = (phase - 1) / (pointsPerSide * phaseInc);
             double index = (1.0 + t) * tableCenter;
-            double frac = index - int(index);
-            blep = linear_interp(blepTable[(int)index], blepTable[(int)index + 1], frac);
+            double frac = index - static_cast<int>(index);
+            blep = linear_interp(blepTable[static_cast<int>(index)], blepTable[static_cast<int>(index) + 1], frac);
         }
     }
     
@@ -225,8 +225,8 @@ double BandLimitedOscillator::getNextBLEPSawSample()
         {
             double t = phase / (pointsPerSide * phaseInc);
             double index = t * tableCenter + (tableCenter + 1.0);
-            double frac = index - int(index);
-            blep = linear_interp(blepTable[(int)index], blepTable[(int)index + 1], frac);
+            double frac = index - static_cast<int>(index);
+            blep = linear_interp(blepTable[static_cast<int>(index)], blepTable[static_cast<int>(index) + 1], frac);
         }
     }
     
@@ -299,7 +299,7 @@ double BandLimitedOscillator::getNextDPWTriangleSample()
 
 double BandLimitedOscillator::getNextParabolicSineSample()
 {
-    return (float)(parabolicSine(phaseAccumulator.getPhase() * 2.0 * pi - pi));
+    return static_cast<float>(parabolicSine(phaseAccumulator.getPhase() * 2.0 * pi - pi));
 }
 
 double BandLimitedOscillator::getNextWhiteNoiseSample()
@@ -330,7 +330,7 @@ double BandLimitedOscillator::getNextRandomNoiseSample()
     
     // convert the output into a floating point number, scaled by experimentation
     // to a range of o to +2.0
-    double sample = (float)(seed) / (pow(2.0, 32.0) / 16.0);
+    double sample = static_cast<float>(seed) / (pow(2.0, 32.0) / 16.0);
     
     // shift down to form a result from -1.0 to +1.0
     sample -= 1.0;

@@ -15,7 +15,7 @@
 class OscillatorPanel : public Component
 {
 public:
-    OscillatorPanel(const String panelName, const String* parameterList);
+    OscillatorPanel(const String panelName, const String* parameterList, const bool* parameterEnables);
     ~OscillatorPanel() override;
     
     void paint(Graphics& g) override;

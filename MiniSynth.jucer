@@ -51,6 +51,8 @@
               file="Source/LowFrequencyOscillator.h"/>
         <FILE id="JL7Es6" name="LowFrequencyOscillator.cpp" compile="1" resource="0"
               file="Source/LowFrequencyOscillator.cpp"/>
+        <FILE id="IhDttf" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
+        <FILE id="my6K94" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
         <FILE id="jL4Ny4" name="WavetableOscillator.h" compile="0" resource="0"
               file="Source/WavetableOscillator.h"/>
         <FILE id="cYUxcv" name="WavetableOscillator.cpp" compile="1" resource="0"

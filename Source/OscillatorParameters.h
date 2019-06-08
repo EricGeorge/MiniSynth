@@ -51,6 +51,30 @@ static String oscillator2_ParamIDs[] =
     "Oscillator2_Volume"
 };
 
+static bool oscillator1_ParamEnables[] =
+{
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+};
+
+static bool oscillator2_ParamEnables[] =
+{
+    false,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    true
+};
+
 // Low Frequency Oscillators
 
 enum LfoParameters

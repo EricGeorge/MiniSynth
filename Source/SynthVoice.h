@@ -14,6 +14,7 @@
 
 #include "BandLimitedOscillator.h"
 #include "LowFrequencyOscillator.h"
+#include "WavetableOscillator.h"
 
 class SynthSound : public SynthesiserSound
 {
@@ -54,6 +55,6 @@ private:
     
     float level;
     BLOsc osc1;
-    BLOsc osc2;
+    WTOsc osc2;
     LFO lfo1;
 };

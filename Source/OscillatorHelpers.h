@@ -11,8 +11,10 @@
 #pragma once
 
 #include <cmath>
+#include <vector>
 
 const double pi = M_PI;
+const double kMinAudibleDecibels = 0.000001; // -120 dB or 10^(db/20)
 
 //    Taken from Will Pirkle's Designing Software Synthesizers in C++
 //    book.  This polynomial was derived by taking a unipolar triangle pulse
@@ -131,3 +133,18 @@ private:
     double phase;
     double phaseInc;
 };
+
+inline int calculateMaxHarmonic(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm)
+{
+    int numSamples = static_cast<int>(freqWaveRe.size());
+    assert(numSamples == freqWaveIm.size());
+
+    // determine maxHarmonic, the highest non-zero harmonic in the wave
+    int maxHarmonic = numSamples >> 1;
+    while ((fabs(freqWaveRe[maxHarmonic]) + fabs(freqWaveIm[maxHarmonic]) < kMinAudibleDecibels) && maxHarmonic > 0)
+    {
+        --maxHarmonic;
+    }
+
+    return maxHarmonic;
+}
