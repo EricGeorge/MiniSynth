@@ -16,6 +16,8 @@
               file="Source/OscillatorParameters.h"/>
         <FILE id="QkGBlo" name="OutputParameters.h" compile="0" resource="0"
               file="Source/OutputParameters.h"/>
+        <FILE id="sfZOAi" name="WavetableParameters.h" compile="0" resource="0"
+              file="Source/WavetableParameters.h"/>
       </GROUP>
       <GROUP id="{3CCD9624-A5FD-D540-6600-B2F8A440F15C}" name="PluginCore">
         <FILE id="Ad78YY" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
@@ -93,6 +95,19 @@
       <GROUP id="{D904FFC9-53D1-2464-EA0E-4809191A7E82}" name="ScopePanel">
         <FILE id="XC3r5c" name="ScopePanel.h" compile="0" resource="0" file="Source/ScopePanel.h"/>
         <FILE id="CTJVec" name="ScopePanel.cpp" compile="1" resource="0" file="Source/ScopePanel.cpp"/>
+      </GROUP>
+      <GROUP id="{AAC23D06-FC20-1E07-9FB0-7DF8C2350AA7}" name="WavetablePanel">
+        <FILE id="AkmIke" name="WavetablePanelLayout.h" compile="0" resource="0"
+              file="Source/WavetablePanelLayout.h"/>
+        <FILE id="fkZGTO" name="WavetablePanel.h" compile="0" resource="0"
+              file="Source/WavetablePanel.h"/>
+        <FILE id="BQbl2q" name="WavetablePanel.cpp" compile="1" resource="0"
+              file="Source/WavetablePanel.cpp"/>
+      </GROUP>
+      <GROUP id="{AD1A07D7-B2C2-F691-E904-C9D5CFCF95CC}" name="WaveViewPanel">
+        <FILE id="Qw5asx" name="WaveViewPanel.h" compile="0" resource="0" file="Source/WaveViewPanel.h"/>
+        <FILE id="dQYaPx" name="WaveViewPanel.cpp" compile="1" resource="0"
+              file="Source/WaveViewPanel.cpp"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

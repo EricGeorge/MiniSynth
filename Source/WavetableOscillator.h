@@ -13,34 +13,39 @@
 #include "OscillatorHelpers.h"
 #include "Wavetable.h"
 
-class WaveTableOscillator
+class WavetableOscillator
 {
 public:
-    WaveTableOscillator(double sampleRate);
-    ~WaveTableOscillator();
+    WavetableOscillator(double sampleRate);
+    ~WavetableOscillator();
     
     float getNextSample();
     
     void reset(double sampleRate);
+    void update();
     
     void start(double frequency);
     void stop();
 
 
     // parameter setters
-    void setOctaves(float newValue);
+    void setPosition(float newValue);
+    void setInterpolate(float newValue);
     void setSemitones(float newValue);
     void setCents(float newValue);
     void setVolume(float newValue);
 
 private:
     double sampleRate;
+    double frequency;
+    
     PhaseAccumulator phaseAccumulator;
 
     // parameters
-    int octaves;
+    float position;
+    bool interpolate;
     int semitones;
-    int cents;
+    double cents;
     double volume;
     
     // poor man's envelope - replace with ADSR
@@ -50,7 +55,7 @@ private:
     Wavetable wavetable;
 };
 
-using WTOsc = WaveTableOscillator;
+using WTOsc = WavetableOscillator;
 
 
 

@@ -10,12 +10,13 @@
 
 #include "SynthVoice.h"
 #include "OscillatorParameters.h"
+#include "WavetableParameters.h"
 
 SynthVoice::SynthVoice()
 :   level(0.0f),
-    osc1(getSampleRate()),
-    osc2(getSampleRate()),
-    lfo1(getSampleRate())
+    osc(getSampleRate()),
+    wtb(getSampleRate()),
+    lfo(getSampleRate())
 {
 }
 
@@ -25,117 +26,121 @@ SynthVoice::~SynthVoice()
 
 void SynthVoice::parameterChanged (const String& parameterID, float newValue)
 {
-    if (parameterID.contains(oscillator1ParamIDPrefix))
+    if (parameterID.contains(oscillatorParamIDPrefix))
     {
-        osc1ParameterChanged(parameterID, newValue);
+        oscParameterChanged(parameterID, newValue);
     }
-    else if (parameterID.contains(oscillator2ParamIDPrefix))
+    else if (parameterID.contains(wavetableParamIDPrefix))
     {
-        osc2ParameterChanged(parameterID, newValue);
+        wtbParameterChanged(parameterID, newValue);
     }
-    else if (parameterID.contains(lfo1ParamIDPrefix))
+    else if (parameterID.contains(lfoParamIDPrefix))
     {
-        lfo1ParameterChanged(parameterID, newValue);
-    }
-}
-
-void SynthVoice::osc1ParameterChanged (const String& parameterID, float newValue)
-{
-    if (parameterID == oscillator1_ParamIDs[kOscParam_WaveType])
-    {
-        osc1.setWaveType(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_Octave])
-    {
-        osc1.setOctaves(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_Semitone])
-    {
-        osc1.setSemitones(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_Cents])
-    {
-        osc1.setCents(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_PulseWidth])
-    {
-        osc1.setPulseWidth(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_PolyBLEPMix])
-    {
-        osc1.setPolyBLEPMix(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_WaveShapeSaturation])
-    {
-        osc1.setWaveShapeSaturation(newValue);
-    }
-    else if (parameterID == oscillator1_ParamIDs[kOscParam_Volume])
-    {
-        osc1.setVolume(newValue);
+        lfoParameterChanged(parameterID, newValue);
     }
 }
 
-void SynthVoice::osc2ParameterChanged (const String& parameterID, float newValue)
+void SynthVoice::oscParameterChanged (const String& parameterID, float newValue)
 {
-    if (parameterID == oscillator2_ParamIDs[kOscParam_Octave])
+    if (parameterID == oscillator_ParamIDs[kOscParam_WaveType])
     {
-        osc2.setOctaves(newValue);
+        osc.setWaveType(newValue);
     }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_Semitone])
+    else if (parameterID == oscillator_ParamIDs[kOscParam_Octave])
     {
-        osc2.setSemitones(newValue);
+        osc.setOctaves(newValue);
     }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_Cents])
+    else if (parameterID == oscillator_ParamIDs[kOscParam_Semitone])
     {
-        osc2.setCents(newValue);
+        osc.setSemitones(newValue);
     }
-    else if (parameterID == oscillator2_ParamIDs[kOscParam_Volume])
+    else if (parameterID == oscillator_ParamIDs[kOscParam_Cents])
     {
-        osc2.setVolume(newValue);
+        osc.setCents(newValue);
+    }
+    else if (parameterID == oscillator_ParamIDs[kOscParam_PulseWidth])
+    {
+        osc.setPulseWidth(newValue);
+    }
+    else if (parameterID == oscillator_ParamIDs[kOscParam_PolyBLEPMix])
+    {
+        osc.setPolyBLEPMix(newValue);
+    }
+    else if (parameterID == oscillator_ParamIDs[kOscParam_WaveShapeSaturation])
+    {
+        osc.setWaveShapeSaturation(newValue);
+    }
+    else if (parameterID == oscillator_ParamIDs[kOscParam_Volume])
+    {
+        osc.setVolume(newValue);
     }
 }
 
-void SynthVoice::lfo1ParameterChanged (const String& parameterID, float newValue)
+void SynthVoice::wtbParameterChanged (const String& parameterID, float newValue)
 {
-    if (parameterID == lfo1_ParamIDs[kLfoParam_WaveType])
+    if (parameterID == wavetable_ParamIDs[kWtbParam_Position])
     {
-        lfo1.setWaveType(newValue);
+        wtb.setPosition(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_RunState])
+    else if (parameterID == wavetable_ParamIDs[kWtbParam_Interpolate])
     {
-        lfo1.setRunState(newValue);     // TODO
+        wtb.setInterpolate(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_PulseWidth])
+    else if (parameterID == wavetable_ParamIDs[kWtbParam_Semitones])
     {
-        lfo1.setPulseWidth(newValue);
+        wtb.setSemitones(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_PhaseOffset])
+    else if (parameterID == wavetable_ParamIDs[kWtbParam_Cents])
     {
-        lfo1.setPhaseOffset(newValue);  // TODO
+        wtb.setCents(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_Amount])
+    else if (parameterID == wavetable_ParamIDs[kWtbParam_Volume])
     {
-        lfo1.setAmount(newValue);
+        wtb.setVolume(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_PolarityOffset])
+}
+
+void SynthVoice::lfoParameterChanged (const String& parameterID, float newValue)
+{
+    if (parameterID == lfo_ParamIDs[kLfoParam_WaveType])
     {
-        lfo1.setPolarityOffset(newValue);   // TODO
+        lfo.setWaveType(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_Rate])
+    else if (parameterID == lfo_ParamIDs[kLfoParam_RunState])
     {
-        lfo1.setRate(newValue);     // TODO
+        lfo.setRunState(newValue);     // TODO
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_Sync])
+    else if (parameterID == lfo_ParamIDs[kLfoParam_PulseWidth])
     {
-        lfo1.setSync(newValue);     //TODO
+        lfo.setPulseWidth(newValue);
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_FadeInTime])
+    else if (parameterID == lfo_ParamIDs[kLfoParam_PhaseOffset])
     {
-        lfo1.setFadeInTime(newValue);   // TODO
+        lfo.setPhaseOffset(newValue);  // TODO
     }
-    else if (parameterID == lfo1_ParamIDs[kLfoParam_Delay])
+    else if (parameterID == lfo_ParamIDs[kLfoParam_Amount])
     {
-        lfo1.setDelay(newValue);    // TODO
+        lfo.setAmount(newValue);
+    }
+    else if (parameterID == lfo_ParamIDs[kLfoParam_PolarityOffset])
+    {
+        lfo.setPolarityOffset(newValue);   // TODO
+    }
+    else if (parameterID == lfo_ParamIDs[kLfoParam_Rate])
+    {
+        lfo.setRate(newValue);     // TODO
+    }
+    else if (parameterID == lfo_ParamIDs[kLfoParam_Sync])
+    {
+        lfo.setSync(newValue);     //TODO
+    }
+    else if (parameterID == lfo_ParamIDs[kLfoParam_FadeInTime])
+    {
+        lfo.setFadeInTime(newValue);   // TODO
+    }
+    else if (parameterID == lfo_ParamIDs[kLfoParam_Delay])
+    {
+        lfo.setDelay(newValue);    // TODO
     }
 }
 
@@ -150,14 +155,14 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity,
 {
     level = velocity * 0.25;
 
-    osc1.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
-    osc2.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    osc.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    wtb.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
-    osc1.stop();
-    osc2.stop();
+    osc.stop();
+    wtb.stop();
     clearCurrentNote();
 }
 
@@ -173,8 +178,8 @@ void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSampl
 {
     for (int index = 0; index < numSamples; ++index)
     {
-        double sample1 = osc1.getNextSample() * level;
-        double sample2 = osc2.getNextSample() * level;
+        double sample1 = osc.getNextSample() * level;
+        double sample2 = wtb.getNextSample() * level;
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
         {
             outputBuffer.addSample(channel, startSample, sample1 + sample2);

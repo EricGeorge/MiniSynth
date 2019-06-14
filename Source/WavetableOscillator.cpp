@@ -12,9 +12,11 @@
 
 #include "PluginHelpers.h"
 
-WaveTableOscillator::WaveTableOscillator(double sampleRate)
+WavetableOscillator::WavetableOscillator(double sampleRate)
 :   sampleRate(sampleRate),
-    octaves(0),
+    frequency(0.0),
+    position(0.0),
+    interpolate(false),
     semitones(0),
     cents(0),
     volume(1.0),
@@ -26,55 +28,71 @@ WaveTableOscillator::WaveTableOscillator(double sampleRate)
     wavetable.setCurrentFrame(0);
 }
 
-WaveTableOscillator::~WaveTableOscillator()
+WavetableOscillator::~WavetableOscillator()
 {
 
 }
 
-void WaveTableOscillator::setOctaves(float newValue)
+void WavetableOscillator::setPosition(float newValue)
 {
-    octaves = static_cast<int>(newValue);
+    position = newValue;
 }
 
-void WaveTableOscillator::setSemitones(float newValue)
+void WavetableOscillator::setInterpolate(float newValue)
+{
+    interpolate = static_cast<bool>(newValue);
+}
+
+void WavetableOscillator::setSemitones(float newValue)
 {
     semitones = static_cast<int>(newValue);
+    update();
 }
 
-void WaveTableOscillator::setCents(float newValue)
+void WavetableOscillator::setCents(float newValue)
 {
-    cents = static_cast<int>(newValue);
+    cents = newValue;
+    update();
 }
 
-void WaveTableOscillator::setVolume(float newValue)
+void WavetableOscillator::setVolume(float newValue)
 {
     volume = newValue;
 }
 
-void WaveTableOscillator::reset(double inSampleRate)
+void WavetableOscillator::reset(double inSampleRate)
 {
     sampleRate = inSampleRate;
+    frequency = 0.0;
     noteOn = false;
     
     sawOsc();
 }
 
-void WaveTableOscillator::start(double frequency)
+void WavetableOscillator::update()
 {
-    double modFrequency = frequency * getPitchFreqMod(octaves, semitones, cents);
+    double modFrequency = getModFrequency(frequency, semitones + cents);
     phaseAccumulator.reset(0.5, modFrequency / sampleRate); // TODO - currently hard coded for saw
-    noteOn = true;
     
     // update the current wave table selector
-    wavetable.setWaveform(frequency);
+    wavetable.setWaveform(modFrequency);
 }
 
-void WaveTableOscillator::stop()
+void WavetableOscillator::start(double inFrequency)
+{
+    frequency = inFrequency;
+    
+    update();
+    
+    noteOn = true;
+}
+
+void WavetableOscillator::stop()
 {
     noteOn = false;
 }
 
-float WaveTableOscillator::getNextSample()
+float WavetableOscillator::getNextSample()
 {
     float sample = 0.0f;
     

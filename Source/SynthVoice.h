@@ -47,14 +47,14 @@ public:
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
     void parameterChanged (const String& parameterID, float newValue);
-    void osc1ParameterChanged (const String& parameterID, float newValue);
-    void osc2ParameterChanged (const String& parameterID, float newValue);
-    void lfo1ParameterChanged (const String& parameterID, float newValue);
+    void oscParameterChanged (const String& parameterID, float newValue);
+    void wtbParameterChanged (const String& parameterID, float newValue);
+    void lfoParameterChanged (const String& parameterID, float newValue);
 
 private:
     
     float level;
-    BLOsc osc1;
-    WTOsc osc2;
-    LFO lfo1;
+    BLOsc osc;
+    WTOsc wtb;
+    LFO lfo;
 };

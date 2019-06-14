@@ -17,16 +17,10 @@ const int kNumVoices = 16;
 const double kParameterSmoothingCoeff_Fine = 0.005f;
 const double kMinimumDecibels = -24.0;
 
-inline double pitchShiftMultiplier(double semitonesToShift)
+inline double getPitchFreqMod(double semitonesToShift)
 {
     // 2^(N/12)
     return pow(2.0, semitonesToShift / 12.0);
-}
-
-// returns the frequency multiplier for the pitch change
-inline double getPitchFreqMod(double octaves, double semitones, double cents)
-{
-    return pitchShiftMultiplier(octaves * 12 + semitones + cents / 100.0);
 }
 
 inline double tanh_clip(double x)

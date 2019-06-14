@@ -17,6 +17,7 @@
 #include "OutputPanel.h"
 #include "PluginProcessor.h"
 #include "ScopePanel.h"
+#include "WavetablePanel.h"
 
 //==============================================================================
 /**
@@ -39,8 +40,8 @@ private:
     ControlBarPanel controlBarComponent;
     MidiKeyboardComponent midiKeyboardComponent;
     OutputPanel outputComponent;
-    OscillatorPanel oscillatorComponent1;
-    OscillatorPanel oscillatorComponent2;
+    OscillatorPanel oscillatorComponent;
+    WavetablePanel wavetableComponent;
     ScopePanel scopeComponent;
 
 

@@ -14,6 +14,7 @@
 #include "OscillatorParameters.h"
 #include "PluginHelpers.h"
 #include "SynthVoice.h"
+#include "WavetableParameters.h"
 
 Synth::Synth()
 {
@@ -32,40 +33,37 @@ Synth::~Synth()
 
 void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
 {
-    // oscillator 1
-    layout.add(std::make_unique<AudioProcessorParameterGroup>("Osc1GroupID", "Osc1", "/",
-                                                              std::make_unique<AudioParameterInt>(oscillator1_ParamIDs[kOscParam_WaveType], "Osc1 Wavetype", 1, 9, 1),
-                                                              std::make_unique<AudioParameterInt>(oscillator1_ParamIDs[kOscParam_Octave], "Osc1 Octave", -4, 4, 0),
-                                                              std::make_unique<AudioParameterInt>(oscillator1_ParamIDs[kOscParam_Semitone], "Osc1 Semitones", -12, 12, 0),
-                                                              std::make_unique<AudioParameterInt>(oscillator1_ParamIDs[kOscParam_Cents], "Osc1 Cents", -100, 100, 0),
-                                                              std::make_unique<AudioParameterFloat>(oscillator1_ParamIDs[kOscParam_PulseWidth], "Osc1 Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator1_ParamIDs[kOscParam_PolyBLEPMix], "Osc1 PolyBLEP Mix", NormalisableRange<float> (0.0f, 100.0f), 0.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator1_ParamIDs[kOscParam_WaveShapeSaturation], "Osc1 Waveshape Saturation", NormalisableRange<float> (1.0f, 5.0f), 1.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator1_ParamIDs[kOscParam_Volume], "Osc1 Volume", NormalisableRange<float> (0.0f, 1.0f), 0.0f)));
+    // va oscillator
+    layout.add(std::make_unique<AudioProcessorParameterGroup>("VAOscGroupID", "VA Osc", "/",
+                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_WaveType], "Osc Wavetype", 1, 9, 1),
+                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_Octave], "Osc Octave", -4, 4, 0),
+                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_Semitone], "Osc Semitones", -12, 12, 0),
+                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_Cents], "Osc Cents", -100, 100, 0),
+                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_PulseWidth], "Osc Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
+                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_PolyBLEPMix], "Osc PolyBLEP Mix", NormalisableRange<float> (0.0f, 100.0f), 0.0f),
+                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], "Osc Waveshape Saturation", NormalisableRange<float> (1.0f, 5.0f), 1.0f),
+                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_Volume], "Osc Volume", NormalisableRange<float> (0.0f, 1.0f), 1.0f)));
     
-    // oscillator 2
-    layout.add(std::make_unique<AudioProcessorParameterGroup>("Osc2GroupID", "Osc2", "/",
-                                                              std::make_unique<AudioParameterInt>(oscillator2_ParamIDs[kOscParam_WaveType], "Osc2 Wavetype", 1, 9, 1),
-                                                              std::make_unique<AudioParameterInt>(oscillator2_ParamIDs[kOscParam_Octave], "Osc2 Octave", -4, 4, 0),
-                                                              std::make_unique<AudioParameterInt>(oscillator2_ParamIDs[kOscParam_Semitone], "Osc2 Semitones", -12, 12, 0),
-                                                              std::make_unique<AudioParameterInt>(oscillator2_ParamIDs[kOscParam_Cents], "Osc2 Cents", -100, 100, 0),
-                                                              std::make_unique<AudioParameterFloat>(oscillator2_ParamIDs[kOscParam_PulseWidth], "Osc2 Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator2_ParamIDs[kOscParam_PolyBLEPMix], "Osc2 PolyBLEP Mix", NormalisableRange<float> (0.0f, 100.0f), 0.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator2_ParamIDs[kOscParam_WaveShapeSaturation], "Osc2 Waveshape Saturation", NormalisableRange<float> (1.0f, 5.0f), 1.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator2_ParamIDs[kOscParam_Volume], "Osc2 Volume", NormalisableRange<float> (0.0f, 1.0f), 1.0f)));
+    // wavetable
+    layout.add(std::make_unique<AudioProcessorParameterGroup>("WavetableOscGroupID", "Wavetable Osc", "/",
+                                                              std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Position], "Wavetable Position",NormalisableRange<float> (0.0f, 1.0f), 0.0f),
+                                                              std::make_unique<AudioParameterBool>(wavetable_ParamIDs[kWtbParam_Interpolate], "Interpolate", false),
+                                                              std::make_unique<AudioParameterInt>(wavetable_ParamIDs[kWtbParam_Semitones], "Wavetable Semitones", -36, 36, 0),
+                                                              std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Cents], "Wavetable Cents", NormalisableRange<float> (-1.0f, 1.0f), 0.0f),
+                                                              std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Volume], "Wavetable Volume", NormalisableRange<float> (0.0f, 1.0f), 1.0f)));
     
     // lfo 1
-    layout.add(std::make_unique<AudioProcessorParameterGroup>("Lfo1GroupID", "Lfo1", "/",
-                                                              std::make_unique<AudioParameterInt>(lfo1_ParamIDs[kLfoParam_WaveType], "LFO1 Wavetype", 1, 5, 1),
-                                                              std::make_unique<AudioParameterInt>(lfo1_ParamIDs[kLfoParam_RunState], "LFO1 Run Type", 1, 5, 1),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_PulseWidth], "LFO1 Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_PhaseOffset], "LFO1 Phase Offset", NormalisableRange<float> (0.0f, 1.0f), 0.0f),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_Amount], "LFO1 Amount", NormalisableRange<float> (0.0f, 1.0f), 1.0f),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_PolarityOffset], "LFO1 Polarity Offset", NormalisableRange<float> (-1.0f, 1.0f), 0.0f),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_Rate], "LFO1 Rate", NormalisableRange<float> (1.0f, 20.0f), 1.0f),
-                                                              std::make_unique<AudioParameterBool>(lfo1_ParamIDs[kLfoParam_Sync], "LFO1 Sync", false),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_FadeInTime], "LFO1 Fade In Time", NormalisableRange<float> (0.0f, 1.0f), 0.0f),
-                                                              std::make_unique<AudioParameterFloat>(lfo1_ParamIDs[kLfoParam_Delay], "LFO1 Delay", NormalisableRange<float> (0.0f, 1.0f), 0.0f)));
+    layout.add(std::make_unique<AudioProcessorParameterGroup>("LfoGroupID", "LFO", "/",
+                                                              std::make_unique<AudioParameterInt>(lfo_ParamIDs[kLfoParam_WaveType], "LFO1 Wavetype", 1, 5, 1),
+                                                              std::make_unique<AudioParameterInt>(lfo_ParamIDs[kLfoParam_RunState], "LFO1 Run Type", 1, 5, 1),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_PulseWidth], "LFO1 Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_PhaseOffset], "LFO1 Phase Offset", NormalisableRange<float> (0.0f, 1.0f), 0.0f),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_Amount], "LFO1 Amount", NormalisableRange<float> (0.0f, 1.0f), 1.0f),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_PolarityOffset], "LFO1 Polarity Offset", NormalisableRange<float> (-1.0f, 1.0f), 0.0f),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_Rate], "LFO1 Rate", NormalisableRange<float> (1.0f, 20.0f), 1.0f),
+                                                              std::make_unique<AudioParameterBool>(lfo_ParamIDs[kLfoParam_Sync], "LFO1 Sync", false),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_FadeInTime], "LFO1 Fade In Time", NormalisableRange<float> (0.0f, 1.0f), 0.0f),
+                                                              std::make_unique<AudioParameterFloat>(lfo_ParamIDs[kLfoParam_Delay], "LFO1 Delay", NormalisableRange<float> (0.0f, 1.0f), 0.0f)));
 
     // output gain
     layout.add(std::make_unique<AudioProcessorParameterGroup>("OutputGroupID", "Output Gain", "/",
@@ -74,37 +72,34 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
 
 void Synth::addParameterListeners(AudioProcessorValueTreeState& state)
 {
-    // oscillator 1
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_WaveType], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_Octave], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_Semitone], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_Cents], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_PulseWidth], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_PolyBLEPMix], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_WaveShapeSaturation], this);
-    state.addParameterListener(oscillator1_ParamIDs[kOscParam_Volume], this);
+    // va oscillator
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_WaveType], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_Octave], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_Semitone], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_Cents], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_PulseWidth], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_PolyBLEPMix], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], this);
+    state.addParameterListener(oscillator_ParamIDs[kOscParam_Volume], this);
     
-    // oscillator 2
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_WaveType], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_Octave], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_Semitone], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_Cents], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_PulseWidth], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_PolyBLEPMix], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_WaveShapeSaturation], this);
-    state.addParameterListener(oscillator2_ParamIDs[kOscParam_Volume], this);
+    // wavetable
+    state.addParameterListener(wavetable_ParamIDs[kWtbParam_Position], this);
+    state.addParameterListener(wavetable_ParamIDs[kWtbParam_Interpolate], this);
+    state.addParameterListener(wavetable_ParamIDs[kWtbParam_Semitones], this);
+    state.addParameterListener(wavetable_ParamIDs[kWtbParam_Cents], this);
+    state.addParameterListener(wavetable_ParamIDs[kWtbParam_Volume], this);
 
-    // lfo 1
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_WaveType], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_RunState], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_PulseWidth], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_PhaseOffset], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_Amount], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_PolarityOffset], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_Rate], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_Sync], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_FadeInTime], this);
-    state.addParameterListener(lfo1_ParamIDs[kLfoParam_Delay], this);
+    // lfo
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_WaveType], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_RunState], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_PulseWidth], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_PhaseOffset], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_Amount], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_PolarityOffset], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_Rate], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_Sync], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_FadeInTime], this);
+    state.addParameterListener(lfo_ParamIDs[kLfoParam_Delay], this);
 
     // output gain
     state.addParameterListener(outputGain_ParameterID, this);
@@ -112,37 +107,34 @@ void Synth::addParameterListeners(AudioProcessorValueTreeState& state)
     
 void Synth::removeParameterListeners(AudioProcessorValueTreeState& state)
 {
-    // oscillator 1
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_WaveType], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_Octave], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_Semitone], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_Cents], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_PulseWidth], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_PolyBLEPMix], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_WaveShapeSaturation], this);
-    state.removeParameterListener(oscillator1_ParamIDs[kOscParam_Volume], this);
+    // va oscillator
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_WaveType], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Octave], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Semitone], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Cents], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_PulseWidth], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_PolyBLEPMix], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], this);
+    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Volume], this);
     
     // oscillator 2
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_WaveType], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_Octave], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_Semitone], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_Cents], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_PulseWidth], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_PolyBLEPMix], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_WaveShapeSaturation], this);
-    state.removeParameterListener(oscillator2_ParamIDs[kOscParam_Volume], this);
+    state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Position], this);
+    state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Interpolate], this);
+    state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Semitones], this);
+    state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Cents], this);
+    state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Volume], this);
     
-    // lfo 1
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_WaveType], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_RunState], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_PulseWidth], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_PhaseOffset], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_Amount], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_PolarityOffset], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_Rate], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_Sync], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_FadeInTime], this);
-    state.removeParameterListener(lfo1_ParamIDs[kLfoParam_Delay], this);
+    // LFO
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_WaveType], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_RunState], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_PulseWidth], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_PhaseOffset], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_Amount], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_PolarityOffset], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_Rate], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_Sync], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_FadeInTime], this);
+    state.removeParameterListener(lfo_ParamIDs[kLfoParam_Delay], this);
 
     //output gain
     state.removeParameterListener(outputGain_ParameterID, this);
