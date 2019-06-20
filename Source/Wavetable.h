@@ -44,9 +44,7 @@ public:
 
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
     size_t getNumWaveforms() const;
-    
-    void setWaveform(double normalizedFrequency);
-    
+
 private:
     std::vector<BandLimitedWaveform> blWaveforms;
 };
@@ -54,27 +52,17 @@ private:
 class Wavetable
 {
 public:
-    Wavetable(double sampleRate);
+    Wavetable();
     ~Wavetable();
 
     void addFrame(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
     void addFrame(WavetableFrame& frame);
 
     const WavetableFrame& getFrame(int frameIndex) const;
-    const WavetableFrame& currentFrame() const;
     size_t getNumFrames() const;
-    void setCurrentFrame(int currentFrame);
-    
-    const BandLimitedWaveform& currentWaveform() const;
-    void setWaveform(double frequency);
     
 private:
     std::vector<WavetableFrame> frames;
-    double sampleRate;
-    
-    // state information
-    int currentFrameIndex;
-    int currentWaveformIndex;
 };
 
 //

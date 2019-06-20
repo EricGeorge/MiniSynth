@@ -31,8 +31,12 @@
       <GROUP id="{12C3448E-7D83-6775-D4CB-CD6B34E0F6BB}" name="SynthCore">
         <FILE id="rsgXcP" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
         <FILE id="HZbyde" name="Synth.cpp" compile="1" resource="0" file="Source/Synth.cpp"/>
+        <FILE id="Xl8XkN" name="SynthSound.h" compile="0" resource="0" file="Source/SynthSound.h"/>
+        <FILE id="axZha6" name="SynthSound.cpp" compile="1" resource="0" file="Source/SynthSound.cpp"/>
         <FILE id="o2SNcj" name="SynthVoice.h" compile="0" resource="0" file="Source/SynthVoice.h"/>
         <FILE id="hDEyQB" name="SynthVoice.cpp" compile="1" resource="0" file="Source/SynthVoice.cpp"/>
+        <FILE id="IhDttf" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
+        <FILE id="my6K94" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
       </GROUP>
     </GROUP>
     <GROUP id="{3EE8477B-9BED-6B30-96F7-C82E736C24C7}" name="Processors">
@@ -53,8 +57,6 @@
               file="Source/LowFrequencyOscillator.h"/>
         <FILE id="JL7Es6" name="LowFrequencyOscillator.cpp" compile="1" resource="0"
               file="Source/LowFrequencyOscillator.cpp"/>
-        <FILE id="IhDttf" name="Wavetable.h" compile="0" resource="0" file="Source/Wavetable.h"/>
-        <FILE id="my6K94" name="Wavetable.cpp" compile="1" resource="0" file="Source/Wavetable.cpp"/>
         <FILE id="jL4Ny4" name="WavetableOscillator.h" compile="0" resource="0"
               file="Source/WavetableOscillator.h"/>
         <FILE id="cYUxcv" name="WavetableOscillator.cpp" compile="1" resource="0"

@@ -16,12 +16,12 @@
 
 
 //==============================================================================
-MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor& p)
-:   AudioProcessorEditor (&p),
-    processor (p),
+MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor& processor)
+:   AudioProcessorEditor (&processor),
+    processor (processor),
     midiKeyboardComponent(processor.getMidiKeyboardstate(), MidiKeyboardComponent::horizontalKeyboard),
     oscillatorComponent("VA Oscillator", oscillator_ParamIDs),
-    wavetableComponent("Wavetable Oscillator", wavetable_ParamIDs),
+    wavetableComponent("Wavetable Oscillator", wavetable_ParamIDs, processor.getSynth().getSynthSound()),
     scopeComponent(processor.getAudioBufferQueue())
 {
     addAndMakeVisible(controlBarComponent);
@@ -35,9 +35,9 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
     
     midiKeyboardComponent.setKeyWidth(midiKeyboardKeyWidth);
     
-    outputComponent.setupAttachments(p.getValueTreeState());
-    oscillatorComponent.setupAttachments(p.getValueTreeState());
-    wavetableComponent.setupAttachments(p.getValueTreeState());
+    outputComponent.setupAttachments(processor.getValueTreeState());
+    oscillatorComponent.setupAttachments(processor.getValueTreeState());
+    wavetableComponent.setupAttachments(processor.getValueTreeState());
 }
 
 MiniSynthAudioProcessorEditor::~MiniSynthAudioProcessorEditor()

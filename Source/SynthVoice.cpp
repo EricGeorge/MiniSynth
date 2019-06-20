@@ -9,13 +9,16 @@
 */
 
 #include "SynthVoice.h"
+
 #include "OscillatorParameters.h"
+#include "SynthSound.h"
 #include "WavetableParameters.h"
 
-SynthVoice::SynthVoice()
-:   level(0.0f),
+SynthVoice::SynthVoice(Synth& synth)
+:   synth(synth),
+    level(0.0f),
     osc(getSampleRate()),
-    wtb(getSampleRate()),
+    wtb(getSampleRate(), synth.getSynthSound().getWavetable()),
     lfo(getSampleRate())
 {
 }

@@ -16,7 +16,7 @@
 class WavetableOscillator
 {
 public:
-    WavetableOscillator(double sampleRate);
+    WavetableOscillator(double sampleRate, Wavetable& wavetable);
     ~WavetableOscillator();
     
     float getNextSample();
@@ -51,8 +51,12 @@ private:
     // poor man's envelope - replace with ADSR
     bool noteOn;
 
-    int currentWaveform;      // current table, based on current frequency
-    Wavetable wavetable;
+    int currentWaveformIndex;      // current table, based on current frequency
+    int currentFrameIndex;
+    Wavetable& wavetable;
+    
+    const WavetableFrame& currentFrame() const;
+    const BandLimitedWaveform& currentWaveform() const;
 };
 
 using WTOsc = WavetableOscillator;

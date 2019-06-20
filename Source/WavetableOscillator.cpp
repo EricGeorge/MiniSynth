@@ -12,7 +12,7 @@
 
 #include "PluginHelpers.h"
 
-WavetableOscillator::WavetableOscillator(double sampleRate)
+WavetableOscillator::WavetableOscillator(double sampleRate, Wavetable& wavetable)
 :   sampleRate(sampleRate),
     frequency(0.0),
     position(0.0),
@@ -20,12 +20,12 @@ WavetableOscillator::WavetableOscillator(double sampleRate)
     semitones(0),
     cents(0),
     volume(1.0),
-    currentWaveform(0),
-    wavetable(sampleRate)
+    currentWaveformIndex(0),
+    currentFrameIndex(0),
+    wavetable(wavetable)
 {
     WavetableFrame frame = sawOsc();
     wavetable.addFrame(frame);
-    wavetable.setCurrentFrame(0);
 }
 
 WavetableOscillator::~WavetableOscillator()
@@ -72,10 +72,18 @@ void WavetableOscillator::reset(double inSampleRate)
 void WavetableOscillator::update()
 {
     double modFrequency = getModFrequency(frequency, semitones + cents);
-    phaseAccumulator.reset(0.5, modFrequency / sampleRate); // TODO - currently hard coded for saw
+    double normalizedModFrequency = modFrequency/sampleRate;
+
+    phaseAccumulator.reset(0.0, normalizedModFrequency);
     
     // update the current wave table selector
-    wavetable.setWaveform(modFrequency);
+    currentWaveformIndex = 0;
+    while ((normalizedModFrequency >= currentFrame().getWaveform(currentWaveformIndex).getTopFrequency()) &&
+           (currentWaveformIndex < (currentFrame().getNumWaveforms() - 1)))
+    {
+        ++currentWaveformIndex;
+    }
+
 }
 
 void WavetableOscillator::start(double inFrequency)
@@ -98,14 +106,24 @@ float WavetableOscillator::getNextSample()
     
     if (noteOn)
     {
-        float index = phaseAccumulator.getPhase() * wavetable.currentWaveform().getNumSamples();
+        float index = phaseAccumulator.getPhase() * currentWaveform().getNumSamples();
         float frac = index - static_cast<int>(index);
-        sample = linear_interp(wavetable.currentWaveform().getSample(static_cast<int>(index)),
-                               wavetable.currentWaveform().getSample(static_cast<int>(index) + 1),
+        sample = linear_interp(currentWaveform().getSample(static_cast<int>(index)),
+                               currentWaveform().getSample(static_cast<int>(index) + 1),
                                frac);
 
         phaseAccumulator.IncrementPhase();
     }
     
     return sample * volume;
+}
+
+const WavetableFrame& WavetableOscillator::currentFrame() const
+{
+    return wavetable.getFrame(currentFrameIndex);
+}
+
+const BandLimitedWaveform& WavetableOscillator::currentWaveform() const
+{
+    return currentFrame().getWaveform(currentWaveformIndex);
 }

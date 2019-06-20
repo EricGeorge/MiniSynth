@@ -14,9 +14,10 @@
 #include "WavetablePanelLayout.h"
 #include "WavetableParameters.h"
 
-WavetablePanel::WavetablePanel(const String panelName, const String* parameterList)
+WavetablePanel::WavetablePanel(const String panelName, const String* parameterList, SynthSound& sound)
 :   panelName(panelName),
-parameterList(parameterList)
+    parameterList(parameterList),
+    sound(sound)
 {
     addAndMakeVisible(waveViewPanel);
     addAndMakeVisible(positionSlider);
@@ -121,6 +122,7 @@ void WavetablePanel::comboBoxChanged(ComboBox* cb)
     {
         String wavetableFilePath = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + wavetableFolderLocation + wavetableSelector.getText() + wavetableExtension;
         DBG(wavetableFilePath);
+        sound.setWavetableFile(wavetableFilePath);
     }
 }
 

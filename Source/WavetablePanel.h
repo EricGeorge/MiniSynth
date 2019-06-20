@@ -14,6 +14,8 @@
 
 #include "WaveViewPanel.h"
 
+#include "SynthSound.h"
+
 const static String wavetableFolderLocation = "/Library/Audio/Presets/yourcompany/MiniSynth/Tables/";
 const static String wavetableExtension = ".wav";
 
@@ -22,7 +24,7 @@ class WavetablePanel :  public Component,
                         public ComboBox::Listener
 {
 public:
-    WavetablePanel(const String panelName, const String* parameterList);
+    WavetablePanel(const String panelName, const String* parameterList, SynthSound& sound);
     ~WavetablePanel() override;
     
     void paint(Graphics& g) override;
@@ -38,6 +40,7 @@ private:
     // panel label
     const String panelName;
     const String* parameterList;
+    SynthSound& sound;
     
     WaveViewPanel waveViewPanel;
     

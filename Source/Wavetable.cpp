@@ -87,11 +87,6 @@ size_t WavetableFrame::getNumWaveforms() const
     return blWaveforms.size();
 }
 
-void WavetableFrame::setWaveform(double normalizedFrequency)
-{
-    
-}
-
 // This generates a fixed 1 table per octave set of waveforms
 void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm)
 {
@@ -188,10 +183,7 @@ void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>
 }
 
 // MARK: - Wavetable
-Wavetable::Wavetable(double sampleRate)
-:   sampleRate(sampleRate),
-    currentFrameIndex(0),
-    currentWaveformIndex(0)
+Wavetable::Wavetable()
 {
     
 }
@@ -218,35 +210,9 @@ const WavetableFrame& Wavetable::getFrame(int frameIndex) const
     return frames[frameIndex];
 }
 
-const WavetableFrame& Wavetable::currentFrame() const
-{
-    return getFrame(currentFrameIndex);
-}
-
 size_t Wavetable::getNumFrames() const
 {
     return frames.size();
 }
 
-void Wavetable::setCurrentFrame(int inCurrentFrame)
-{
-    currentFrameIndex = inCurrentFrame;
-}
-
-const BandLimitedWaveform& Wavetable::currentWaveform() const
-{
-    return currentFrame().getWaveform(currentWaveformIndex);
-}
-
-void Wavetable::setWaveform(double frequency)
-{
-    double normalizedFrequency = frequency/sampleRate;
-    
-    currentWaveformIndex = 0;
-    while ((normalizedFrequency >= currentFrame().getWaveform(currentWaveformIndex).getTopFrequency()) &&
-           (currentWaveformIndex < (currentFrame().getNumWaveforms() - 1)))
-    {
-        ++currentWaveformIndex;
-    }
-}
 

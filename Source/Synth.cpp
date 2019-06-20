@@ -18,17 +18,22 @@
 
 Synth::Synth()
 {
+    addSound(new SynthSound());
+
     for (int i = 0; i < kNumVoices; ++i)
     {
-        addVoice(new SynthVoice());
+        addVoice(new SynthVoice(*this));
     }
-    
-    addSound(new SynthSound());
 }
 
 Synth::~Synth()
 {
     
+}
+
+SynthSound& Synth::getSynthSound() const
+{
+    return *dynamic_cast<SynthSound*>(getSound(0).get());
 }
 
 void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
