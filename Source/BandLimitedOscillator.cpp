@@ -28,7 +28,7 @@ BandLimitedOscillator::BandLimitedOscillator(double sampleRate)
     pulseWidth(0.5),
     polyBLEPMix(0.0),
     waveShapeSaturation(1.0),
-    volume(1.0),
+    volume(0.0),
     noteOn(false)
 {
     seed = arc4random();

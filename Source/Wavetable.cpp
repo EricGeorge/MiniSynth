@@ -7,7 +7,6 @@
 
   ==============================================================================
 */
-
 #include "Wavetable.h"
 
 #include "OscillatorHelpers.h"
@@ -60,9 +59,6 @@ void BandLimitedWaveform::create(std::vector<double>& freqWaveRe, std::vector<do
     samples = std::vector<float>(freqWaveIm.begin(), freqWaveIm.end());
     std::for_each(samples.begin(), samples.end(), [scale](float &sample){ sample = sample * scale; });
     
-    // duplicate for interpolation wraparound
-    samples.push_back(freqWaveIm[0]);
-
     setTopFrequency(inTopFreq);
 }
 
@@ -182,10 +178,46 @@ void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>
     }
 }
 
+void WavetableFrame::writeToWaveFile(String fileName)
+{
+    // create a buffer from the frame
+    AudioSampleBuffer buffer;
+    buffer.setSize(1, static_cast<int>(getNumWaveforms()) * kSingleCycleWaveformSize);
+    int bufferIndex = 0;
+    
+    for (int index = 0; index < blWaveforms.size(); index++)
+    {
+        for (int sample = 0; sample < blWaveforms[index].getNumSamples(); sample++)
+        {
+            buffer.setSample(0, bufferIndex++, blWaveforms[index].getSample(sample));
+        }
+    }
+    
+    WavAudioFormat format;
+    String targetFolder = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + "/Downloads/WaveTableFrames/";
+    
+    if (!File(targetFolder).exists())
+    {
+        File(targetFolder).createDirectory();
+    }
+
+    File outputFile = File(targetFolder + fileName);
+    if (outputFile.exists())
+    {
+        outputFile.deleteFile();
+    }
+    
+    FileOutputStream* outputTo = outputFile.createOutputStream();
+    std::unique_ptr<AudioFormatWriter> writer(format.createWriterFor(outputTo, 44100, 1, 16, NULL, 0));
+    writer->writeFromAudioSampleBuffer(buffer, 0, buffer.getNumSamples());
+}
+
 // MARK: - Wavetable
 Wavetable::Wavetable()
 {
-    
+    // load default wavetable
+    WavetableFrame frame = createFrameFromSawWave();
+    addFrame(frame);
 }
 
 Wavetable::~Wavetable()
@@ -215,4 +247,13 @@ size_t Wavetable::getNumFrames() const
     return frames.size();
 }
 
+void Wavetable::clear()
+{
+    frames.clear();
+}
+
+void Wavetable::WriteFrameToWaveFile(String fileName, int frameID)
+{
+    frames[frameID].writeToWaveFile(fileName);
+}
 

@@ -26,6 +26,9 @@ public:
     void setWavetableFile(const String wavFile);
     
     Wavetable& getWavetable();
+    
 private:
     Wavetable wavetable;
+    
+    AudioFormatManager formatManager;
 };

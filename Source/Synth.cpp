@@ -47,7 +47,7 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
                                                               std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_PulseWidth], "Osc Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
                                                               std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_PolyBLEPMix], "Osc PolyBLEP Mix", NormalisableRange<float> (0.0f, 100.0f), 0.0f),
                                                               std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], "Osc Waveshape Saturation", NormalisableRange<float> (1.0f, 5.0f), 1.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_Volume], "Osc Volume", NormalisableRange<float> (0.0f, 1.0f), 1.0f)));
+                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_Volume], "Osc Volume", NormalisableRange<float> (0.0f, 1.0f), 0.0f)));
     
     // wavetable
     layout.add(std::make_unique<AudioProcessorParameterGroup>("WavetableOscGroupID", "Wavetable Osc", "/",

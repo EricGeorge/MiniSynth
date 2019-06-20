@@ -10,8 +10,11 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
 #include <vector>
 
+#include "OscillatorHelpers.h"
 #include "PluginHelpers.h"
 
 class BandLimitedWaveform
@@ -45,8 +48,11 @@ public:
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
     size_t getNumWaveforms() const;
 
+    void writeToWaveFile(String fileName);
+
 private:
     std::vector<BandLimitedWaveform> blWaveforms;
+    
 };
 
 class Wavetable
@@ -58,8 +64,12 @@ public:
     void addFrame(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
     void addFrame(WavetableFrame& frame);
 
+    void clear();
+    
     const WavetableFrame& getFrame(int frameIndex) const;
     size_t getNumFrames() const;
+    
+    void WriteFrameToWaveFile(String fileName, int frameID);
     
 private:
     std::vector<WavetableFrame> frames;
@@ -68,9 +78,9 @@ private:
 //
 // example that builds a sawtooth oscillator via frequency domain
 //
-inline WavetableFrame sawOsc()
+inline WavetableFrame createFrameFromSawWave()
 {
-    int tableLen = 2048;    // to give full bandwidth from 20 Hz
+    int tableLen = kSingleCycleWaveformSize;    // to give full bandwidth from 20 Hz
     int idx;
     std::vector<double> freqWaveRe;
     std::vector<double> freqWaveIm;
@@ -99,22 +109,26 @@ inline WavetableFrame sawOsc()
 //
 // example that creates and oscillator from an arbitrary time domain wave
 //
-inline WavetableFrame waveOsc(double *waveSamples, int tableLen)
+inline WavetableFrame createFrameFromSingleCycle(std::vector<float> waveSamples)
 {
+    int tableLength = static_cast<int>(waveSamples.size());
+    
     int idx;
     std::vector<double> freqWaveRe;
     std::vector<double> freqWaveIm;
-    freqWaveRe.resize(tableLen);
-    freqWaveIm.resize(tableLen);
+    freqWaveRe.resize(tableLength);
+    freqWaveIm.resize(tableLength);
     
     // take FFT
-    for (idx = 0; idx < tableLen; idx++)
+    for (idx = 0; idx < tableLength; idx++)
     {
         freqWaveIm[idx] = waveSamples[idx];
         freqWaveRe[idx] = 0.0;
     }
     
-    fft(tableLen, freqWaveRe, freqWaveIm);
+    // Note - this fft (to freq domain) is the inverse of the other FFs later in the
+    // calculation which are returning to time domain.
+    fft(tableLength, freqWaveIm, freqWaveRe);
     
     WavetableFrame frame;
     frame.create(freqWaveRe, freqWaveIm);

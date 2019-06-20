@@ -22,6 +22,7 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
     addAndMakeVisible(waveViewPanel);
     addAndMakeVisible(positionSlider);
     addAndMakeVisible(interpolateButton);
+    addAndMakeVisible(exportWavetableButton);
     addAndMakeVisible(wavetableSelector);
     addAndMakeVisible(semitonesSlider);
     addAndMakeVisible(centsSlider);
@@ -44,6 +45,13 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
     interpolateButton.setColour(TextButton::buttonOnColourId, getCommonColours().detail);
     interpolateButton.addListener(this);
     
+    exportWavetableButton.setButtonText("Export");
+    exportWavetableButton.setColour(TextButton::textColourOffId,  getCommonColours().detail);
+    exportWavetableButton.setColour(TextButton::textColourOnId,   getCommonColours().panelBackground);
+    exportWavetableButton.setColour(TextButton::buttonColourId,   getCommonColours().panelBackground);
+    exportWavetableButton.setColour(TextButton::buttonOnColourId, getCommonColours().detail);
+    exportWavetableButton.addListener(this);
+
     wavetableSelector.setText("Select Wavetable");
     wavetableSelector.setTextWhenNothingSelected("Select Wavetable");
     wavetableSelector.setColour(ComboBox::textColourId, getCommonColours().detail);
@@ -85,6 +93,7 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
 WavetablePanel::~WavetablePanel()
 {
     interpolateButton.removeListener(this);
+    exportWavetableButton.removeListener(this);
     wavetableSelector.removeListener(this);
 }
 
@@ -113,7 +122,10 @@ void WavetablePanel::setupAttachments(AudioProcessorValueTreeState& state)
 
 void WavetablePanel::buttonClicked (Button* b)
 {
-    // TODO
+    if (b == &exportWavetableButton)
+    {
+        handleExportWavetableFrame();
+    }
 }
 
 void WavetablePanel::comboBoxChanged(ComboBox* cb)
@@ -121,7 +133,6 @@ void WavetablePanel::comboBoxChanged(ComboBox* cb)
     if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected())
     {
         String wavetableFilePath = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + wavetableFolderLocation + wavetableSelector.getText() + wavetableExtension;
-        DBG(wavetableFilePath);
         sound.setWavetableFile(wavetableFilePath);
     }
 }
@@ -138,9 +149,12 @@ void WavetablePanel::resized()
     buttonsArea.reduced(8);
     buttonsArea.removeFromTop(60);
     buttonsArea.removeFromLeft(wavetableKnobSpacing);
-    interpolateButton.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth * 2, wavetableKnobWidth / 2.5);
-    
-    buttonsArea.removeFromLeft(wavetableKnobWidth * 2.5);
+    interpolateButton.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth, wavetableKnobWidth / 2.5);
+
+    buttonsArea.removeFromLeft(wavetableKnobWidth + wavetableKnobSpacing);
+    exportWavetableButton.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth, wavetableKnobWidth / 2.5);
+
+    buttonsArea.removeFromLeft(wavetableKnobWidth + wavetableKnobSpacing);
     wavetableSelector.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth * 3, wavetableKnobWidth / 2.5);
     
     sliderArea.reduced(8);
@@ -178,12 +192,31 @@ void WavetablePanel::populateWavetableSelector()
     String wavetableFolder = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + wavetableFolderLocation;
     
     int comboBoxIndex = 1;
+    std::vector<File> wavetables;
     for(DirectoryIterator di(File(wavetableFolder),
                              false,
                              "*" + wavetableExtension,
                              File::TypesOfFileToFind::findFiles); di.next();)
     {
         File wavetable = di.getFile();
-        wavetableSelector.addItem(wavetable.getFileNameWithoutExtension(), comboBoxIndex++);
+        wavetables.push_back(wavetable);
+    }
+    
+    sort(wavetables.begin(), wavetables.end(),
+         [](const File & a, const File & b) -> bool
+         {
+             return a.getFileNameWithoutExtension() < b.getFileNameWithoutExtension();
+         });
+    
+    std::for_each(wavetables.begin(),
+                  wavetables.end(),
+                  [this, comboBoxIndex](File &wavetable) mutable { wavetableSelector.addItem(wavetable.getFileNameWithoutExtension(), comboBoxIndex++); });
+}
+
+void WavetablePanel::handleExportWavetableFrame()
+{
+    if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected())
+    {
+        sound.getWavetable().WriteFrameToWaveFile(wavetableSelector.getText() + "_Frame_0.wav", 0);
     }
 }

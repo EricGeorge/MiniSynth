@@ -34,6 +34,8 @@ public:
     
     void buttonClicked (Button* b) override;
     void comboBoxChanged(ComboBox* cb) override;
+    
+    void handleExportWavetableFrame();
 
 
 private:
@@ -52,6 +54,9 @@ private:
     // interpolate
     TextButton interpolateButton;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> interpolateAttachment;
+    
+    // export wavetable
+    TextButton exportWavetableButton;
     
     // wavetable
     ComboBox wavetableSelector;

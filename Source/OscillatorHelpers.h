@@ -17,6 +17,7 @@
 
 const double pi = M_PI;
 const double kMinAudibleDecibels = 0.000001; // -120 dB or 10^(db/20)
+const int kSingleCycleWaveformSize = 2048;
 
 //    Taken from Will Pirkle's Designing Software Synthesizers in C++
 //    book.  This polynomial was derived by taking a unipolar triangle pulse

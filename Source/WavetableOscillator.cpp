@@ -24,8 +24,6 @@ WavetableOscillator::WavetableOscillator(double sampleRate, Wavetable& wavetable
     currentFrameIndex(0),
     wavetable(wavetable)
 {
-    WavetableFrame frame = sawOsc();
-    wavetable.addFrame(frame);
 }
 
 WavetableOscillator::~WavetableOscillator()
@@ -65,8 +63,6 @@ void WavetableOscillator::reset(double inSampleRate)
     sampleRate = inSampleRate;
     frequency = 0.0;
     noteOn = false;
-    
-    sawOsc();
 }
 
 void WavetableOscillator::update()
