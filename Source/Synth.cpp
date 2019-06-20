@@ -51,7 +51,7 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
     
     // wavetable
     layout.add(std::make_unique<AudioProcessorParameterGroup>("WavetableOscGroupID", "Wavetable Osc", "/",
-                                                              std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Position], "Wavetable Position",NormalisableRange<float> (0.0f, 1.0f), 0.0f),
+                                                              std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Position], "Wavetable Position", NormalisableRange<float> (0.0f, 0.99999f), 0.0f),
                                                               std::make_unique<AudioParameterBool>(wavetable_ParamIDs[kWtbParam_Interpolate], "Interpolate", false),
                                                               std::make_unique<AudioParameterInt>(wavetable_ParamIDs[kWtbParam_Semitones], "Wavetable Semitones", -36, 36, 0),
                                                               std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Cents], "Wavetable Cents", NormalisableRange<float> (-1.0f, 1.0f), 0.0f),

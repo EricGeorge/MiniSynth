@@ -34,7 +34,7 @@ public:
     
     void buttonClicked (Button* b) override;
     void comboBoxChanged(ComboBox* cb) override;
-    
+
     void handleExportWavetableFrame();
 
 

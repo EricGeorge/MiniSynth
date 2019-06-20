@@ -106,6 +106,15 @@ void WavetablePanel::setupAttachments(AudioProcessorValueTreeState& state)
     volumeAttachment.reset(new juce::AudioProcessorValueTreeState::SliderAttachment(state, parameterList[kWtbParam_Volume], volumeSlider));
     
     // setNumDecimalPlacesToDisplay doesn't seem to work so setup this lambda instead AFTER setting up the attachment!
+    positionSlider.textFromValueFunction = [this](double value)
+    {
+        int numFrames = sound.getWavetable().getNumFrames();
+        int displayValue = numFrames * value;
+        
+        return juce::String(displayValue);
+    };
+    positionSlider.updateText();
+
     centsSlider.textFromValueFunction = [](double value)
     {
         return juce::String(value, 2);
@@ -134,6 +143,7 @@ void WavetablePanel::comboBoxChanged(ComboBox* cb)
     {
         String wavetableFilePath = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + wavetableFolderLocation + wavetableSelector.getText() + wavetableExtension;
         sound.setWavetableFile(wavetableFilePath);
+        positionSlider.setValue(0.0);
     }
 }
 
@@ -217,6 +227,8 @@ void WavetablePanel::handleExportWavetableFrame()
 {
     if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected())
     {
-        sound.getWavetable().WriteFrameToWaveFile(wavetableSelector.getText() + "_Frame_0.wav", 0);
+        int numFrames = sound.getWavetable().getNumFrames();
+        int displayValue = numFrames * positionSlider.getValue();
+        sound.getWavetable().WriteFrameToWaveFile(wavetableSelector.getText() + "_Frame_" + String(displayValue) + ".wav", displayValue);
     }
 }

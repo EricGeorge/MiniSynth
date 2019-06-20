@@ -18,7 +18,7 @@ SynthVoice::SynthVoice(Synth& synth)
 :   synth(synth),
     level(0.0f),
     osc(getSampleRate()),
-    wtb(getSampleRate(), synth.getSynthSound().getWavetable()),
+    wtb(getSampleRate(), synth.getSynthSound()),
     lfo(getSampleRate())
 {
 }

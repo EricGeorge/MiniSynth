@@ -28,7 +28,7 @@ public:
     double getTopFrequency() const;
     void setTopFrequency(double topFrequency);
     
-    size_t getNumSamples() const;
+    int getNumSamples() const;
     float getSample(int index) const;
     
 private:
@@ -46,7 +46,7 @@ public:
     void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double minTopFrequency, double maxTopFrequency);
 
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
-    size_t getNumWaveforms() const;
+    int getNumWaveforms() const;
 
     void writeToWaveFile(String fileName);
 
@@ -60,14 +60,14 @@ class Wavetable
 public:
     Wavetable();
     ~Wavetable();
-
+    
     void addFrame(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
     void addFrame(WavetableFrame& frame);
 
     void clear();
     
     const WavetableFrame& getFrame(int frameIndex) const;
-    size_t getNumFrames() const;
+    int getNumFrames() const;
     
     void WriteFrameToWaveFile(String fileName, int frameID);
     

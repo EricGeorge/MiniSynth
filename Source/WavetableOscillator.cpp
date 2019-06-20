@@ -12,28 +12,63 @@
 
 #include "PluginHelpers.h"
 
-WavetableOscillator::WavetableOscillator(double sampleRate, Wavetable& wavetable)
+WavetableOscillator::WavetableOscillator(double sampleRate, SynthSound& sound)
 :   sampleRate(sampleRate),
     frequency(0.0),
+    sound(sound),
     position(0.0),
     interpolate(false),
     semitones(0),
     cents(0),
     volume(1.0),
     currentWaveformIndex(0),
-    currentFrameIndex(0),
-    wavetable(wavetable)
+    currentFrameIndex(-1),
+    nextFrameIndex(-1),
+    trueFrameIndex(0.0),
+    wavetable(sound.getWavetable())
 {
+    sound.addActionListener(this);
 }
 
 WavetableOscillator::~WavetableOscillator()
 {
+    sound.removeActionListener(this);
+}
 
+void WavetableOscillator::actionListenerCallback (const String& message)
+{
+    if (message == synthSound_BroadcastIDs[kSSBC_WavetableChanged])
+    {
+        currentFrameIndex = nextFrameIndex = -1;
+        updateFrameIndices();
+    }
+}
+
+void WavetableOscillator::updateFrameIndices()
+{
+    trueFrameIndex = position * wavetable.getNumFrames();
+    
+    // just see if the incremental index changed
+    int newFrameIndex = trueFrameIndex;
+    
+    if (currentFrameIndex != newFrameIndex)
+    {
+        currentFrameIndex = newFrameIndex;
+        
+        nextFrameIndex = currentFrameIndex +1;
+        if (nextFrameIndex >= wavetable.getNumFrames())
+        {
+            nextFrameIndex = currentFrameIndex;
+        }
+        
+        update();
+    }
 }
 
 void WavetableOscillator::setPosition(float newValue)
 {
     position = newValue;
+    updateFrameIndices();
 }
 
 void WavetableOscillator::setInterpolate(float newValue)
@@ -79,7 +114,6 @@ void WavetableOscillator::update()
     {
         ++currentWaveformIndex;
     }
-
 }
 
 void WavetableOscillator::start(double inFrequency)
@@ -108,6 +142,18 @@ float WavetableOscillator::getNextSample()
                                currentWaveform().getSample(static_cast<int>(index) + 1),
                                frac);
 
+        if (interpolate && (nextFrameIndex != currentFrameIndex))
+        {
+            // interpolate between frames
+            float frameFrac = trueFrameIndex - currentFrameIndex;
+            
+            float sampleNextFrame = linear_interp(nextFrameCurrentWaveform().getSample(static_cast<int>(index)),
+                                                  nextFrameCurrentWaveform().getSample(static_cast<int>(index) + 1),
+                                                  frac);
+            
+            sample = linear_interp(sample, sampleNextFrame, frameFrac);
+        }
+        
         phaseAccumulator.IncrementPhase();
     }
     
@@ -123,3 +169,14 @@ const BandLimitedWaveform& WavetableOscillator::currentWaveform() const
 {
     return currentFrame().getWaveform(currentWaveformIndex);
 }
+
+const WavetableFrame&  WavetableOscillator::nextFrame() const
+{
+    return wavetable.getFrame(nextFrameIndex);
+}
+
+const BandLimitedWaveform& WavetableOscillator::nextFrameCurrentWaveform() const
+{
+    return nextFrame().getWaveform(currentWaveformIndex);
+}
+

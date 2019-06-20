@@ -10,13 +10,16 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
 #include "OscillatorHelpers.h"
+#include "SynthSound.h"
 #include "Wavetable.h"
 
-class WavetableOscillator
+class WavetableOscillator : public ActionListener
 {
 public:
-    WavetableOscillator(double sampleRate, Wavetable& wavetable);
+    WavetableOscillator(double sampleRate, SynthSound& sound);
     ~WavetableOscillator();
     
     float getNextSample();
@@ -35,14 +38,17 @@ public:
     void setCents(float newValue);
     void setVolume(float newValue);
 
+    void actionListenerCallback (const String& message) override;
+
 private:
     double sampleRate;
     double frequency;
+    SynthSound& sound;
     
     PhaseAccumulator phaseAccumulator;
 
     // parameters
-    float position;
+    double position;
     bool interpolate;
     int semitones;
     double cents;
@@ -53,10 +59,17 @@ private:
 
     int currentWaveformIndex;      // current table, based on current frequency
     int currentFrameIndex;
+    int nextFrameIndex;
+    double trueFrameIndex;
     Wavetable& wavetable;
+    
+    void updateFrameIndices();
     
     const WavetableFrame& currentFrame() const;
     const BandLimitedWaveform& currentWaveform() const;
+    
+    const WavetableFrame& nextFrame() const;
+    const BandLimitedWaveform& nextFrameCurrentWaveform() const;
 };
 
 using WTOsc = WavetableOscillator;

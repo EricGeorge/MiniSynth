@@ -14,7 +14,19 @@
 
 #include "Wavetable.h"
 
-class SynthSound : public SynthesiserSound
+enum SynthSoundBroadcastMessages
+{
+    kSSBC_WavetableChanged = 0
+};
+
+static String synthSound_BroadcastIDs[]
+{
+    "Wavetable_Changed"
+};
+
+
+class SynthSound :  public SynthesiserSound,
+                    public ActionBroadcaster
 {
 public:
     SynthSound();

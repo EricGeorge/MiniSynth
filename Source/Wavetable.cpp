@@ -33,9 +33,9 @@ void BandLimitedWaveform::setTopFrequency(double inTopFrequency)
     topFrequency = inTopFrequency;
 }
 
-size_t BandLimitedWaveform::getNumSamples() const
+int BandLimitedWaveform::getNumSamples() const
 {
-    return samples.size();
+    return static_cast<int>(samples.size());
 }
 
 float BandLimitedWaveform::getSample(int index) const
@@ -78,9 +78,9 @@ const BandLimitedWaveform& WavetableFrame::getWaveform(int waveformIndex) const
     return blWaveforms[waveformIndex];
 }
 
-size_t WavetableFrame::getNumWaveforms() const
+int WavetableFrame::getNumWaveforms() const
 {
-    return blWaveforms.size();
+    return static_cast<int>(blWaveforms.size());
 }
 
 // This generates a fixed 1 table per octave set of waveforms
@@ -182,7 +182,7 @@ void WavetableFrame::writeToWaveFile(String fileName)
 {
     // create a buffer from the frame
     AudioSampleBuffer buffer;
-    buffer.setSize(1, static_cast<int>(getNumWaveforms()) * kSingleCycleWaveformSize);
+    buffer.setSize(1, getNumWaveforms() * kSingleCycleWaveformSize);
     int bufferIndex = 0;
     
     for (int index = 0; index < blWaveforms.size(); index++)
@@ -242,9 +242,9 @@ const WavetableFrame& Wavetable::getFrame(int frameIndex) const
     return frames[frameIndex];
 }
 
-size_t Wavetable::getNumFrames() const
+int Wavetable::getNumFrames() const
 {
-    return frames.size();
+    return static_cast<int>(frames.size());
 }
 
 void Wavetable::clear()
