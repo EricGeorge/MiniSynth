@@ -21,7 +21,8 @@ const static String wavetableExtension = ".wav";
 
 class WavetablePanel :  public Component,
                         public Button::Listener,
-                        public ComboBox::Listener
+                        public ComboBox::Listener,
+                        public Slider::Listener
 {
 public:
     WavetablePanel(const String panelName, const String* parameterList, SynthSound& sound);
@@ -34,6 +35,7 @@ public:
     
     void buttonClicked (Button* b) override;
     void comboBoxChanged(ComboBox* cb) override;
+    void sliderValueChanged(Slider* slider) override;
 
     void handleExportWavetableFrame();
 

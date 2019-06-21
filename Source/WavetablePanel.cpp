@@ -17,7 +17,8 @@
 WavetablePanel::WavetablePanel(const String panelName, const String* parameterList, SynthSound& sound)
 :   panelName(panelName),
     parameterList(parameterList),
-    sound(sound)
+    sound(sound),
+    waveViewPanel(sound)
 {
     addAndMakeVisible(waveViewPanel);
     addAndMakeVisible(positionSlider);
@@ -43,14 +44,12 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
     interpolateButton.setColour(TextButton::textColourOnId,   getCommonColours().panelBackground);
     interpolateButton.setColour(TextButton::buttonColourId,   getCommonColours().panelBackground);
     interpolateButton.setColour(TextButton::buttonOnColourId, getCommonColours().detail);
-    interpolateButton.addListener(this);
     
     exportWavetableButton.setButtonText("Export");
     exportWavetableButton.setColour(TextButton::textColourOffId,  getCommonColours().detail);
     exportWavetableButton.setColour(TextButton::textColourOnId,   getCommonColours().panelBackground);
     exportWavetableButton.setColour(TextButton::buttonColourId,   getCommonColours().panelBackground);
     exportWavetableButton.setColour(TextButton::buttonOnColourId, getCommonColours().detail);
-    exportWavetableButton.addListener(this);
 
     wavetableSelector.setText("Select Wavetable");
     wavetableSelector.setTextWhenNothingSelected("Select Wavetable");
@@ -58,7 +57,6 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
     wavetableSelector.setColour(ComboBox::backgroundColourId, getCommonColours().panelBackground);
     wavetableSelector.setColour(ComboBox::arrowColourId, getCommonColours().detail);
     wavetableSelector.setJustificationType(Justification::centred);
-    wavetableSelector.addListener(this);
     
     semitonesLabel.attachToComponent(&semitonesSlider, false);
     semitonesLabel.setFont(Font(sliderLabelFontSize));
@@ -87,11 +85,17 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
     volumeSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
     volumeSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
     
+    positionSlider.addListener(this);
+    interpolateButton.addListener(this);
+    exportWavetableButton.addListener(this);
+    wavetableSelector.addListener(this);
+
     populateWavetableSelector();
 }
 
 WavetablePanel::~WavetablePanel()
 {
+    positionSlider.removeListener(this);
     interpolateButton.removeListener(this);
     exportWavetableButton.removeListener(this);
     wavetableSelector.removeListener(this);
@@ -143,7 +147,17 @@ void WavetablePanel::comboBoxChanged(ComboBox* cb)
     {
         String wavetableFilePath = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + wavetableFolderLocation + wavetableSelector.getText() + wavetableExtension;
         sound.setWavetableFile(wavetableFilePath);
+        
         positionSlider.setValue(0.0);
+        waveViewPanel.waveformChanged(0.0);
+    }
+}
+
+void WavetablePanel::sliderValueChanged(Slider* slider)
+{
+    if (slider == &positionSlider)
+    {
+        waveViewPanel.waveformChanged(sound.getWavetable().getNumFrames() * positionSlider.getValue());
     }
 }
 
