@@ -25,12 +25,14 @@ public:
     void resized() override;
     
     void waveformChanged(float realFrameIndex);
+    void setInterpolate(bool interpolate);
     
 private:
     // panel label
     const String panelName;
     
     SynthSound& sound;
+    bool interpolate;
     
     std::unique_ptr<BandLimitedWaveform> waveform1;
     int frameIndex1;

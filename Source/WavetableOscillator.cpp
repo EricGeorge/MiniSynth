@@ -60,8 +60,6 @@ void WavetableOscillator::updateFrameIndices()
         {
             nextFrameIndex = currentFrameIndex;
         }
-        
-        update();
     }
 }
 
@@ -105,7 +103,7 @@ void WavetableOscillator::update()
     double modFrequency = getModFrequency(frequency, semitones + cents);
     double normalizedModFrequency = modFrequency/sampleRate;
 
-    phaseAccumulator.reset(0.0, normalizedModFrequency);
+    phaseAccumulator.reset(normalizedModFrequency);
     
     // update the current wave table selector
     currentWaveformIndex = 0;

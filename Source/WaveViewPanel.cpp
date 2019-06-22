@@ -14,6 +14,7 @@
 
 WaveViewPanel::WaveViewPanel(SynthSound& sound)
 :   sound(sound),
+    interpolate(false),
     frameIndex1(0),
     frameIndex2(0),
     interpFrac(0.0)
@@ -24,6 +25,11 @@ WaveViewPanel::WaveViewPanel(SynthSound& sound)
 WaveViewPanel::~WaveViewPanel()
 {
     
+}
+
+void WaveViewPanel::setInterpolate(bool inInterpolate)
+{
+    interpolate = inInterpolate;
 }
 
 void WaveViewPanel::paint(Graphics& g)
@@ -57,7 +63,7 @@ void WaveViewPanel::paint(Graphics& g)
             float x2 = jmap<float>(i, 0, numSamples - 1, inset.getX(), inset.getRight());
             float y2 = jmap<float>(waveform1->getSample(i), -1, 1, inset.getBottom(), inset.getY());
 
-            if (frameIndex2 != frameIndex1)
+            if (frameIndex2 != frameIndex1 && interpolate)
             {
                 float y1Interp = jmap<float>(waveform2->getSample(i - 1), -1, 1, inset.getBottom(), inset.getY());
                 float y2Interp = jmap<float>(waveform2->getSample(i), -1, 1, inset.getBottom(), inset.getY());

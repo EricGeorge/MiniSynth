@@ -90,30 +90,11 @@ void BandLimitedOscillator::reset(double inSampleRate)
     noteOn = false;
 }
 
-double BandLimitedOscillator::getStartingPhaseOffset()
-{
-    switch (waveType)
-    {
-        case BLEPSaw:
-        case PolyBLEPSawSquareMod:
-        case UnipolarWaveShapedSaw:
-        case BipolarWaveShapedSaw:
-        case SumofSawSquarePWM:
-            return 0.5;
-
-        case DPWTriangle:
-        case ParabolicSine:
-        case WhiteNoise:
-        case RandomNoise:
-            return 0.0;
-    }
-}
-
 void BandLimitedOscillator::update()
 {
     double modFrequency = getModFrequency(frequency, convertToSemitones(octaves, semitones, cents / 100.0));
-    phaseAccumulator.reset(getStartingPhaseOffset(), modFrequency / sampleRate);
-    dpwPhaseAccumulator.reset(getStartingPhaseOffset(), (2 * modFrequency) / sampleRate);
+    phaseAccumulator.reset(modFrequency / sampleRate);
+    dpwPhaseAccumulator.reset((2 * modFrequency) / sampleRate);
 }
 
 void BandLimitedOscillator::start(double inFrequency)

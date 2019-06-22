@@ -126,9 +126,8 @@ public:
         return phaseInc;
     }
     
-    void reset(double inPhase, double inPhaseInc)
+    void reset(double inPhaseInc)
     {
-        phase = inPhase;
         phaseInc = inPhaseInc;
     }
     

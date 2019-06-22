@@ -85,9 +85,7 @@ private:
     double getNextDPWTriangleSample();
     double getNextParabolicSineSample();
     double getNextWhiteNoiseSample();
-    double getNextRandomNoiseSample();
-    
-    double getStartingPhaseOffset();    
+    double getNextRandomNoiseSample();    
 };
 
 using BLOsc = BandLimitedOscillator;
