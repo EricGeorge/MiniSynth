@@ -51,9 +51,7 @@ void BandLimitedWaveform::create(std::vector<double>& freqWaveRe, std::vector<do
 
     fft(numSamples, freqWaveRe, freqWaveIm);
     
-    // calculate normal
-    double max = *max_element(freqWaveIm.begin(), freqWaveIm.end());
-    double scale = 1.0 / max * .999;
+    double scale = 1.0 / numSamples;
 
     // normalize (note we're also converting to floats here for the final sample vector)
     samples = std::vector<float>(freqWaveIm.begin(), freqWaveIm.end());
