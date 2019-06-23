@@ -19,7 +19,7 @@
 
 BandLimitedOscillator::BandLimitedOscillator(double sampleRate)
 :   sampleRate(sampleRate),
-    modFrequency(0.0),
+    frequency(0.0),
     dpwDifferentiator(0.0),
     waveType(PolyBLEPSawSquareMod),
     octaves(0),
@@ -42,22 +42,25 @@ BandLimitedOscillator::~BandLimitedOscillator()
 void BandLimitedOscillator::setWaveType(float newValue)
 {
     waveType = static_cast<WaveType>(newValue);
-    reset(sampleRate);
+    update();
 }
 
 void BandLimitedOscillator::setOctaves(float newValue)
 {
     octaves = static_cast<int>(newValue);
+    update();
 }
 
 void BandLimitedOscillator::setSemitones(float newValue)
 {
     semitones = static_cast<int>(newValue);
+    update();
 }
 
 void BandLimitedOscillator::setCents(float newValue)
 {
     cents = static_cast<int>(newValue);
+    update();
 }
 
 void BandLimitedOscillator::setPulseWidth(float newValue)
@@ -82,42 +85,29 @@ void BandLimitedOscillator::setVolume(float newValue)
 void BandLimitedOscillator::reset(double inSampleRate)
 {
     sampleRate = inSampleRate;
-    modFrequency = 0.0;
+    frequency = 0.0;
     dpwDifferentiator.reset(0.0);
     noteOn = false;
 }
 
-double BandLimitedOscillator::getStartingPhaseOffset()
+void BandLimitedOscillator::update()
 {
-    switch (waveType)
-    {
-        case BLEPSaw:
-        case PolyBLEPSawSquareMod:
-        case UnipolarWaveShapedSaw:
-        case BipolarWaveShapedSaw:
-        case SumofSawSquarePWM:
-            return 0.5;
-
-        case DPWTriangle:
-        case ParabolicSine:
-        case WhiteNoise:
-        case RandomNoise:
-            return 0.0;
-    }
+    double modFrequency = getModFrequency(frequency, convertToSemitones(octaves, semitones, cents / 100.0));
+    phaseAccumulator.reset(modFrequency / sampleRate);
+    dpwPhaseAccumulator.reset((2 * modFrequency) / sampleRate);
 }
 
-void BandLimitedOscillator::start(double frequency)
+void BandLimitedOscillator::start(double inFrequency)
 {
-    modFrequency = frequency * getPitchFreqMod(octaves, semitones, cents);
-    phaseAccumulator.reset(getStartingPhaseOffset(), modFrequency / sampleRate);
-    dpwPhaseAccumulator.reset(getStartingPhaseOffset(), (2 * modFrequency) / sampleRate);
+    frequency = inFrequency;
+    update();
     noteOn = true;
 }
 
 void BandLimitedOscillator::stop()
 {
     noteOn = false;
-    modFrequency = 0.0;
+    frequency = 0.0;
 }
 
 double BandLimitedOscillator::getNextSample()
@@ -193,7 +183,7 @@ double BandLimitedOscillator::getNextBLEPSawSample()
     double phase = phaseAccumulator.getPhase();
     double phaseInc = phaseAccumulator.getPhaseInc();
 
-    if (modFrequency <= sampleRate / 8.0)
+    if (getModFrequency(frequency, convertToSemitones(octaves, semitones, cents / 100.0)) <= sampleRate / 8.0)
     {
         blepTable = &blepTable_8_BLKHAR[0];
         pointsPerSide = 4;
@@ -293,7 +283,7 @@ double BandLimitedOscillator::getNextDPWTriangleSample()
     double squareMod = invertedSquaredSaw * squareModulator;
     double differentiatedSquareMod = dpwDifferentiator.process(squareMod);
 
-    double c = sampleRate / (4.0 * 2.0 * modFrequency * (1 - dpwPhaseAccumulator.getPhaseInc()));
+    double c = sampleRate / (4.0 * 2.0 * getModFrequency(frequency, convertToSemitones(octaves, semitones, cents / 100.0)) * (1 - dpwPhaseAccumulator.getPhaseInc()));
     return differentiatedSquareMod * c;
 }
 

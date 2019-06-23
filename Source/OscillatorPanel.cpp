@@ -14,7 +14,7 @@
 #include "OscillatorPanelLayout.h"
 #include "OscillatorParameters.h"
 
-OscillatorPanel::OscillatorPanel(const String panelName, const String* parameterList, const bool* parameterEnables)
+OscillatorPanel::OscillatorPanel(const String panelName, const String* parameterList)
 :   panelName(panelName),
     parameterList(parameterList)
 {
@@ -84,30 +84,6 @@ OscillatorPanel::OscillatorPanel(const String panelName, const String* parameter
     volumeSlider.setTextBoxStyle(Slider::TextBoxRight, false, volumeSlider.getTextBoxWidth(), volumeSlider.getTextBoxHeight());
     volumeSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
     volumeSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
-    
-    wavetypeLabel.setVisible(parameterEnables[kOscParam_WaveType]);
-    wavetypeSlider.setVisible(parameterEnables[kOscParam_WaveType]);
-    
-    octavesLabel.setVisible(parameterEnables[kOscParam_Octave]);
-    octavesSlider.setVisible(parameterEnables[kOscParam_Octave]);
-    
-    semitonesLabel.setVisible(parameterEnables[kOscParam_Semitone]);
-    semitonesSlider.setVisible(parameterEnables[kOscParam_Semitone]);
-    
-    centsLabel.setVisible(parameterEnables[kOscParam_Cents]);
-    centsSlider.setVisible(parameterEnables[kOscParam_Cents]);
-    
-    pulseWidthLabel.setVisible(parameterEnables[kOscParam_PulseWidth]);
-    pulseWidthSlider.setVisible(parameterEnables[kOscParam_PulseWidth]);
-    
-    polyBLEPMixLabel.setVisible(parameterEnables[kOscParam_PolyBLEPMix]);
-    polyBLEPMixSlider.setVisible(parameterEnables[kOscParam_PolyBLEPMix]);
-    
-    waveShapeSaturationLabel.setVisible(parameterEnables[kOscParam_WaveShapeSaturation]);
-    waveShapeSaturationSlider.setVisible(parameterEnables[kOscParam_WaveShapeSaturation]);
-    
-    volumeLabel.setVisible(parameterEnables[kOscParam_Volume]);
-    volumeSlider.setVisible(parameterEnables[kOscParam_Volume]);
 }
 
 OscillatorPanel::~OscillatorPanel()
@@ -160,47 +136,26 @@ void OscillatorPanel::resized()
     sliderArea.removeFromLeft(120);
     sliderArea.removeFromRight(50);
     
-    if (wavetypeSlider.isVisible())
-    {
-        wavetypeSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    wavetypeSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
-    if (octavesSlider.isVisible())
-    {
-        octavesSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    octavesSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
-    if (semitonesSlider.isVisible())
-    {
-        semitonesSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    semitonesSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
-    if (centsSlider.isVisible())
-    {
-        centsSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    centsSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
-    if (pulseWidthSlider.isVisible())
-    {
-        pulseWidthSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    pulseWidthSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
-    if (polyBLEPMixSlider.isVisible())
-    {
-        polyBLEPMixSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    polyBLEPMixSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
-    if (waveShapeSaturationSlider.isVisible())
-    {
-        waveShapeSaturationSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
-        sliderArea.removeFromTop(oscillatorSliderSpacing);
-    }
+    waveShapeSaturationSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
+    sliderArea.removeFromTop(oscillatorSliderSpacing);
     
     volumeSlider.setBounds(sliderArea.removeFromTop(oscillatorSliderHeight));
 }

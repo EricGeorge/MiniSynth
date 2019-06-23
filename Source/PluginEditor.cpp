@@ -12,20 +12,21 @@
 
 #include "OscillatorParameters.h"
 #include "PluginLayout.h"
+#include "WavetableParameters.h"
 
 
 //==============================================================================
-MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor& p)
-:   AudioProcessorEditor (&p),
-    processor (p),
+MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor& processor)
+:   AudioProcessorEditor (&processor),
+    processor (processor),
     midiKeyboardComponent(processor.getMidiKeyboardstate(), MidiKeyboardComponent::horizontalKeyboard),
-    oscillatorComponent1("Oscillator 1", oscillator1_ParamIDs, oscillator1_ParamEnables),
-    oscillatorComponent2("Oscillator 2", oscillator2_ParamIDs, oscillator2_ParamEnables),
+    oscillatorComponent("VA Oscillator", oscillator_ParamIDs),
+    wavetableComponent("Wavetable Oscillator", wavetable_ParamIDs, processor.getSynth().getSynthSound()),
     scopeComponent(processor.getAudioBufferQueue())
 {
     addAndMakeVisible(controlBarComponent);
-    addAndMakeVisible(oscillatorComponent1);
-    addAndMakeVisible(oscillatorComponent2);
+    addAndMakeVisible(oscillatorComponent);
+    addAndMakeVisible(wavetableComponent);
     addAndMakeVisible(outputComponent);
     addAndMakeVisible(scopeComponent);
     addAndMakeVisible(midiKeyboardComponent);
@@ -34,9 +35,9 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
     
     midiKeyboardComponent.setKeyWidth(midiKeyboardKeyWidth);
     
-    outputComponent.setupAttachments(p.getValueTreeState());
-    oscillatorComponent1.setupAttachments(p.getValueTreeState());
-    oscillatorComponent2.setupAttachments(p.getValueTreeState());
+    outputComponent.setupAttachments(processor.getValueTreeState());
+    oscillatorComponent.setupAttachments(processor.getValueTreeState());
+    wavetableComponent.setupAttachments(processor.getValueTreeState());
 }
 
 MiniSynthAudioProcessorEditor::~MiniSynthAudioProcessorEditor()
@@ -53,8 +54,8 @@ void MiniSynthAudioProcessorEditor::resized()
 {
     controlBarComponent.setBounds(controlBarX, controlBarY, controlBarWidth, controlBarHeight);
     outputComponent.setBounds(outputX, outputY, outputWidth, outputHeight);
-    oscillatorComponent1.setBounds(oscillatorX, oscillatorY, oscillatorWidth, oscillatorHeight / 2);
-    oscillatorComponent2.setBounds(oscillatorX, oscillatorY + oscillatorHeight / 2 , oscillatorWidth, oscillatorHeight / 2);
+    oscillatorComponent.setBounds(oscillatorX, oscillatorY, oscillatorWidth, oscillatorHeight / 2);
+    wavetableComponent.setBounds(oscillatorX, oscillatorY + oscillatorHeight / 2 , oscillatorWidth, oscillatorHeight / 2);
     scopeComponent.setBounds(scopeX, scopeY, scopeWidth, scopeHeight);
     midiKeyboardComponent.setBounds(midiKeyboardX, midiKeyboardY, midiKeyboardWidth, midiKeyboardHeight);
 }

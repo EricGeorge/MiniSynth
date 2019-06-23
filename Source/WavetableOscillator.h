@@ -10,47 +10,69 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
 #include "OscillatorHelpers.h"
+#include "SynthSound.h"
 #include "Wavetable.h"
 
-class WaveTableOscillator
+class WavetableOscillator : public ActionListener
 {
 public:
-    WaveTableOscillator(double sampleRate);
-    ~WaveTableOscillator();
+    WavetableOscillator(double sampleRate, SynthSound& sound);
+    ~WavetableOscillator();
     
     float getNextSample();
     
     void reset(double sampleRate);
+    void update();
     
     void start(double frequency);
     void stop();
 
 
     // parameter setters
-    void setOctaves(float newValue);
+    void setPosition(float newValue);
+    void setInterpolate(float newValue);
     void setSemitones(float newValue);
     void setCents(float newValue);
     void setVolume(float newValue);
 
+    void actionListenerCallback (const String& message) override;
+
 private:
     double sampleRate;
+    double frequency;
+    SynthSound& sound;
+    
     PhaseAccumulator phaseAccumulator;
 
     // parameters
-    int octaves;
+    double position;
+    bool interpolate;
     int semitones;
-    int cents;
+    double cents;
     double volume;
     
     // poor man's envelope - replace with ADSR
     bool noteOn;
 
-    int currentWaveform;      // current table, based on current frequency
-    Wavetable wavetable;
+    int currentWaveformIndex;      // current table, based on current frequency
+    int currentFrameIndex;
+    int nextFrameIndex;
+    double trueFrameIndex;
+    Wavetable& wavetable;
+    
+    void updateFrameIndices();
+    
+    const WavetableFrame& currentFrame() const;
+    const BandLimitedWaveform& currentWaveform() const;
+    
+    const WavetableFrame& nextFrame() const;
+    const BandLimitedWaveform& nextFrameCurrentWaveform() const;
 };
 
-using WTOsc = WaveTableOscillator;
+using WTOsc = WavetableOscillator;
 
 
 
