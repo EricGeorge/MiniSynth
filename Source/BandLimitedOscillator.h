@@ -34,6 +34,7 @@ public:
     
 
     void reset(double sampleRate);
+    void update();
     
     void start(double frequency);
     void stop();
@@ -52,9 +53,9 @@ public:
     
 private:
     double sampleRate;
+    double frequency;
     
     PhaseAccumulator phaseAccumulator;
-    double modFrequency;
 
     // for Differentiated Parabolic Waveform
     PhaseAccumulator dpwPhaseAccumulator;
@@ -84,9 +85,7 @@ private:
     double getNextDPWTriangleSample();
     double getNextParabolicSineSample();
     double getNextWhiteNoiseSample();
-    double getNextRandomNoiseSample();
-    
-    double getStartingPhaseOffset();    
+    double getNextRandomNoiseSample();    
 };
 
 using BLOsc = BandLimitedOscillator;
