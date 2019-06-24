@@ -187,9 +187,15 @@ void MiniSynthAudioProcessor::setStateInformation (const void* data, int sizeInB
         state.replaceState(ValueTree::fromXml(*xmlState));
 }
 
+Synth& MiniSynthAudioProcessor::getSynth()
+{
+    return synth;
+}
+
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new MiniSynthAudioProcessor();
 }
+

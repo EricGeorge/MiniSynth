@@ -13,8 +13,11 @@
 #include <cmath>
 #include <vector>
 
+#include "PluginHelpers.h"
+
 const double pi = M_PI;
 const double kMinAudibleDecibels = 0.000001; // -120 dB or 10^(db/20)
+const int kSingleCycleWaveformSize = 2048;
 
 //    Taken from Will Pirkle's Designing Software Synthesizers in C++
 //    book.  This polynomial was derived by taking a unipolar triangle pulse
@@ -123,9 +126,8 @@ public:
         return phaseInc;
     }
     
-    void reset(double inPhase, double inPhaseInc)
+    void reset(double inPhaseInc)
     {
-        phase = inPhase;
         phaseInc = inPhaseInc;
     }
     
@@ -147,4 +149,14 @@ inline int calculateMaxHarmonic(std::vector<double>& freqWaveRe, std::vector<dou
     }
 
     return maxHarmonic;
+}
+
+inline double getModFrequency(double frequency, double semitones)
+{
+    return frequency * getPitchFreqMod(semitones);
+}
+
+inline double convertToSemitones(double octaves, double semitones, double cents)
+{
+    return octaves * 12 + semitones + cents;
 }
