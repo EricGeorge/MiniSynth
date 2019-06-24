@@ -86,7 +86,7 @@ void LowFrequencyOscillator::setDelay(float newValue)
 void LowFrequencyOscillator::reset(double sampleRate)
 {
     sampleRate = sampleRate;
-    phaseAccumulator.reset(rate / sampleRate);
+    phaseAccumulator.reset(0.0, rate / sampleRate);
 }
 
 double LowFrequencyOscillator::getNextSample()

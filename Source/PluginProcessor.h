@@ -65,7 +65,6 @@ public:
     MidiKeyboardState& getMidiKeyboardstate() noexcept { return midiKeyboardState; }
     AudioProcessorValueTreeState& getValueTreeState() noexcept { return state; }
  
-    Synth& getSynth();
     
 private:
     //==============================================================================

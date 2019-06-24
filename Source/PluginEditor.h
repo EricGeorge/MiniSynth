@@ -17,8 +17,6 @@
 #include "OutputPanel.h"
 #include "PluginProcessor.h"
 #include "ScopePanel.h"
-#include "Synth.h"
-#include "WavetablePanel.h"
 
 //==============================================================================
 /**
@@ -26,7 +24,7 @@
 class MiniSynthAudioProcessorEditor : public AudioProcessorEditor
 {
 public:
-    MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor& processor);
+    MiniSynthAudioProcessorEditor (MiniSynthAudioProcessor&);
     ~MiniSynthAudioProcessorEditor();
 
     //==============================================================================
@@ -41,8 +39,8 @@ private:
     ControlBarPanel controlBarComponent;
     MidiKeyboardComponent midiKeyboardComponent;
     OutputPanel outputComponent;
-    OscillatorPanel oscillatorComponent;
-    WavetablePanel wavetableComponent;
+    OscillatorPanel oscillatorComponent1;
+    OscillatorPanel oscillatorComponent2;
     ScopePanel scopeComponent;
 
 
