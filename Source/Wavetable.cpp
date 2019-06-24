@@ -213,9 +213,6 @@ void WavetableFrame::writeToWaveFile(String fileName)
 // MARK: - Wavetable
 Wavetable::Wavetable()
 {
-    // load default wavetable
-    WavetableFrame frame = createFrameFromSawWave();
-    addFrame(frame);
 }
 
 Wavetable::~Wavetable()

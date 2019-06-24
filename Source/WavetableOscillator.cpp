@@ -116,7 +116,14 @@ void WavetableOscillator::update()
 
 void WavetableOscillator::start(double inFrequency)
 {
+    if (currentFrameIndex < 0)
+    {
+        // not a valid frame - don't play anything
+        return;
+    }
+
     frequency = inFrequency;
+    
     
     update();
     
