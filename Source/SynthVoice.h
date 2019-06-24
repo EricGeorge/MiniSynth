@@ -14,13 +14,21 @@
 
 #include "BandLimitedOscillator.h"
 #include "LowFrequencyOscillator.h"
-#include "Synth.h"
 #include "WavetableOscillator.h"
+
+class SynthSound : public SynthesiserSound
+{
+public:
+    SynthSound() {}
+    
+    bool appliesToNote(int midiNoteNumber) override { return true; }
+    bool appliesToChannel(int midiChannel) override { return true; }
+};
 
 class SynthVoice : public SynthesiserVoice
 {
 public:
-    SynthVoice(Synth& synth);
+    SynthVoice();
     ~SynthVoice() override;
     
     bool canPlaySound(SynthesiserSound* sound) override;
@@ -39,14 +47,14 @@ public:
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
     void parameterChanged (const String& parameterID, float newValue);
-    void oscParameterChanged (const String& parameterID, float newValue);
-    void wtbParameterChanged (const String& parameterID, float newValue);
-    void lfoParameterChanged (const String& parameterID, float newValue);
+    void osc1ParameterChanged (const String& parameterID, float newValue);
+    void osc2ParameterChanged (const String& parameterID, float newValue);
+    void lfo1ParameterChanged (const String& parameterID, float newValue);
 
 private:
-    Synth& synth;
+    
     float level;
-    BLOsc osc;
-    WTOsc wtb;
-    LFO lfo;
+    BLOsc osc1;
+    WTOsc osc2;
+    LFO lfo1;
 };

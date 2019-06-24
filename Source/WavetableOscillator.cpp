@@ -12,169 +12,82 @@
 
 #include "PluginHelpers.h"
 
-WavetableOscillator::WavetableOscillator(double sampleRate, SynthSound& sound)
+WaveTableOscillator::WaveTableOscillator(double sampleRate)
 :   sampleRate(sampleRate),
-    frequency(0.0),
-    sound(sound),
-    position(0.0),
-    interpolate(false),
+    octaves(0),
     semitones(0),
     cents(0),
     volume(1.0),
-    currentWaveformIndex(0),
-    currentFrameIndex(-1),
-    nextFrameIndex(-1),
-    trueFrameIndex(0.0),
-    wavetable(sound.getWavetable())
+    currentWaveform(0),
+    wavetable(sampleRate)
 {
-    sound.addActionListener(this);
+    WavetableFrame frame = sawOsc();
+    wavetable.addFrame(frame);
+    wavetable.setCurrentFrame(0);
 }
 
-WavetableOscillator::~WavetableOscillator()
+WaveTableOscillator::~WaveTableOscillator()
 {
-    sound.removeActionListener(this);
+
 }
 
-void WavetableOscillator::actionListenerCallback (const String& message)
+void WaveTableOscillator::setOctaves(float newValue)
 {
-    if (message == synthSound_BroadcastIDs[kSSBC_WavetableChanged])
-    {
-        currentFrameIndex = nextFrameIndex = -1;
-        updateFrameIndices();
-    }
+    octaves = static_cast<int>(newValue);
 }
 
-void WavetableOscillator::updateFrameIndices()
-{
-    trueFrameIndex = position * wavetable.getNumFrames();
-    
-    // just see if the incremental index changed
-    int newFrameIndex = trueFrameIndex;
-    
-    if (currentFrameIndex != newFrameIndex)
-    {
-        currentFrameIndex = newFrameIndex;
-        
-        nextFrameIndex = currentFrameIndex +1;
-        if (nextFrameIndex >= wavetable.getNumFrames())
-        {
-            nextFrameIndex = currentFrameIndex;
-        }
-    }
-}
-
-void WavetableOscillator::setPosition(float newValue)
-{
-    position = newValue;
-    updateFrameIndices();
-}
-
-void WavetableOscillator::setInterpolate(float newValue)
-{
-    interpolate = static_cast<bool>(newValue);
-}
-
-void WavetableOscillator::setSemitones(float newValue)
+void WaveTableOscillator::setSemitones(float newValue)
 {
     semitones = static_cast<int>(newValue);
-    update();
 }
 
-void WavetableOscillator::setCents(float newValue)
+void WaveTableOscillator::setCents(float newValue)
 {
-    cents = newValue;
-    update();
+    cents = static_cast<int>(newValue);
 }
 
-void WavetableOscillator::setVolume(float newValue)
+void WaveTableOscillator::setVolume(float newValue)
 {
     volume = newValue;
 }
 
-void WavetableOscillator::reset(double inSampleRate)
+void WaveTableOscillator::reset(double inSampleRate)
 {
     sampleRate = inSampleRate;
-    frequency = 0.0;
     noteOn = false;
+    
+    sawOsc();
 }
 
-void WavetableOscillator::update()
+void WaveTableOscillator::start(double frequency)
 {
-    double modFrequency = getModFrequency(frequency, semitones + cents);
-    double normalizedModFrequency = modFrequency/sampleRate;
-
-    phaseAccumulator.reset(normalizedModFrequency);
+    double modFrequency = frequency * getPitchFreqMod(octaves, semitones, cents);
+    phaseAccumulator.reset(0.5, modFrequency / sampleRate); // TODO - currently hard coded for saw
+    noteOn = true;
     
     // update the current wave table selector
-    currentWaveformIndex = 0;
-    while ((normalizedModFrequency >= currentFrame().getWaveform(currentWaveformIndex).getTopFrequency()) &&
-           (currentWaveformIndex < (currentFrame().getNumWaveforms() - 1)))
-    {
-        ++currentWaveformIndex;
-    }
+    wavetable.setWaveform(frequency);
 }
 
-void WavetableOscillator::start(double inFrequency)
-{
-    frequency = inFrequency;
-    
-    update();
-    
-    noteOn = true;
-}
-
-void WavetableOscillator::stop()
+void WaveTableOscillator::stop()
 {
     noteOn = false;
 }
 
-float WavetableOscillator::getNextSample()
+float WaveTableOscillator::getNextSample()
 {
     float sample = 0.0f;
     
     if (noteOn)
     {
-        float index = phaseAccumulator.getPhase() * currentWaveform().getNumSamples();
+        float index = phaseAccumulator.getPhase() * wavetable.currentWaveform().getNumSamples();
         float frac = index - static_cast<int>(index);
-        sample = linear_interp(currentWaveform().getSample(static_cast<int>(index)),
-                               currentWaveform().getSample(static_cast<int>(index) + 1),
+        sample = linear_interp(wavetable.currentWaveform().getSample(static_cast<int>(index)),
+                               wavetable.currentWaveform().getSample(static_cast<int>(index) + 1),
                                frac);
 
-        if (interpolate && (nextFrameIndex != currentFrameIndex))
-        {
-            // interpolate between frames
-            float frameFrac = trueFrameIndex - currentFrameIndex;
-            
-            float sampleNextFrame = linear_interp(nextFrameCurrentWaveform().getSample(static_cast<int>(index)),
-                                                  nextFrameCurrentWaveform().getSample(static_cast<int>(index) + 1),
-                                                  frac);
-            
-            sample = linear_interp(sample, sampleNextFrame, frameFrac);
-        }
-        
         phaseAccumulator.IncrementPhase();
     }
     
     return sample * volume;
 }
-
-const WavetableFrame& WavetableOscillator::currentFrame() const
-{
-    return wavetable.getFrame(currentFrameIndex);
-}
-
-const BandLimitedWaveform& WavetableOscillator::currentWaveform() const
-{
-    return currentFrame().getWaveform(currentWaveformIndex);
-}
-
-const WavetableFrame&  WavetableOscillator::nextFrame() const
-{
-    return wavetable.getFrame(nextFrameIndex);
-}
-
-const BandLimitedWaveform& WavetableOscillator::nextFrameCurrentWaveform() const
-{
-    return nextFrame().getWaveform(currentWaveformIndex);
-}
-

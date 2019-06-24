@@ -13,7 +13,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "Gain.h"
-#include "SynthSound.h"
 
 class Synth :   public Synthesiser,
                 public AudioProcessorValueTreeState::Listener
@@ -31,8 +30,6 @@ public:
                           const MidiBuffer& inputMidi,
                           int startSample,
                           int numSamples);
-    
-    SynthSound& getSynthSound() const;
 
 private:
     // synth components external to the voice
