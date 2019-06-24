@@ -10,11 +10,8 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include <vector>
 
-#include "OscillatorHelpers.h"
 #include "PluginHelpers.h"
 
 class BandLimitedWaveform
@@ -28,7 +25,7 @@ public:
     double getTopFrequency() const;
     void setTopFrequency(double topFrequency);
     
-    int getNumSamples() const;
+    size_t getNumSamples() const;
     float getSample(int index) const;
     
 private:
@@ -46,41 +43,46 @@ public:
     void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double minTopFrequency, double maxTopFrequency);
 
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
-    int getNumWaveforms() const;
-
-    void writeToWaveFile(String fileName);
-
+    size_t getNumWaveforms() const;
+    
+    void setWaveform(double normalizedFrequency);
+    
 private:
     std::vector<BandLimitedWaveform> blWaveforms;
-    
 };
 
 class Wavetable
 {
 public:
-    Wavetable();
+    Wavetable(double sampleRate);
     ~Wavetable();
-    
+
     void addFrame(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
     void addFrame(WavetableFrame& frame);
 
-    void clear();
-    
     const WavetableFrame& getFrame(int frameIndex) const;
-    int getNumFrames() const;
+    const WavetableFrame& currentFrame() const;
+    size_t getNumFrames() const;
+    void setCurrentFrame(int currentFrame);
     
-    void WriteFrameToWaveFile(String fileName, int frameID);
+    const BandLimitedWaveform& currentWaveform() const;
+    void setWaveform(double frequency);
     
 private:
     std::vector<WavetableFrame> frames;
+    double sampleRate;
+    
+    // state information
+    int currentFrameIndex;
+    int currentWaveformIndex;
 };
 
 //
 // example that builds a sawtooth oscillator via frequency domain
 //
-inline WavetableFrame createFrameFromSawWave()
+inline WavetableFrame sawOsc()
 {
-    int tableLen = kSingleCycleWaveformSize;    // to give full bandwidth from 20 Hz
+    int tableLen = 2048;    // to give full bandwidth from 20 Hz
     int idx;
     std::vector<double> freqWaveRe;
     std::vector<double> freqWaveIm;
@@ -109,26 +111,22 @@ inline WavetableFrame createFrameFromSawWave()
 //
 // example that creates and oscillator from an arbitrary time domain wave
 //
-inline WavetableFrame createFrameFromSingleCycle(std::vector<float> waveSamples)
+inline WavetableFrame waveOsc(double *waveSamples, int tableLen)
 {
-    int tableLength = static_cast<int>(waveSamples.size());
-    
     int idx;
     std::vector<double> freqWaveRe;
     std::vector<double> freqWaveIm;
-    freqWaveRe.resize(tableLength);
-    freqWaveIm.resize(tableLength);
+    freqWaveRe.resize(tableLen);
+    freqWaveIm.resize(tableLen);
     
     // take FFT
-    for (idx = 0; idx < tableLength; idx++)
+    for (idx = 0; idx < tableLen; idx++)
     {
         freqWaveIm[idx] = waveSamples[idx];
         freqWaveRe[idx] = 0.0;
     }
     
-    // Note - this fft (to freq domain) is the inverse of the other FFs later in the
-    // calculation which are returning to time domain.
-    fft(tableLength, freqWaveIm, freqWaveRe);
+    fft(tableLen, freqWaveRe, freqWaveIm);
     
     WavetableFrame frame;
     frame.create(freqWaveRe, freqWaveIm);

@@ -25,17 +25,54 @@ enum OscillatorParameters
     kOscParam_Volume
 };
 
-static String oscillatorParamIDPrefix = "Oscillator_";
-static String oscillator_ParamIDs[] =
+static String oscillator1ParamIDPrefix = "Oscillator1_";
+static String oscillator1_ParamIDs[] =
 {
-    "Oscillator_Wavetype",
-    "Oscillator_Octave",
-    "Oscillator_Semitone",
-    "Oscillator_Cents",
-    "Oscillator_PulseWidth",
-    "Oscillator_PolyBLEPMix",
-    "Oscillator_WaveShapeSaturation",
-    "Oscillator_Volume"
+    "Oscillator1_Wavetype",
+    "Oscillator1_Octave",
+    "Oscillator1_Semitone",
+    "Oscillator1_Cents",
+    "Oscillator1_PulseWidth",
+    "Oscillator1_PolyBLEPMix",
+    "Oscillator1_WaveShapeSaturation",
+    "Oscillator1_Volume"
+};
+
+static String oscillator2ParamIDPrefix = "Oscillator2_";
+static String oscillator2_ParamIDs[] =
+{
+    "Oscillator2_Wavetype",
+    "Oscillator2_Octave",
+    "Oscillator2_Semitone",
+    "Oscillator2_Cents",
+    "Oscillator2_PulseWidth",
+    "Oscillator2_PolyBLEPMix",
+    "Oscillator2_WaveShapeSaturation",
+    "Oscillator2_Volume"
+};
+
+static bool oscillator1_ParamEnables[] =
+{
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+};
+
+static bool oscillator2_ParamEnables[] =
+{
+    false,
+    true,
+    true,
+    true,
+    false,
+    false,
+    false,
+    true
 };
 
 // Low Frequency Oscillators
@@ -54,17 +91,17 @@ enum LfoParameters
     kLfoParam_Delay
 };
 
-static String lfoParamIDPrefix = "LFO_";
-static String lfo_ParamIDs[] =
+static String lfo1ParamIDPrefix = "LFO1_";
+static String lfo1_ParamIDs[] =
 {
-    "LFO_Wavetype",
-    "LFO_RunState",
-    "LFO_PulseWidth",
-    "LFO_PhaseOffset",
-    "LFO_Amount",
-    "LFO_PolarityOffset",
-    "LFO_Rate",
-    "LFO_Sync",
-    "LFO_FadeInTime",
-    "LFO_Delay"
+    "LFO1_Wavetype",
+    "LFO1_RunState",
+    "LFO1_PulseWidth",
+    "LFO1_PhaseOffset",
+    "LFO1_Amount",
+    "LFO1_PolarityOffset",
+    "LFO1_Rate",
+    "LFO1_Sync",
+    "LFO1_FadeInTime",
+    "LFO1_Delay"
 };

@@ -7,6 +7,7 @@
 
   ==============================================================================
 */
+
 #include "Wavetable.h"
 
 #include "OscillatorHelpers.h"
@@ -33,9 +34,9 @@ void BandLimitedWaveform::setTopFrequency(double inTopFrequency)
     topFrequency = inTopFrequency;
 }
 
-int BandLimitedWaveform::getNumSamples() const
+size_t BandLimitedWaveform::getNumSamples() const
 {
-    return static_cast<int>(samples.size());
+    return samples.size();
 }
 
 float BandLimitedWaveform::getSample(int index) const
@@ -51,12 +52,17 @@ void BandLimitedWaveform::create(std::vector<double>& freqWaveRe, std::vector<do
 
     fft(numSamples, freqWaveRe, freqWaveIm);
     
-    double scale = 1.0 / numSamples;
+    // calculate normal
+    double max = *max_element(freqWaveIm.begin(), freqWaveIm.end());
+    double scale = 1.0 / max * .999;
 
     // normalize (note we're also converting to floats here for the final sample vector)
     samples = std::vector<float>(freqWaveIm.begin(), freqWaveIm.end());
     std::for_each(samples.begin(), samples.end(), [scale](float &sample){ sample = sample * scale; });
     
+    // duplicate for interpolation wraparound
+    samples.push_back(freqWaveIm[0]);
+
     setTopFrequency(inTopFreq);
 }
 
@@ -76,9 +82,14 @@ const BandLimitedWaveform& WavetableFrame::getWaveform(int waveformIndex) const
     return blWaveforms[waveformIndex];
 }
 
-int WavetableFrame::getNumWaveforms() const
+size_t WavetableFrame::getNumWaveforms() const
 {
-    return static_cast<int>(blWaveforms.size());
+    return blWaveforms.size();
+}
+
+void WavetableFrame::setWaveform(double normalizedFrequency)
+{
+    
 }
 
 // This generates a fixed 1 table per octave set of waveforms
@@ -176,46 +187,13 @@ void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>
     }
 }
 
-void WavetableFrame::writeToWaveFile(String fileName)
-{
-    // create a buffer from the frame
-    AudioSampleBuffer buffer;
-    buffer.setSize(1, getNumWaveforms() * kSingleCycleWaveformSize);
-    int bufferIndex = 0;
-    
-    for (int index = 0; index < blWaveforms.size(); index++)
-    {
-        for (int sample = 0; sample < blWaveforms[index].getNumSamples(); sample++)
-        {
-            buffer.setSample(0, bufferIndex++, blWaveforms[index].getSample(sample));
-        }
-    }
-    
-    WavAudioFormat format;
-    String targetFolder = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + "/Downloads/WaveTableFrames/";
-    
-    if (!File(targetFolder).exists())
-    {
-        File(targetFolder).createDirectory();
-    }
-
-    File outputFile = File(targetFolder + fileName);
-    if (outputFile.exists())
-    {
-        outputFile.deleteFile();
-    }
-    
-    FileOutputStream* outputTo = outputFile.createOutputStream();
-    std::unique_ptr<AudioFormatWriter> writer(format.createWriterFor(outputTo, 44100, 1, 16, NULL, 0));
-    writer->writeFromAudioSampleBuffer(buffer, 0, buffer.getNumSamples());
-}
-
 // MARK: - Wavetable
-Wavetable::Wavetable()
+Wavetable::Wavetable(double sampleRate)
+:   sampleRate(sampleRate),
+    currentFrameIndex(0),
+    currentWaveformIndex(0)
 {
-    // load default wavetable
-    WavetableFrame frame = createFrameFromSawWave();
-    addFrame(frame);
+    
 }
 
 Wavetable::~Wavetable()
@@ -240,18 +218,35 @@ const WavetableFrame& Wavetable::getFrame(int frameIndex) const
     return frames[frameIndex];
 }
 
-int Wavetable::getNumFrames() const
+const WavetableFrame& Wavetable::currentFrame() const
 {
-    return static_cast<int>(frames.size());
+    return getFrame(currentFrameIndex);
 }
 
-void Wavetable::clear()
+size_t Wavetable::getNumFrames() const
 {
-    frames.clear();
+    return frames.size();
 }
 
-void Wavetable::WriteFrameToWaveFile(String fileName, int frameID)
+void Wavetable::setCurrentFrame(int inCurrentFrame)
 {
-    frames[frameID].writeToWaveFile(fileName);
+    currentFrameIndex = inCurrentFrame;
+}
+
+const BandLimitedWaveform& Wavetable::currentWaveform() const
+{
+    return currentFrame().getWaveform(currentWaveformIndex);
+}
+
+void Wavetable::setWaveform(double frequency)
+{
+    double normalizedFrequency = frequency/sampleRate;
+    
+    currentWaveformIndex = 0;
+    while ((normalizedFrequency >= currentFrame().getWaveform(currentWaveformIndex).getTopFrequency()) &&
+           (currentWaveformIndex < (currentFrame().getNumWaveforms() - 1)))
+    {
+        ++currentWaveformIndex;
+    }
 }
 
