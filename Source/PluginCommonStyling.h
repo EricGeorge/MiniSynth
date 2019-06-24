@@ -25,12 +25,16 @@ class CommonColours
 public:
     CommonColours()
     :   panelBackground(Colours::darkgrey),
-    detail(Colours::darkorange)
+        panelDetails(Colours::lightslategrey),
+        detail(Colours::darkorange),
+        detailContrast(Colours::deepskyblue)
     {
     }
     
     const Colour panelBackground;
+    const Colour panelDetails;
     const Colour detail;
+    const Colour detailContrast;
 };
 
 static CommonColours& getCommonColours() { static CommonColours commonColours; return commonColours; }
