@@ -139,6 +139,10 @@ void WavetablePanel::buttonClicked (Button* b)
     {
         handleExportWavetableFrame();
     }
+    else if (b == &interpolateButton)
+    {
+        waveViewPanel.setInterpolate(b->getToggleState());
+    }
 }
 
 void WavetablePanel::comboBoxChanged(ComboBox* cb)
