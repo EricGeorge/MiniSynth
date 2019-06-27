@@ -72,7 +72,7 @@ void SynthSound::setWavetableFile(const String wavFile)
             frameSamples.push_back(fileBuffer.getSample(0, index));
         }
         
-        WavetableFrame frame = createFrameFromSingleCycle(frameSamples);
+        WavetableFrame frame = createFrameFromSingleCycle2(frameSamples);
         wavetable.addFrame(frame);
     }
     

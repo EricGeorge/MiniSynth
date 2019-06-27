@@ -24,7 +24,8 @@ public:
     ~BandLimitedWaveform();
     
     void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double inTopFreq);
-    
+    void create2(std::vector<float>& freqWaveRe, double inTopFreq);
+
     double getTopFrequency() const;
     void setTopFrequency(double topFrequency);
     
@@ -43,6 +44,7 @@ public:
     ~WavetableFrame();
     
     void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
+    void create2(std::vector<float>& freqWaveRe);
     void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double minTopFrequency, double maxTopFrequency);
 
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
@@ -122,15 +124,36 @@ inline WavetableFrame createFrameFromSingleCycle(std::vector<float> waveSamples)
     // take FFT
     for (idx = 0; idx < tableLength; idx++)
     {
-        freqWaveIm[idx] = waveSamples[idx];
-        freqWaveRe[idx] = 0.0;
+        freqWaveRe[idx] = waveSamples[idx];
+        freqWaveIm[idx] = 0.0;
     }
     
     // Note - this fft (to freq domain) is the inverse of the other FFs later in the
     // calculation which are returning to time domain.
-    fft(tableLength, freqWaveIm, freqWaveRe);
+    fft(tableLength, freqWaveRe, freqWaveIm);
     
     WavetableFrame frame;
     frame.create(freqWaveRe, freqWaveIm);
     return frame;
 }
+
+inline WavetableFrame createFrameFromSingleCycle2(std::vector<float> waveSamples)
+{
+    int idx;
+    std::vector<float> fftData(waveSamples.size() * 2, 0.0f);
+    
+    // take FFT
+    for (idx = 0; idx < waveSamples.size(); idx++)
+    {
+        fftData[idx] = waveSamples[idx];
+    }
+    
+    dsp::FFT fft(11);
+    
+    fft.performRealOnlyForwardTransform(&fftData[0]);
+    
+    WavetableFrame frame;
+    frame.create2(fftData);
+    return frame;
+}
+
