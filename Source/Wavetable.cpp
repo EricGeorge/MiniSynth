@@ -57,6 +57,16 @@ void BandLimitedWaveform::create(std::vector<double>& freqWaveRe, std::vector<do
     samples = std::vector<float>(freqWaveIm.begin(), freqWaveIm.end());
     std::for_each(samples.begin(), samples.end(), [scale](float &sample){ sample = sample * scale; });
     
+    // check for dc offset and adjust if necessary
+    auto max = FloatVectorOperations::findMaximum(samples.data(), numSamples);
+    auto min = FloatVectorOperations::findMinimum(samples.data(), numSamples);
+
+    auto offset = (max + min) / 2;
+    if (abs(offset) > 0.001)
+    {
+        std::for_each(samples.begin(), samples.end(), [offset](float &sample){ sample = sample - offset; });
+    }
+    
     setTopFrequency(inTopFreq);
 }
 
