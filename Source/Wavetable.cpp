@@ -78,10 +78,20 @@ void BandLimitedWaveform::create2(std::vector<float>& freqWaveRe, double inTopFr
     fft.performRealOnlyInverseTransform(&freqWaveRe[0]);
     
     samples.resize(2048);
-    
+
     for (int i = 0; i < samples.size(); i++)
     {
         samples[i] = freqWaveRe[i];
+    }
+    
+    // check for dc offset and adjust if necessary
+    auto max = FloatVectorOperations::findMaximum(samples.data(), 2048);
+    auto min = FloatVectorOperations::findMinimum(samples.data(), 2048);
+    
+    auto offset = (max + min) / 2;
+    if (abs(offset) > 0.001)
+    {
+        std::for_each(samples.begin(), samples.end(), [offset](float &sample){ sample = sample - offset; });
     }
     
     setTopFrequency(inTopFreq);
