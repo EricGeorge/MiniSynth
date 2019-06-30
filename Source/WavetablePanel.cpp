@@ -159,7 +159,7 @@ void WavetablePanel::comboBoxChanged(ComboBox* cb)
 
 void WavetablePanel::sliderValueChanged(Slider* slider)
 {
-    if (slider == &positionSlider)
+    if (slider == &positionSlider && sound.getWavetable().wavetableLoaded())
     {
         waveViewPanel.waveformChanged(sound.getWavetable().getNumFrames() * positionSlider.getValue());
     }

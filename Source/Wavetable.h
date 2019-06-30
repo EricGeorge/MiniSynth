@@ -23,8 +23,7 @@ public:
     BandLimitedWaveform();
     ~BandLimitedWaveform();
     
-    void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double inTopFreq);
-    void create2(std::vector<float>& freqWaveRe, double inTopFreq);
+    void create(std::vector<float>& freqWaveRe, double inTopFreq);
 
     double getTopFrequency() const;
     void setTopFrequency(double topFrequency);
@@ -43,9 +42,7 @@ public:
     WavetableFrame();
     ~WavetableFrame();
     
-    void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
-    void create2(std::vector<float>& freqWaveRe);
-    void create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double minTopFrequency, double maxTopFrequency);
+    void create(std::vector<float>& freqWaveRe);
 
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
     int getNumWaveforms() const;
@@ -63,10 +60,11 @@ public:
     Wavetable();
     ~Wavetable();
     
-    void addFrame(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm);
     void addFrame(WavetableFrame& frame);
 
     void clear();
+    
+    bool wavetableLoaded() const;
     
     const WavetableFrame& getFrame(int frameIndex) const;
     int getNumFrames() const;
@@ -77,67 +75,7 @@ private:
     std::vector<WavetableFrame> frames;
 };
 
-//
-// example that builds a sawtooth oscillator via frequency domain
-//
-inline WavetableFrame createFrameFromSawWave()
-{
-    int tableLen = kSingleCycleWaveformSize;    // to give full bandwidth from 20 Hz
-    int idx;
-    std::vector<double> freqWaveRe;
-    std::vector<double> freqWaveIm;
-    
-    freqWaveRe.resize(tableLen);
-    freqWaveIm.resize(tableLen);
-    
-    // make a sawtooth
-    for (idx = 0; idx < tableLen; idx++)
-    {
-        freqWaveIm[idx] = 0.0;
-    }
-    
-    freqWaveRe[0] = freqWaveRe[tableLen >> 1] = 0.0;
-    for (idx = 1; idx < (tableLen >> 1); idx++)
-    {
-        freqWaveRe[idx] = 1.0 / idx;                    // sawtooth spectrum
-        freqWaveRe[tableLen - idx] = -freqWaveRe[idx];  // mirror
-    }
-    
-    WavetableFrame frame;
-    frame.create(freqWaveRe, freqWaveIm);
-    return frame;
-}
-
-//
-// example that creates and oscillator from an arbitrary time domain wave
-//
 inline WavetableFrame createFrameFromSingleCycle(std::vector<float> waveSamples)
-{
-    int tableLength = static_cast<int>(waveSamples.size());
-    
-    int idx;
-    std::vector<double> freqWaveRe;
-    std::vector<double> freqWaveIm;
-    freqWaveRe.resize(tableLength);
-    freqWaveIm.resize(tableLength);
-    
-    // take FFT
-    for (idx = 0; idx < tableLength; idx++)
-    {
-        freqWaveRe[idx] = waveSamples[idx];
-        freqWaveIm[idx] = 0.0;
-    }
-    
-    // Note - this fft (to freq domain) is the inverse of the other FFs later in the
-    // calculation which are returning to time domain.
-    fft(tableLength, freqWaveRe, freqWaveIm);
-    
-    WavetableFrame frame;
-    frame.create(freqWaveRe, freqWaveIm);
-    return frame;
-}
-
-inline WavetableFrame createFrameFromSingleCycle2(std::vector<float> waveSamples)
 {
     dsp::FFT fft(log2(kSingleCycleWaveformSize));
 
@@ -147,7 +85,7 @@ inline WavetableFrame createFrameFromSingleCycle2(std::vector<float> waveSamples
     fft.performRealOnlyForwardTransform(fftData.data());
     
     WavetableFrame frame;
-    frame.create2(fftData);
+    frame.create(fftData);
     return frame;
 }
 
