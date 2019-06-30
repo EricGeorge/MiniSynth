@@ -70,25 +70,22 @@ void BandLimitedWaveform::create(std::vector<double>& freqWaveRe, std::vector<do
     setTopFrequency(inTopFreq);
 }
 
-void BandLimitedWaveform::create2(std::vector<float>& freqWaveRe, double inTopFreq)
+void BandLimitedWaveform::create2(std::vector<float>& freqData, double inTopFreq)
 {
     // convert to time domain
-    dsp::FFT fft(11);
+    dsp::FFT fft(log2(kSingleCycleWaveformSize));
+    fft.performRealOnlyInverseTransform(freqData.data());
     
-    fft.performRealOnlyInverseTransform(&freqWaveRe[0]);
+    samples.assign(freqData.begin(), freqData.begin() + kSingleCycleWaveformSize);
     
-    samples.resize(2048);
-
-    for (int i = 0; i < samples.size(); i++)
-    {
-        samples[i] = freqWaveRe[i];
-    }
+    // check if waveform is centered around 0 and adjust if necessary
+    auto minMax = std::minmax_element(samples.begin(), samples.end());
     
-    // check for dc offset and adjust if necessary
-    auto max = FloatVectorOperations::findMaximum(samples.data(), 2048);
-    auto min = FloatVectorOperations::findMinimum(samples.data(), 2048);
+    float max = *minMax.second;
+    float min = *minMax.first;
     
-    auto offset = (max + min) / 2;
+    float offset = (max + min) / 2;
+    
     if (abs(offset) > 0.001)
     {
         std::for_each(samples.begin(), samples.end(), [offset](float &sample){ sample = sample - offset; });

@@ -139,18 +139,12 @@ inline WavetableFrame createFrameFromSingleCycle(std::vector<float> waveSamples)
 
 inline WavetableFrame createFrameFromSingleCycle2(std::vector<float> waveSamples)
 {
-    int idx;
-    std::vector<float> fftData(waveSamples.size() * 2, 0.0f);
+    dsp::FFT fft(log2(kSingleCycleWaveformSize));
+
+    std::vector<float> fftData(kSingleCycleWaveformSize * 2, 0.0f);
+    std::copy(waveSamples.begin(), waveSamples.end(), fftData.begin());
     
-    // take FFT
-    for (idx = 0; idx < waveSamples.size(); idx++)
-    {
-        fftData[idx] = waveSamples[idx];
-    }
-    
-    dsp::FFT fft(11);
-    
-    fft.performRealOnlyForwardTransform(&fftData[0]);
+    fft.performRealOnlyForwardTransform(fftData.data());
     
     WavetableFrame frame;
     frame.create2(fftData);
