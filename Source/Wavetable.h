@@ -23,7 +23,7 @@ public:
     BandLimitedWaveform();
     ~BandLimitedWaveform();
     
-    void create(std::vector<float>& freqWaveRe, double inTopFreq);
+    void create(std::vector<float>& blWaveformSamples, double inTopFreq);
 
     double getTopFrequency() const;
     void setTopFrequency(double topFrequency);
@@ -42,7 +42,7 @@ public:
     WavetableFrame();
     ~WavetableFrame();
     
-    void create(std::vector<float>& freqWaveRe);
+    void create(std::vector<float>& waveSamples);
 
     const BandLimitedWaveform& getWaveform(int waveformIndex) const;
     int getNumWaveforms() const;
@@ -51,7 +51,6 @@ public:
 
 private:
     std::vector<BandLimitedWaveform> blWaveforms;
-    
 };
 
 class Wavetable
@@ -60,7 +59,7 @@ public:
     Wavetable();
     ~Wavetable();
     
-    void addFrame(WavetableFrame& frame);
+    void createFrame(std::vector<float> waveSamples);
 
     void clear();
     
@@ -73,19 +72,6 @@ public:
     
 private:
     std::vector<WavetableFrame> frames;
+    
+    void addFrame(WavetableFrame& frame);
 };
-
-inline WavetableFrame createFrameFromSingleCycle(std::vector<float> waveSamples)
-{
-    dsp::FFT fft(log2(kSingleCycleWaveformSize));
-
-    std::vector<float> fftData(kSingleCycleWaveformSize * 2, 0.0f);
-    std::copy(waveSamples.begin(), waveSamples.end(), fftData.begin());
-    
-    fft.performRealOnlyForwardTransform(fftData.data());
-    
-    WavetableFrame frame;
-    frame.create(fftData);
-    return frame;
-}
-

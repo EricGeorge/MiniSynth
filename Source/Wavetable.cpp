@@ -43,13 +43,9 @@ float BandLimitedWaveform::getSample(int index) const
     return samples[index];
 }
 
-void BandLimitedWaveform::create(std::vector<float>& freqData, double inTopFreq)
+void BandLimitedWaveform::create(std::vector<float>& blWaveformSamples, double inTopFreq)
 {
-    // convert to time domain
-    dsp::FFT fft(log2(kSingleCycleWaveformSize));
-    fft.performRealOnlyInverseTransform(freqData.data());
-    
-    samples.assign(freqData.begin(), freqData.begin() + kSingleCycleWaveformSize);
+    samples = blWaveformSamples;
     
     // check if waveform is centered around 0 and adjust if necessary
     auto minMax = std::minmax_element(samples.begin(), samples.end());
@@ -89,8 +85,15 @@ int WavetableFrame::getNumWaveforms() const
 }
 
 // This generates a fixed 1 table per octave set of waveforms
-void WavetableFrame::create(std::vector<float>& freqData)
+void WavetableFrame::create(std::vector<float>& waveSamples)
 {
+    dsp::FFT fft(log2(kSingleCycleWaveformSize));
+    
+    std::vector<float> freqData(kSingleCycleWaveformSize * 2, 0.0f);
+    std::copy(waveSamples.begin(), waveSamples.end(), freqData.begin());
+    
+    fft.performRealOnlyForwardTransform(freqData.data());
+    
     unsigned long numSamples = freqData.size();
     assert(numSamples == kSingleCycleWaveformSize * 2);
     
@@ -128,10 +131,16 @@ void WavetableFrame::create(std::vector<float>& freqData)
             blFreqData[numSamples - realIndex] = freqData[numSamples - realIndex];
             blFreqData[numSamples - imagIndex] = freqData[numSamples - imagIndex];
         }
-                
+      
+        // convert back to time domain
+        fft.performRealOnlyInverseTransform(blFreqData.data());
+        
+        // the band limited sample data is only in the first half
+        std::vector<float> blWaveformSamples(blFreqData.begin(), blFreqData.begin() + kSingleCycleWaveformSize);
+        
         // make the wavetable
         BandLimitedWaveform blWaveform;
-        blWaveform.create(blFreqData, topFreq);
+        blWaveform.create(blWaveformSamples, topFreq);
         blWaveforms.push_back(blWaveform);
         
         // prepare for next table
@@ -182,6 +191,13 @@ Wavetable::Wavetable()
 Wavetable::~Wavetable()
 {
     
+}
+
+void Wavetable::createFrame(std::vector<float> waveSamples)
+{
+    WavetableFrame frame;
+    frame.create(waveSamples);
+    addFrame(frame);
 }
 
 void Wavetable::addFrame(WavetableFrame& frame)
