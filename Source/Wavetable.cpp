@@ -43,19 +43,22 @@ float BandLimitedWaveform::getSample(int index) const
     return samples[index];
 }
 
-void BandLimitedWaveform::create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double inTopFreq)
+void BandLimitedWaveform::create(std::vector<float>& blWaveformSamples, double inTopFreq)
 {
-    // convert to time domain
-    int numSamples = static_cast<int>(freqWaveRe.size());
-    assert(numSamples == freqWaveIm.size());
-
-    fft(numSamples, freqWaveRe, freqWaveIm);
+    samples = blWaveformSamples;
     
-    double scale = 1.0 / numSamples;
-
-    // normalize (note we're also converting to floats here for the final sample vector)
-    samples = std::vector<float>(freqWaveIm.begin(), freqWaveIm.end());
-    std::for_each(samples.begin(), samples.end(), [scale](float &sample){ sample = sample * scale; });
+    // check if waveform is centered around 0 and adjust if necessary
+    auto minMax = std::minmax_element(samples.begin(), samples.end());
+    
+    float max = *minMax.second;
+    float min = *minMax.first;
+    
+    float offset = (max + min) / 2;
+    
+    if (abs(offset) > 0.001)
+    {
+        std::for_each(samples.begin(), samples.end(), [offset](float &sample){ sample = sample - offset; });
+    }
     
     setTopFrequency(inTopFreq);
 }
@@ -82,18 +85,25 @@ int WavetableFrame::getNumWaveforms() const
 }
 
 // This generates a fixed 1 table per octave set of waveforms
-void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm)
+void WavetableFrame::create(std::vector<float>& waveSamples)
 {
-    int numSamples = static_cast<int>(freqWaveRe.size());
-    assert(numSamples == freqWaveIm.size());
+    dsp::FFT fft(log2(kSingleCycleWaveformSize));
     
-    // zero DC offset and Nyquist
-    freqWaveRe[0] = freqWaveIm[0] = 0.0;
-    freqWaveRe[numSamples >> 1] = freqWaveIm[numSamples >> 1] = 0.0;
+    std::vector<float> freqData(kSingleCycleWaveformSize * 2, 0.0f);
+    std::copy(waveSamples.begin(), waveSamples.end(), freqData.begin());
+    
+    fft.performRealOnlyForwardTransform(freqData.data());
+    
+    unsigned long numSamples = freqData.size();
+    assert(numSamples == kSingleCycleWaveformSize * 2);
+    
+    // zero DC offset
+    freqData[0] = 0.0;
+    freqData[1] = 0.0;
     
     // determine maxHarmonic, the highest non-zero harmonic in the wave
-    unsigned int maxHarmonic  = calculateMaxHarmonic(freqWaveRe, freqWaveIm);
-    
+    unsigned int maxHarmonic = calculateMaxHarmonic(freqData);
+
     // topFreq is normalized to the sampleRate.
     // we can allow for aliasing back down to about 15kHz since it will be mostly inaudible.
     // so we can allow harmonics up to about (44.1k - 15k =) 29.1k.  29.1k / 22050 = 1.319
@@ -102,77 +112,40 @@ void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>
     double topFreq = 2.0 / 3.0 / maxHarmonic;
     
     // for subsquent tables, double topFreq and remove upper half of harmonics
-    std::vector<double> ar(numSamples, 0.0);
-    std::vector<double> ai(numSamples, 0.0);
+    std::vector<float> blFreqData(numSamples, 0.0);
     
     while (maxHarmonic > 0)
     {
-        std::fill(ar.begin(), ar.end(), 0);
-        std::fill(ai.begin(), ai.end(), 0);
-
+        std::fill(blFreqData.begin(), blFreqData.end(), 0);
+        
+        int index = 1;
+        
         // fill the table in with the needed harmonics
-        for (int idx = 1; idx <= maxHarmonic; idx++)
+        for (index = 1; index <= maxHarmonic; index++)
         {
-            ar[idx] = freqWaveRe[idx];
-            ai[idx] = freqWaveIm[idx];
-            ar[numSamples - idx] = freqWaveRe[numSamples - idx];
-            ai[numSamples - idx] = freqWaveIm[numSamples - idx];
+            int realIndex = 2 * index;
+            int imagIndex = realIndex + 1;
+            
+            blFreqData[realIndex] = freqData[realIndex];
+            blFreqData[imagIndex] = freqData[imagIndex];
+            blFreqData[numSamples - realIndex] = freqData[numSamples - realIndex];
+            blFreqData[numSamples - imagIndex] = freqData[numSamples - imagIndex];
         }
+      
+        // convert back to time domain
+        fft.performRealOnlyInverseTransform(blFreqData.data());
+        
+        // the band limited sample data is only in the first half
+        std::vector<float> blWaveformSamples(blFreqData.begin(), blFreqData.begin() + kSingleCycleWaveformSize);
         
         // make the wavetable
         BandLimitedWaveform blWaveform;
-        blWaveform.create(ar, ai, topFreq);
+        blWaveform.create(blWaveformSamples, topFreq);
         blWaveforms.push_back(blWaveform);
         
         // prepare for next table
         topFreq *= 2;
         maxHarmonic >>= 1;
-    }
-}
-
-// instead of a fixed table per octave, this builds tables based on the frequency constraints passed in
-// minTopFrequency is the minimum normalized frequency that all wave tables support - ie ensures harmonics are produced to this value
-// maxTopFrequency is the maximum normalized frequency that all wave tables support - determines how much aliasing is included.
-void WavetableFrame::create(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm, double minTopFrequency, double maxTopFrequency)
-{
-    int numSamples = static_cast<int>(freqWaveRe.size());
-    assert(numSamples == freqWaveIm.size());
-    assert(maxTopFrequency > minTopFrequency);
-
-    // zero DC offset and Nyquist to be safe
-    freqWaveRe[0] = freqWaveIm[0] = 0.0;
-    freqWaveRe[numSamples >> 1] = freqWaveIm[numSamples >> 1] = 0.0;
-    
-    // for subsequent tables, double topFreq and remove upper half of harmonics
-    std::vector<double> ar(numSamples, 0.0);
-    std::vector<double> ai(numSamples, 0.0);
-
-    unsigned int maxHarmonic  = calculateMaxHarmonic(freqWaveRe, freqWaveIm);
-    
-    while (maxHarmonic > 0)
-    {
-        double topFreq = maxTopFrequency / maxHarmonic;
-        
-        std::fill(ar.begin(), ar.end(), 0);
-        std::fill(ai.begin(), ai.end(), 0);
-
-        // fill the table in with the needed harmonics
-        for (int idx = 1; idx <= maxHarmonic; idx++)
-        {
-            ar[idx] = freqWaveRe[idx];
-            ai[idx] = freqWaveIm[idx];
-            ar[numSamples - idx] = freqWaveRe[numSamples - idx];
-            ai[numSamples - idx] = freqWaveIm[numSamples - idx];
-        }
-        
-        // make the wavetable
-        BandLimitedWaveform blWaveform;
-        blWaveform.create(ar, ai, topFreq);
-        blWaveforms.push_back(blWaveform);
-        
-        // topFreq is new base frequency, so figure how many harmonics will fit withing maxTop
-        int candidateHarmonic = std::round(minTopFrequency / topFreq);  // next table's maximum harmonic
-        maxHarmonic = candidateHarmonic >= maxHarmonic ? maxHarmonic - 1 : candidateHarmonic;
     }
 }
 
@@ -220,11 +193,11 @@ Wavetable::~Wavetable()
     
 }
 
-void Wavetable::addFrame(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm)
+void Wavetable::createFrame(std::vector<float> waveSamples)
 {
     WavetableFrame frame;
-    frame.create(freqWaveRe, freqWaveIm);
-    frames.push_back(frame);
+    frame.create(waveSamples);
+    addFrame(frame);
 }
 
 void Wavetable::addFrame(WavetableFrame& frame)
@@ -245,6 +218,11 @@ int Wavetable::getNumFrames() const
 void Wavetable::clear()
 {
     frames.clear();
+}
+
+bool Wavetable::wavetableLoaded() const
+{
+    return frames.size() > 0;
 }
 
 void Wavetable::WriteFrameToWaveFile(String fileName, int frameID)

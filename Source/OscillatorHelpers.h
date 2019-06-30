@@ -136,18 +136,17 @@ private:
     double phaseInc;
 };
 
-inline int calculateMaxHarmonic(std::vector<double>& freqWaveRe, std::vector<double>& freqWaveIm)
+inline int calculateMaxHarmonic(std::vector<float>& freqData)
 {
-    int numSamples = static_cast<int>(freqWaveRe.size());
-    assert(numSamples == freqWaveIm.size());
-
+    assert(freqData.size() == kSingleCycleWaveformSize * 2);
+    
     // determine maxHarmonic, the highest non-zero harmonic in the wave
-    int maxHarmonic = numSamples >> 1;
-    while ((fabs(freqWaveRe[maxHarmonic]) + fabs(freqWaveIm[maxHarmonic]) < kMinAudibleDecibels) && maxHarmonic > 0)
+    int maxHarmonic = kSingleCycleWaveformSize >> 1;
+    while ((fabs(freqData[maxHarmonic * 2]) < kMinAudibleDecibels) && maxHarmonic > 0)
     {
         --maxHarmonic;
     }
-
+    
     return maxHarmonic;
 }
 

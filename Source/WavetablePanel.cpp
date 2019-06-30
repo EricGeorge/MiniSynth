@@ -139,6 +139,10 @@ void WavetablePanel::buttonClicked (Button* b)
     {
         handleExportWavetableFrame();
     }
+    else if (b == &interpolateButton)
+    {
+        waveViewPanel.setInterpolate(b->getToggleState());
+    }
 }
 
 void WavetablePanel::comboBoxChanged(ComboBox* cb)
@@ -155,7 +159,7 @@ void WavetablePanel::comboBoxChanged(ComboBox* cb)
 
 void WavetablePanel::sliderValueChanged(Slider* slider)
 {
-    if (slider == &positionSlider)
+    if (slider == &positionSlider && sound.getWavetable().wavetableLoaded())
     {
         waveViewPanel.waveformChanged(sound.getWavetable().getNumFrames() * positionSlider.getValue());
     }
