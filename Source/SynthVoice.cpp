@@ -20,7 +20,6 @@
 SynthVoice::SynthVoice(Synth& synth)
 :   synth(synth),
     level(0.0f),
-    osc(getSampleRate()),
     wtb(getSampleRate(), synth.getSynthSound()),
     env(getSampleRate()),
     amp(),
@@ -34,11 +33,7 @@ SynthVoice::~SynthVoice()
 
 void SynthVoice::parameterChanged (const String& parameterID, float newValue)
 {
-    if (parameterID.contains(oscillatorParamIDPrefix))
-    {
-        oscParameterChanged(parameterID, newValue);
-    }
-    else if (parameterID.contains(wavetableParamIDPrefix))
+    if (parameterID.contains(wavetableParamIDPrefix))
     {
         wtbParameterChanged(parameterID, newValue);
     }
@@ -53,42 +48,6 @@ void SynthVoice::parameterChanged (const String& parameterID, float newValue)
     else if (parameterID.contains(lfoParamIDPrefix))
     {
         lfoParameterChanged(parameterID, newValue);
-    }
-}
-
-void SynthVoice::oscParameterChanged (const String& parameterID, float newValue)
-{
-    if (parameterID == oscillator_ParamIDs[kOscParam_WaveType])
-    {
-        osc.setWaveType(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Octave])
-    {
-        osc.setOctaves(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Semitone])
-    {
-        osc.setSemitones(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Cents])
-    {
-        osc.setCents(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_PulseWidth])
-    {
-        osc.setPulseWidth(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_PolyBLEPMix])
-    {
-        osc.setPolyBLEPMix(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_WaveShapeSaturation])
-    {
-        osc.setWaveShapeSaturation(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Volume])
-    {
-        osc.setVolume(newValue);
     }
 }
 
@@ -203,13 +162,11 @@ void SynthVoice::startNote(int midiNoteNumber, float velocity,
 {
     level = velocity * 0.25;
 
-    osc.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
     wtb.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
-    osc.stop();
     wtb.stop();
     clearCurrentNote();
 }
@@ -226,13 +183,12 @@ void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSampl
 {
     for (int index = 0; index < numSamples; ++index)
     {
-        double sample1 = osc.getNextSample() * level;
-        double sample2 = wtb.getNextSample() * level;
+        double sample = wtb.getNextSample() * level;
         double envMod = env.getNextSampleMod();
         
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
         {
-            double processedSample = amp.processSample(sample1 + sample2, channel, envMod);
+            double processedSample = amp.processSample(sample, channel, envMod);
             outputBuffer.addSample(channel, startSample, processedSample);
         }
         ++startSample;

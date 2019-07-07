@@ -13,7 +13,6 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "ControlBarPanel.h"
-#include "OscillatorPanel.h"
 #include "OutputPanel.h"
 #include "PluginProcessor.h"
 #include "ScopePanel.h"
@@ -41,7 +40,6 @@ private:
     ControlBarPanel controlBarComponent;
     MidiKeyboardComponent midiKeyboardComponent;
     OutputPanel outputComponent;
-    OscillatorPanel oscillatorComponent;
     WavetablePanel wavetableComponent;
     ScopePanel scopeComponent;
 

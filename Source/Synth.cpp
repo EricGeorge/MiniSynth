@@ -41,17 +41,6 @@ SynthSound& Synth::getSynthSound() const
 
 void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout& layout)
 {
-    // va oscillator
-    layout.add(std::make_unique<AudioProcessorParameterGroup>("VAOscGroupID", "VA Osc", "/",
-                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_WaveType], "Osc Wavetype", 1, 9, 1),
-                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_Octave], "Osc Octave", -4, 4, 0),
-                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_Semitone], "Osc Semitones", -12, 12, 0),
-                                                              std::make_unique<AudioParameterInt>(oscillator_ParamIDs[kOscParam_Cents], "Osc Cents", -100, 100, 0),
-                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_PulseWidth], "Osc Pulse Width", NormalisableRange<float> (1.0f, 99.0f), 50.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_PolyBLEPMix], "Osc PolyBLEP Mix", NormalisableRange<float> (0.0f, 100.0f), 0.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], "Osc Waveshape Saturation", NormalisableRange<float> (1.0f, 5.0f), 1.0f),
-                                                              std::make_unique<AudioParameterFloat>(oscillator_ParamIDs[kOscParam_Volume], "Osc Volume", NormalisableRange<float> (0.0f, 1.0f), 0.0f)));
-    
     // wavetable
     layout.add(std::make_unique<AudioProcessorParameterGroup>("WavetableOscGroupID", "Wavetable Osc", "/",
                                                               std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Position], "Wavetable Position", NormalisableRange<float> (0.0f, 0.99999f), 0.0f),
@@ -92,16 +81,6 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
 
 void Synth::addParameterListeners(AudioProcessorValueTreeState& state)
 {
-    // va oscillator
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_WaveType], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_Octave], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_Semitone], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_Cents], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_PulseWidth], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_PolyBLEPMix], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], this);
-    state.addParameterListener(oscillator_ParamIDs[kOscParam_Volume], this);
-    
     // wavetable
     state.addParameterListener(wavetable_ParamIDs[kWtbParam_Position], this);
     state.addParameterListener(wavetable_ParamIDs[kWtbParam_Interpolate], this);
@@ -137,17 +116,7 @@ void Synth::addParameterListeners(AudioProcessorValueTreeState& state)
     
 void Synth::removeParameterListeners(AudioProcessorValueTreeState& state)
 {
-    // va oscillator
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_WaveType], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Octave], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Semitone], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Cents], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_PulseWidth], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_PolyBLEPMix], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_WaveShapeSaturation], this);
-    state.removeParameterListener(oscillator_ParamIDs[kOscParam_Volume], this);
-    
-    // oscillator 2
+   // oscillator 2
     state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Position], this);
     state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Interpolate], this);
     state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Semitones], this);
