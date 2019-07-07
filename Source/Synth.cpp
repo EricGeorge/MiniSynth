@@ -10,11 +10,14 @@
 
 #include "Synth.h"
 
+#include "AmplifierParameters.h"
+#include "EnvelopeParameters.h"
 #include "OutputParameters.h"
 #include "OscillatorParameters.h"
+#include "WavetableParameters.h"
+
 #include "PluginHelpers.h"
 #include "SynthVoice.h"
-#include "WavetableParameters.h"
 
 Synth::Synth()
 {
@@ -57,6 +60,18 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
                                                               std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Cents], "Wavetable Cents", NormalisableRange<float> (-1.0f, 1.0f), 0.0f),
                                                               std::make_unique<AudioParameterFloat>(wavetable_ParamIDs[kWtbParam_Volume], "Wavetable Volume", NormalisableRange<float> (0.0f, 1.0f), 1.0f)));
     
+    // amp envelope
+    layout.add(std::make_unique<AudioProcessorParameterGroup>("AmpEnvelopeGroupID", "Amp Envelope", "/",
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Attack], "Attack", NormalisableRange<float> (0.0f, 1.0f), 0.1f),
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Decay], "Decay", NormalisableRange<float> (0.0f, 1.0f), 0.1f),
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Sustain], "Sustain", NormalisableRange<float> (0.0f, 1.0f), 0.7f),
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Release], "Release", NormalisableRange<float> (0.0f, 1.0f), 0.1f)));
+    
+    // amplifier
+    layout.add(std::make_unique<AudioProcessorParameterGroup>("AmplifierID", "Amp", "/",
+                                                              std::make_unique<AudioParameterFloat>(amplifier_ParamIDs[kAmpParam_Gain], "Gain", NormalisableRange<float> (0.0f, 1.0f), 1.0f),
+                                                              std::make_unique<AudioParameterFloat>(amplifier_ParamIDs[kAmpParam_Pan], "Pan", NormalisableRange<float> (-1.0f, 1.0f), 0.0f)));
+                                                              
     // lfo 1
     layout.add(std::make_unique<AudioProcessorParameterGroup>("LfoGroupID", "LFO", "/",
                                                               std::make_unique<AudioParameterInt>(lfo_ParamIDs[kLfoParam_WaveType], "LFO1 Wavetype", 1, 5, 1),
@@ -94,6 +109,16 @@ void Synth::addParameterListeners(AudioProcessorValueTreeState& state)
     state.addParameterListener(wavetable_ParamIDs[kWtbParam_Cents], this);
     state.addParameterListener(wavetable_ParamIDs[kWtbParam_Volume], this);
 
+    // amp envelope
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_Attack], this);
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_Decay], this);
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_Sustain], this);
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_Release], this);
+
+    // amp
+    state.addParameterListener(amplifier_ParamIDs[kAmpParam_Gain], this);
+    state.addParameterListener(amplifier_ParamIDs[kAmpParam_Pan], this);
+    
     // lfo
     state.addParameterListener(lfo_ParamIDs[kLfoParam_WaveType], this);
     state.addParameterListener(lfo_ParamIDs[kLfoParam_RunState], this);
@@ -129,6 +154,16 @@ void Synth::removeParameterListeners(AudioProcessorValueTreeState& state)
     state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Cents], this);
     state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Volume], this);
     
+    // amp envelope
+    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Attack], this);
+    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Decay], this);
+    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Sustain], this);
+    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Release], this);
+    
+    // amp
+    state.removeParameterListener(amplifier_ParamIDs[kAmpParam_Gain], this);
+    state.removeParameterListener(amplifier_ParamIDs[kAmpParam_Pan], this);
+
     // LFO
     state.removeParameterListener(lfo_ParamIDs[kLfoParam_WaveType], this);
     state.removeParameterListener(lfo_ParamIDs[kLfoParam_RunState], this);

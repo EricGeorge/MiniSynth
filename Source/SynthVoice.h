@@ -12,7 +12,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "Amplifier.h"
 #include "BandLimitedOscillator.h"
+#include "Envelope.h"
 #include "LowFrequencyOscillator.h"
 #include "Synth.h"
 #include "WavetableOscillator.h"
@@ -38,15 +40,19 @@ public:
     
     void renderNextBlock (AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override;
     
-    void parameterChanged (const String& parameterID, float newValue);
-    void oscParameterChanged (const String& parameterID, float newValue);
-    void wtbParameterChanged (const String& parameterID, float newValue);
-    void lfoParameterChanged (const String& parameterID, float newValue);
+    void parameterChanged(const String& parameterID, float newValue);
+    void oscParameterChanged(const String& parameterID, float newValue);
+    void wtbParameterChanged(const String& parameterID, float newValue);
+    void lfoParameterChanged(const String& parameterID, float newValue);
+    void envParameterChanged(const String& parameterID, float newValue);
+    void ampParameterChanged(const String& parameterID, float newValue);
 
 private:
     Synth& synth;
     float level;
     BLOsc osc;
     WTOsc wtb;
+    Env env;
+    Amp amp;
     LFO lfo;
 };

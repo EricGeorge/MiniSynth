@@ -12,6 +12,10 @@
         <FILE id="pf4Qb5" name="PluginLayout.h" compile="0" resource="0" file="Source/PluginLayout.h"/>
       </GROUP>
       <GROUP id="{2A21BA41-6655-215F-A822-1631B9D499F7}" name="Parameters">
+        <FILE id="WpHF53" name="AmplifierParameters.h" compile="0" resource="0"
+              file="Source/AmplifierParameters.h"/>
+        <FILE id="JoR0iq" name="EnvelopeParameters.h" compile="0" resource="0"
+              file="Source/EnvelopeParameters.h"/>
         <FILE id="BuTILn" name="OscillatorParameters.h" compile="0" resource="0"
               file="Source/OscillatorParameters.h"/>
         <FILE id="QkGBlo" name="OutputParameters.h" compile="0" resource="0"
@@ -40,6 +44,14 @@
       </GROUP>
     </GROUP>
     <GROUP id="{3EE8477B-9BED-6B30-96F7-C82E736C24C7}" name="Processors">
+      <GROUP id="{772FCF72-6A95-B411-82EA-BDC26B5AE60A}" name="AmplifierProcessor">
+        <FILE id="SwaVNH" name="Amplifier.h" compile="0" resource="0" file="Source/Amplifier.h"/>
+        <FILE id="jnk7kf" name="Amplifier.cpp" compile="1" resource="0" file="Source/Amplifier.cpp"/>
+      </GROUP>
+      <GROUP id="{716C19A8-00AC-D625-9057-C2FD23ABDE9A}" name="EnvelopeProcessor">
+        <FILE id="MGMyEY" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
+        <FILE id="JTPyph" name="Envelope.cpp" compile="1" resource="0" file="Source/Envelope.cpp"/>
+      </GROUP>
       <GROUP id="{F906826B-FEEF-34D0-2EC7-7974502AFEEB}" name="GainProcessor">
         <FILE id="MZTNbY" name="Gain.h" compile="0" resource="0" file="Source/Gain.h"/>
         <FILE id="gQgD4G" name="Gain.cpp" compile="1" resource="0" file="Source/Gain.cpp"/>

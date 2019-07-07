@@ -10,15 +10,20 @@
 
 #include "SynthVoice.h"
 
+#include "AmplifierParameters.h"
+#include "EnvelopeParameters.h"
 #include "OscillatorParameters.h"
-#include "SynthSound.h"
 #include "WavetableParameters.h"
+
+#include "SynthSound.h"
 
 SynthVoice::SynthVoice(Synth& synth)
 :   synth(synth),
     level(0.0f),
     osc(getSampleRate()),
     wtb(getSampleRate(), synth.getSynthSound()),
+    env(getSampleRate()),
+    amp(),
     lfo(getSampleRate())
 {
 }
@@ -36,6 +41,14 @@ void SynthVoice::parameterChanged (const String& parameterID, float newValue)
     else if (parameterID.contains(wavetableParamIDPrefix))
     {
         wtbParameterChanged(parameterID, newValue);
+    }
+    else if (parameterID.contains(envelopeParamIDPrefix))
+    {
+        envParameterChanged(parameterID, newValue);
+    }
+    else if (parameterID.contains(amplifierParamIDPrefix))
+    {
+        ampParameterChanged(parameterID, newValue);
     }
     else if (parameterID.contains(lfoParamIDPrefix))
     {
@@ -100,6 +113,38 @@ void SynthVoice::wtbParameterChanged (const String& parameterID, float newValue)
     else if (parameterID == wavetable_ParamIDs[kWtbParam_Volume])
     {
         wtb.setVolume(newValue);
+    }
+}
+
+void SynthVoice::envParameterChanged(const String &parameterID, float newValue)
+{
+    if (parameterID == envelope_ParamIDs[kEnvParam_Attack])
+    {
+        env.setAttack(newValue);
+    }
+    else if (parameterID == envelope_ParamIDs[kEnvParam_Decay])
+    {
+        env.setDecay(newValue);
+    }
+    else if (parameterID == envelope_ParamIDs[kEnvParam_Sustain])
+    {
+        env.setSustain(newValue);
+    }
+    else if (parameterID == envelope_ParamIDs[kEnvParam_Release])
+    {
+        env.setRelease(newValue);
+    }
+}
+
+void SynthVoice::ampParameterChanged(const String &parameterID, float newValue)
+{
+    if (parameterID == amplifier_ParamIDs[kAmpParam_Gain])
+    {
+        amp.setGain(newValue);
+    }
+    else if (parameterID == amplifier_ParamIDs[kAmpParam_Pan])
+    {
+        amp.setPan(newValue);
     }
 }
 
@@ -183,9 +228,12 @@ void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSampl
     {
         double sample1 = osc.getNextSample() * level;
         double sample2 = wtb.getNextSample() * level;
+        double envMod = env.getNextSampleMod();
+        
         for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
         {
-            outputBuffer.addSample(channel, startSample, sample1 + sample2);
+            double processedSample = amp.processSample(sample1 + sample2, channel, envMod);
+            outputBuffer.addSample(channel, startSample, processedSample);
         }
         ++startSample;
     }
