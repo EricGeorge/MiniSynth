@@ -23,17 +23,13 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
     wavetableComponent("Wavetable Oscillator", wavetable_ParamIDs, processor.getSynth().getSynthSound()),
     scopeComponent(processor.getAudioBufferQueue())
 {
-    addAndMakeVisible(controlBarComponent);
     addAndMakeVisible(wavetableComponent);
-    addAndMakeVisible(outputComponent);
     addAndMakeVisible(scopeComponent);
     addAndMakeVisible(midiKeyboardComponent);
 
     setSize(pluginEditorWidth, pluginEditorHeight);
     
     midiKeyboardComponent.setKeyWidth(midiKeyboardKeyWidth);
-    
-    outputComponent.setupAttachments(processor.getValueTreeState());
     wavetableComponent.setupAttachments(processor.getValueTreeState());
 }
 
@@ -49,8 +45,6 @@ void MiniSynthAudioProcessorEditor::paint (Graphics& g)
 
 void MiniSynthAudioProcessorEditor::resized()
 {
-    controlBarComponent.setBounds(controlBarX, controlBarY, controlBarWidth, controlBarHeight);
-    outputComponent.setBounds(outputX, outputY, outputWidth, outputHeight);
     wavetableComponent.setBounds(oscillatorX, oscillatorY, oscillatorWidth, oscillatorHeight / 2);
     scopeComponent.setBounds(scopeX, scopeY, scopeWidth, scopeHeight);
     midiKeyboardComponent.setBounds(midiKeyboardX, midiKeyboardY, midiKeyboardWidth, midiKeyboardHeight);

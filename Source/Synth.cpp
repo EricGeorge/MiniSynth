@@ -76,7 +76,7 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
 
     // output gain
     layout.add(std::make_unique<AudioProcessorParameterGroup>("OutputGroupID", "Output Gain", "/",
-                                                              std::make_unique<AudioParameterFloat>(outputGain_ParameterID, "Output Gain", NormalisableRange<float> (0.0f, 1.0f), Decibels::decibelsToGain(-3.0f))));
+                                                              std::make_unique<AudioParameterFloat>(outputGain_ParameterID, "Output Gain", NormalisableRange<float> (0.0f, 1.0f), Decibels::decibelsToGain(0.0f))));
 }
 
 void Synth::addParameterListeners(AudioProcessorValueTreeState& state)

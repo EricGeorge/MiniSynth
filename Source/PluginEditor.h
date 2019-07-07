@@ -37,9 +37,7 @@ private:
     // access the processor object that created it.
     MiniSynthAudioProcessor& processor;
     
-    ControlBarPanel controlBarComponent;
     MidiKeyboardComponent midiKeyboardComponent;
-    OutputPanel outputComponent;
     WavetablePanel wavetableComponent;
     ScopePanel scopeComponent;
 
