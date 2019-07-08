@@ -22,8 +22,7 @@ SynthVoice::SynthVoice(Synth& synth)
     level(0.0f),
     wtb(getSampleRate(), synth.getSynthSound()),
     env(getSampleRate()),
-    amp(),
-    lfo(getSampleRate())
+    amp()
 {
 }
 
@@ -44,10 +43,6 @@ void SynthVoice::parameterChanged (const String& parameterID, float newValue)
     else if (parameterID.contains(amplifierParamIDPrefix))
     {
         ampParameterChanged(parameterID, newValue);
-    }
-    else if (parameterID.contains(lfoParamIDPrefix))
-    {
-        lfoParameterChanged(parameterID, newValue);
     }
 }
 
@@ -106,51 +101,6 @@ void SynthVoice::ampParameterChanged(const String &parameterID, float newValue)
         amp.setPan(newValue);
     }
 }
-
-void SynthVoice::lfoParameterChanged (const String& parameterID, float newValue)
-{
-    if (parameterID == lfo_ParamIDs[kLfoParam_WaveType])
-    {
-        lfo.setWaveType(newValue);
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_RunState])
-    {
-        lfo.setRunState(newValue);     // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_PulseWidth])
-    {
-        lfo.setPulseWidth(newValue);
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_PhaseOffset])
-    {
-        lfo.setPhaseOffset(newValue);  // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Amount])
-    {
-        lfo.setAmount(newValue);
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_PolarityOffset])
-    {
-        lfo.setPolarityOffset(newValue);   // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Rate])
-    {
-        lfo.setRate(newValue);     // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Sync])
-    {
-        lfo.setSync(newValue);     //TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_FadeInTime])
-    {
-        lfo.setFadeInTime(newValue);   // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Delay])
-    {
-        lfo.setDelay(newValue);    // TODO
-    }
-}
-
 
 bool SynthVoice::canPlaySound(SynthesiserSound* sound)
 {

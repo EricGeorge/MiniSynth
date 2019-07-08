@@ -11,16 +11,17 @@
 #include "WavetableOscillator.h"
 
 #include "PluginHelpers.h"
+#include "WavetableParameters.h"
 
 WavetableOscillator::WavetableOscillator(double sampleRate, SynthSound& sound)
 :   sampleRate(sampleRate),
     frequency(0.0),
     sound(sound),
-    position(0.0),
-    interpolate(false),
-    semitones(0),
-    cents(0),
-    volume(1.0),
+    position(wtbPositionInitialValue),
+    interpolate(wtbInterpolateInitialValue),
+    semitones(wtbSemitonesInitialValue),
+    cents(wtbCentsInitialValue),
+    volume(wtbVolumeInitialValue),
     currentWaveformIndex(0),
     currentFrameIndex(-1),
     nextFrameIndex(-1),

@@ -10,9 +10,11 @@
 
 #include "Amplifier.h"
 
+#include "AmplifierParameters.h"
+
 Amplifier::Amplifier()
-:   gain(1.0),
-    pan(0.0)
+:   gain(ampGainInitialValue),
+    pan(ampPanInitialValue)
 {
     
 }

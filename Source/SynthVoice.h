@@ -41,7 +41,6 @@ public:
     
     void parameterChanged(const String& parameterID, float newValue);
     void wtbParameterChanged(const String& parameterID, float newValue);
-    void lfoParameterChanged(const String& parameterID, float newValue);
     void envParameterChanged(const String& parameterID, float newValue);
     void ampParameterChanged(const String& parameterID, float newValue);
 
@@ -51,5 +50,4 @@ private:
     WTOsc wtb;
     Env env;
     Amp amp;
-    LFO lfo;
 };

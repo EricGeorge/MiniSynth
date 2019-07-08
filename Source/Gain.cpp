@@ -14,7 +14,7 @@
 #include "PluginHelpers.h"
 
 Gain::Gain()
-:   gain(juce::Decibels::decibelsToGain(0.0f)),
+:   gain(juce::Decibels::decibelsToGain(outputGainInitialValue)),
     gainSmoothed(gain)
 {
 }

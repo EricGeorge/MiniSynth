@@ -10,13 +10,15 @@
 
 #include "Envelope.h"
 
+#include "EnvelopeParameters.h"
+
 Envelope::Envelope(double sampleRate)
 :   sampleRate(sampleRate),
     state(Idle),
-    attack(0.1),
-    decay(0.1),
-    sustain(0.7),
-    release(0.1)
+    attack(envAttackInitialValue),
+    decay(envDecayInitialValue),
+    sustain(envSustainInitialValue),
+    release(envReleaseInitialValue)
 {
     
 }
