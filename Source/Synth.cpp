@@ -51,10 +51,24 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
     
     // amp envelope
     layout.add(std::make_unique<AudioProcessorParameterGroup>("AmpEnvelopeGroupID", "Amp Envelope", "/",
-                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Attack], "Attack", NormalisableRange<float> (0.0f, 1.0f), 0.1f),
-                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Decay], "Decay", NormalisableRange<float> (0.0f, 1.0f), 0.1f),
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Attack],
+                                                                                                    "Attack",
+                                                                                                    NormalisableRange<float> (0.1f,
+                                                                                                                              20.0f,
+                                                                                                                              [](float start, float end, float value) { return convertToRangeWithAnchor(start, end, value, 0.5, 1.0);},
+                                                                                                                              [](float start, float end, float value) { return convertFromRangeWithAnchor(start, end, value, 0.5, 1.0);}),
+                                                                                                    0.1f),
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Decay], "Decay", NormalisableRange<float> (0.1f,
+                                                                                                                                                                           20.0f,
+                                                                                                                                                                           [](float start, float end, float value) { return convertToRangeWithAnchor(start, end, value, 0.5, 1.0);},
+                                                                                                                                                                           [](float start, float end, float value) { return convertFromRangeWithAnchor(start, end, value, 0.5, 1.0);}),
+                                                                                                    0.1f),
                                                               std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Sustain], "Sustain", NormalisableRange<float> (0.0f, 1.0f), 0.7f),
-                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Release], "Release", NormalisableRange<float> (0.0f, 1.0f), 0.1f)));
+                                                              std::make_unique<AudioParameterFloat>(envelope_ParamIDs[kEnvParam_Release], "Release", NormalisableRange<float> (0.1f,
+                                                                                                                                                                               20.0f,
+                                                                                                                                                                               [](float start, float end, float value) { return convertToRangeWithAnchor(start, end, value, 0.5, 1.0);},
+                                                                                                                                                                               [](float start, float end, float value) { return convertFromRangeWithAnchor(start, end, value, 0.5, 1.0);}),
+                                                                                                    0.1f)));
     
     // amplifier
     layout.add(std::make_unique<AudioProcessorParameterGroup>("AmplifierID", "Amp", "/",

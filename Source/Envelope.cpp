@@ -38,6 +38,20 @@ void Envelope::end()
 
 double Envelope::getNextSampleMod()
 {
+    switch (state)
+    {
+        case Idle:
+            break;
+        case Attack:
+            break;
+        case Decay:
+            break;
+        case Sustain:
+            break;
+        case Release:
+            break;
+    }
+    
     return 1.0;
 }
 
