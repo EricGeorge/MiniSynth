@@ -35,6 +35,8 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
     setSize(pluginEditorWidth, pluginEditorHeight);
     
     midiKeyboardComponent.setKeyWidth(midiKeyboardKeyWidth);
+
+    envelopeComponent.setupAttachments(processor.getValueTreeState());
     wavetableComponent.setupAttachments(processor.getValueTreeState());
 }
 

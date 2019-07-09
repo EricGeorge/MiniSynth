@@ -12,7 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class EnvelopePanel: public Component
+class EnvelopePanel:    public Component,
+                        public Slider::Listener
 {
 public:
     EnvelopePanel(const String panelName, const String* parameterList);
@@ -23,7 +24,29 @@ public:
     
     void setupAttachments(AudioProcessorValueTreeState& state);
     
+    void sliderValueChanged(Slider* slider) override;
+    
 private:
     const String panelName;
     const String* parameterList;
+    
+    // attack
+    Label attackLabel{ {}, "ATTACK" };
+    Slider attackSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackAttachment;
+    
+    // decay
+    Label decayLabel{ {}, "DECAY" };
+    Slider decaySlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayAttachment;
+    
+    // sustain
+    Label sustainLabel{ {}, "SUSTAIN" };
+    Slider sustainSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
+    
+    // release
+    Label releaseLabel{ {}, "RELEASE" };
+    Slider releaseSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
 };
