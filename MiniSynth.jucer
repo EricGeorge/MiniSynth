@@ -92,6 +92,13 @@
         <FILE id="gNmbDb" name="ControlBarPanel.cpp" compile="1" resource="0"
               file="Source/ControlBarPanel.cpp"/>
       </GROUP>
+      <GROUP id="{7CE66BD7-212A-2EE9-59B6-789D44FBB170}" name="EnvelopePanel">
+        <FILE id="tUEm7T" name="EnvelopePanelLayout.h" compile="0" resource="0"
+              file="Source/EnvelopePanelLayout.h"/>
+        <FILE id="x0woEL" name="EnvelopePanel.h" compile="0" resource="0" file="Source/EnvelopePanel.h"/>
+        <FILE id="dpseMP" name="EnvelopePanel.cpp" compile="1" resource="0"
+              file="Source/EnvelopePanel.cpp"/>
+      </GROUP>
       <GROUP id="{FF6FB97D-2763-1172-9000-32E9DB937789}" name="OscillatorPanel">
         <FILE id="wdpuaa" name="OscillatorPanelLayout.h" compile="0" resource="0"
               file="Source/OscillatorPanelLayout.h"/>
