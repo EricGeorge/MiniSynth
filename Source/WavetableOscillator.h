@@ -27,16 +27,14 @@ public:
     void reset(double sampleRate);
     void update();
     
-    void start(double frequency);
-    void stop();
-
-
     // parameter setters
     void setPosition(float newValue);
     void setInterpolate(float newValue);
     void setSemitones(float newValue);
     void setCents(float newValue);
     void setVolume(float newValue);
+    
+    void setFrequency(double frequency);
 
     void actionListenerCallback (const String& message) override;
 
@@ -54,9 +52,6 @@ private:
     double cents;
     double volume;
     
-    // poor man's envelope - replace with ADSR
-    bool noteOn;
-
     int currentWaveformIndex;      // current table, based on current frequency
     int currentFrameIndex;
     int nextFrameIndex;

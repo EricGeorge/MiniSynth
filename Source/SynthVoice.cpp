@@ -110,15 +110,20 @@ bool SynthVoice::canPlaySound(SynthesiserSound* sound)
 void SynthVoice::startNote(int midiNoteNumber, float velocity,
                            SynthesiserSound* sound, int currentPitchWheelPosition)
 {
-    level = velocity * 0.25;
+    level = velocity;
 
-    wtb.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    wtb.setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber));
+    env.start();
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
-    wtb.stop();
-    clearCurrentNote();
+    env.end();
+    
+    if (!allowTailOff)
+    {
+        clearCurrentNote();
+    }
 }
 
 void SynthVoice::pitchWheelMoved(int newPitchWheelValue)
@@ -131,16 +136,23 @@ void SynthVoice::controllerMoved(int controllerNumber, int newControllerValue)
 
 void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    for (int index = 0; index < numSamples; ++index)
+    if (env.getState() != Envelope::State::Idle)
     {
-        double sample = wtb.getNextSample() * level;
-        double envMod = env.getNextSampleMod();
-        
-        for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+        for (int index = 0; index < numSamples; ++index)
         {
-            double processedSample = amp.processSample(sample, channel, envMod);
-            outputBuffer.addSample(channel, startSample, processedSample);
+            double sample = wtb.getNextSample() * level;
+            double envMod = env.getNextSampleMod();
+            
+            for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+            {
+                double processedSample = amp.processSample(sample, channel, envMod);
+                outputBuffer.addSample(channel, startSample, processedSample);
+            }
+            ++startSample;
         }
-        ++startSample;
+    }
+    else if (isVoiceActive())
+    {
+        clearCurrentNote();
     }
 }

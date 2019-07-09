@@ -36,10 +36,14 @@ public:
     void setSustain(double newValue);
     void setRelease(double newValue);
     
+    // getters
+    State getState() const;
+    
 private:
     double sampleRate;
     
     State state;
+    double output;
     
     // parameters
     double attack;
@@ -47,6 +51,11 @@ private:
     double sustain;
     double release;
     
+    double attackIncrement;
+    double decayIncrement;
+    double releaseIncrement;
+    
+    void update();
 };
 
 using Env = Envelope;

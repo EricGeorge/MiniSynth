@@ -92,8 +92,8 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
 
     populateWavetableSelector();
     
-    // default to first wavetable for ease of testing
-    wavetableSelector.setSelectedId(1);
+    // default to wavetable for ease of testing
+    wavetableSelector.setSelectedId(8);
 }
 
 WavetablePanel::~WavetablePanel()

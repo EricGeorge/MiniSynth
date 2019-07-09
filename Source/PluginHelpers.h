@@ -13,7 +13,7 @@
 #include <cmath>
 #include <vector>
 
-const int kNumVoices = 16;
+const int kNumVoices = 1;
 const double kParameterSmoothingCoeff_Fine = 0.005f;
 const double kMinimumDecibels = -24.0;
 
