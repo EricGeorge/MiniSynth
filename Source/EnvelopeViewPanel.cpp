@@ -15,12 +15,10 @@
 #include "PluginHelpers.h"
 
 EnvelopeViewPanel::EnvelopeViewPanel()
-:   attackX(0),
-    attackY(0),
-    decayX(0),
-    sustainY(0),
-    releaseX(0),
-    releaseY(0),
+:   originPoint(0,0),
+    attackPoint(0, 0),
+    decayPoint(0, 0),
+    releasePoint(0, 0),
     maxSegmentWidth(0),
     segmentView(0, 0, 0, 0)
 {
@@ -45,10 +43,10 @@ void EnvelopeViewPanel::paint(Graphics& g)
     g.setColour(getCommonColours().detailContrast);
 
     Path envelopePath;
-    envelopePath.startNewSubPath(segmentView.getX(), segmentView.getBottom());
-    envelopePath.lineTo(attackX, segmentView.getY());
-    envelopePath.lineTo(decayX, sustainY);
-    envelopePath.lineTo(releaseX, segmentView.getBottom());
+    envelopePath.startNewSubPath(originPoint);
+    envelopePath.lineTo(attackPoint);
+    envelopePath.lineTo(decayPoint);
+    envelopePath.lineTo(releasePoint);
     
     PathStrokeType strokeType(3.0f);
     g.strokePath(envelopePath, strokeType);
@@ -60,7 +58,7 @@ void EnvelopeViewPanel::paint(Graphics& g)
                                     segmentView.getX() + segmentView.getWidth() / 2,
                                     segmentView.getBottom(),
                                     false);
-    
+
     g.setGradientFill(envelopeGradient);
     g.fillPath(envelopePath);
     
@@ -68,9 +66,9 @@ void EnvelopeViewPanel::paint(Graphics& g)
     g.setColour(Colours::ghostwhite);
     int radius = 8;
     int diameter = 2 * radius;
-    g.fillEllipse(attackX - radius, segmentView.getY() - radius, diameter, diameter);
-    g.fillEllipse(decayX - radius, sustainY - radius, diameter, diameter);
-    g.fillEllipse(releaseX - radius, segmentView.getBottom() - radius, diameter, diameter);
+    g.fillEllipse(attackPoint.getX() - radius, segmentView.getY() - radius, diameter, diameter);
+    g.fillEllipse(decayPoint.getX() - radius, decayPoint.getY() - radius, diameter, diameter);
+    g.fillEllipse(releasePoint.getX() - radius, segmentView.getBottom() - radius, diameter, diameter);
 
     // paint the border
     g.setColour(getCommonColours().detail);
@@ -84,16 +82,23 @@ void EnvelopeViewPanel::resized()
     segmentView.removeFromTop(20);
     segmentView.removeFromRight(20);
     segmentView.removeFromBottom(4);
-
+    
     maxSegmentWidth = segmentView.getWidth() / 3;
 }
 
 void EnvelopeViewPanel::envelopeChanged(float attack, float decay, float sustain, float release)
 {
-    attackX =  segmentView.getX() + convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attack, 0.5, 1000.0) * maxSegmentWidth;
-    decayX = attackX + convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decay, 0.5, 1000.0) * maxSegmentWidth;
-    sustainY = segmentView.getBottom() - segmentView.getHeight() * sustain;
-    releaseX = decayX + convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, release, 0.5, 1000.0) * maxSegmentWidth;
+    originPoint.setX(segmentView.getBottomLeft().getX());
+    originPoint.setY(segmentView.getBottomLeft().getY());
+    
+    attackPoint.setX(segmentView.getX() + convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attack, 0.5, 1000.0) * maxSegmentWidth);
+    attackPoint.setY(segmentView.getY());
+
+    decayPoint.setX(attackPoint.getX() + convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decay, 0.5, 1000.0) * maxSegmentWidth);
+    decayPoint.setY(segmentView.getBottom() - sustain * segmentView.getHeight());
+
+    releasePoint.setX(decayPoint.getX() + convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, release, 0.5, 1000.0) * maxSegmentWidth);
+    releasePoint.setY(segmentView.getBottom());
     
     repaint();
 }

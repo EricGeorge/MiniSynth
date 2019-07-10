@@ -24,12 +24,10 @@ public:
     void envelopeChanged(float attack, float decay, float sustain, float release);
     
 private:
-    float attackX;
-    float attackY;
-    float decayX;
-    float sustainY;
-    float releaseX;
-    float releaseY;
+    Point<float> originPoint;
+    Point<float> attackPoint;
+    Point<float> decayPoint;
+    Point<float> releasePoint;
     
     float maxSegmentWidth;
     Rectangle<int> segmentView;
