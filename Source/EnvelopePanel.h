@@ -12,6 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "EnvelopeViewPanel.h"
+
 class EnvelopePanel:    public Component,
                         public Slider::Listener
 {
@@ -29,6 +31,8 @@ public:
 private:
     const String panelName;
     const String* parameterList;
+    
+    EnvelopeViewPanel envelopeViewPanel;
     
     // attack
     Label attackLabel{ {}, "ATTACK" };

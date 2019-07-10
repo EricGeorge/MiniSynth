@@ -99,6 +99,12 @@
         <FILE id="dpseMP" name="EnvelopePanel.cpp" compile="1" resource="0"
               file="Source/EnvelopePanel.cpp"/>
       </GROUP>
+      <GROUP id="{0BF0E0CE-CBA3-7E2E-0715-18F384454099}" name="EnvelopeViewPanel">
+        <FILE id="xq4E4b" name="EnvelopeViewPanel.h" compile="0" resource="0"
+              file="Source/EnvelopeViewPanel.h"/>
+        <FILE id="TBr4iJ" name="EnvelopeViewPanel.cpp" compile="1" resource="0"
+              file="Source/EnvelopeViewPanel.cpp"/>
+      </GROUP>
       <GROUP id="{FF6FB97D-2763-1172-9000-32E9DB937789}" name="OscillatorPanel">
         <FILE id="wdpuaa" name="OscillatorPanelLayout.h" compile="0" resource="0"
               file="Source/OscillatorPanelLayout.h"/>

@@ -19,6 +19,7 @@ EnvelopePanel::EnvelopePanel(const String panelName, const String* parameterList
 :   panelName(panelName),
     parameterList(parameterList)
 {
+    addAndMakeVisible(envelopeViewPanel);
     addAndMakeVisible(attackSlider);
     addAndMakeVisible(decaySlider);
     addAndMakeVisible(sustainSlider);
@@ -109,12 +110,12 @@ void EnvelopePanel::setupAttachments(AudioProcessorValueTreeState& state)
 
 void EnvelopePanel::resized()
 {
-    auto controlsArea = getLocalBounds().removeFromLeft(getLocalBounds().getWidth() / 2);
-//    auto envelopeViewArea = getLocalBounds().removeFromRight(controlsArea.getWidth());
+    auto controlsArea = getLocalBounds().removeFromLeft(getLocalBounds().getWidth() * .4);
+    auto envelopeViewArea = getLocalBounds().removeFromRight(getLocalBounds().getWidth() - controlsArea.getWidth());
     auto buttonsArea = controlsArea.removeFromTop(getLocalBounds().getHeight() * .5);
     auto sliderArea = controlsArea.removeFromBottom(buttonsArea.getHeight());
     
-//    waveViewPanel.setBounds(waveViewArea.reduced(40));
+    envelopeViewPanel.setBounds(envelopeViewArea.reduced(40));
     
 //    buttonsArea.reduced(8);
 //    buttonsArea.removeFromTop(60);
@@ -159,6 +160,9 @@ void EnvelopePanel::paint(Graphics& g)
 
 void EnvelopePanel::sliderValueChanged(Slider* slider)
 {
-    
+    envelopeViewPanel.envelopeChanged(attackSlider.getValue(),
+                                      decaySlider.getValue(),
+                                      sustainSlider.getValue(),
+                                      releaseSlider.getValue());
 }
 
