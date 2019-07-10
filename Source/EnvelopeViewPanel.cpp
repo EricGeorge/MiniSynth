@@ -36,7 +36,7 @@ void EnvelopeViewPanel::paint(Graphics& g)
 {
     Component::paint(g);
     
-    Rectangle<int> border(getLocalBounds().reduced(panelOutlineInset));
+    Rectangle<int> border(getLocalBounds());
 
     g.setColour(getCommonColours().panelBackground);
     g.fillAll();
@@ -64,9 +64,17 @@ void EnvelopeViewPanel::paint(Graphics& g)
     g.setGradientFill(envelopeGradient);
     g.fillPath(envelopePath);
     
+    // draw the control dots
+    g.setColour(Colours::ghostwhite);
+    int radius = 8;
+    int diameter = 2 * radius;
+    g.fillEllipse(attackX - radius, segmentView.getY() - radius, diameter, diameter);
+    g.fillEllipse(decayX - radius, sustainY - radius, diameter, diameter);
+    g.fillEllipse(releaseX - radius, segmentView.getBottom() - radius, diameter, diameter);
+
     // paint the border
     g.setColour(getCommonColours().detail);
-    g.drawRect(border, 2.0);
+    g.drawRect(border, 3.0);
 }
 
 void EnvelopeViewPanel::resized()
