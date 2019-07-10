@@ -30,11 +30,11 @@ static String envelope_ParamIDs[] =
 };
 
 // milliseconds
-const float envAttackMinValue = 0.1f;
+const float envAttackMinValue = 1.0f;
 const float envAttackMaxValue = 20000.0f;
 const float envAttackInitialValue = 100.0f;
 
-const float envDecayMinValue = 0.1f;
+const float envDecayMinValue = 1.0f;
 const float envDecayMaxValue = 20000.0f;
 const float envDecayInitialValue = 100.0f;
 
@@ -42,6 +42,6 @@ const float envSustainMinValue = 0.0f;
 const float envSustainMaxValue = 1.0f;
 const float envSustainInitialValue = 0.7f;
 
-const float envReleaseMinValue = 0.1f;
+const float envReleaseMinValue = 1.0f;
 const float envReleaseMaxValue = 20000.0f;
 const float envReleaseInitialValue = 100.0f;

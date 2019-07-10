@@ -31,6 +31,8 @@ public:
 private:
     const String panelName;
     const String* parameterList;
+    const String ms = " ms";
+    const String s = " s";
     
     EnvelopeViewPanel envelopeViewPanel;
     

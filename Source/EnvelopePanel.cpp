@@ -85,25 +85,49 @@ void EnvelopePanel::setupAttachments(AudioProcessorValueTreeState& state)
     // setNumDecimalPlacesToDisplay doesn't seem to work so setup this lambda instead AFTER setting up the attachment!
     attackSlider.textFromValueFunction = [this](double value)
     {
-        return juce::String(value, 2);;
+        String units = ms;
+        int precision = 1;
+        if (value > 1000.0)
+        {
+            value = value / 1000.0;
+            units = s;
+            precision = 2;
+        }
+        return juce::String(value, precision) + units;
     };
     attackSlider.updateText();
     
     decaySlider.textFromValueFunction = [this](double value)
     {
-        return juce::String(value, 2);;
+        String units = ms;
+        int precision = 1;
+        if (value > 1000.0)
+        {
+            value = value / 1000.0;
+            units = s;
+            precision = 2;
+        }
+        return juce::String(value, precision) + units;
     };
     decaySlider.updateText();
     
     sustainSlider.textFromValueFunction = [this](double value)
     {
-        return juce::String(value, 2);;
+        return juce::String(value, 2);
     };
     sustainSlider.updateText();
     
     releaseSlider.textFromValueFunction = [this](double value)
     {
-        return juce::String(value, 2);;
+        String units = ms;
+        int precision = 1;
+        if (value > 1000.0)
+        {
+            value = value / 1000.0;
+            units = s;
+            precision = 2;
+        }
+        return juce::String(value, precision) + units;
     };
     releaseSlider.updateText();
 }

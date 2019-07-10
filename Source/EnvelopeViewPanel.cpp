@@ -16,11 +16,13 @@
 
 EnvelopeViewPanel::EnvelopeViewPanel()
 :   attackX(0),
+    attackY(0),
     decayX(0),
     sustainY(0),
     releaseX(0),
+    releaseY(0),
     maxSegmentWidth(0),
-    maxSegmentHeight(0)
+    segmentView(0, 0, 0, 0)
 {
     
 }
@@ -40,35 +42,50 @@ void EnvelopeViewPanel::paint(Graphics& g)
     g.fillAll();
     
     // paint the envelope
-    Rectangle<int> inset = border;
-    inset.reduce(2, 2);
     g.setColour(getCommonColours().detailContrast);
 
-    g.drawLine(Line<float>(inset.getX(), inset.getHeight(), inset.getX() + attackX, inset.getY()), 3.0);
-    g.drawLine(Line<float>(inset.getX() + attackX, inset.getY(), inset.getX() + decayX, inset.getY() + (inset.getHeight() - sustainY)), 3.0);
-    g.drawLine(Line<float>(inset.getX() + decayX, inset.getY() + (inset.getHeight() - sustainY), inset.getX() + releaseX, inset.getHeight()), 3.0);
+    Path envelopePath;
+    envelopePath.startNewSubPath(segmentView.getX(), segmentView.getBottom());
+    envelopePath.lineTo(attackX, segmentView.getY());
+    envelopePath.lineTo(decayX, sustainY);
+    envelopePath.lineTo(releaseX, segmentView.getBottom());
+    
+    PathStrokeType strokeType(3.0f);
+    g.strokePath(envelopePath, strokeType);
 
+    ColourGradient envelopeGradient(getCommonColours().detailContrast,
+                                    segmentView.getX() + segmentView.getWidth() / 2,
+                                    segmentView.getY(),
+                                    getCommonColours().panelBackground,
+                                    segmentView.getX() + segmentView.getWidth() / 2,
+                                    segmentView.getBottom(),
+                                    false);
+    
+    g.setGradientFill(envelopeGradient);
+    g.fillPath(envelopePath);
+    
     // paint the border
     g.setColour(getCommonColours().detail);
     g.drawRect(border, 2.0);
-    
-    g.drawRect(getLocalBounds().reduced(panelOutlineInset));
 }
 
 void EnvelopeViewPanel::resized()
 {
-    Rectangle<int> view = getLocalBounds().reduced(panelOutlineInset);
-    float numPoints = view.getWidth();
-    maxSegmentWidth = numPoints / 3;
-    maxSegmentHeight = view.getHeight();
+    segmentView = getLocalBounds();
+    segmentView.removeFromLeft(5);
+    segmentView.removeFromTop(20);
+    segmentView.removeFromRight(20);
+    segmentView.removeFromBottom(4);
+
+    maxSegmentWidth = segmentView.getWidth() / 3;
 }
 
 void EnvelopeViewPanel::envelopeChanged(float attack, float decay, float sustain, float release)
 {
-    attackX = maxSegmentWidth * convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attack, 0.5, 1000.0);
-    decayX = attackX + maxSegmentWidth * convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decay, 0.5, 1000.0);
-    sustainY = maxSegmentHeight * sustain;
-    releaseX = decayX + maxSegmentWidth * convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, release, 0.5, 1000.0);
+    attackX =  segmentView.getX() + convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attack, 0.5, 1000.0) * maxSegmentWidth;
+    decayX = attackX + convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decay, 0.5, 1000.0) * maxSegmentWidth;
+    sustainY = segmentView.getBottom() - segmentView.getHeight() * sustain;
+    releaseX = decayX + convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, release, 0.5, 1000.0) * maxSegmentWidth;
     
     repaint();
 }

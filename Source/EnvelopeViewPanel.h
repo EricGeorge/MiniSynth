@@ -25,10 +25,12 @@ public:
     
 private:
     float attackX;
+    float attackY;
     float decayX;
     float sustainY;
     float releaseX;
+    float releaseY;
     
     float maxSegmentWidth;
-    float maxSegmentHeight;
+    Rectangle<int> segmentView;
 };
