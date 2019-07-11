@@ -24,28 +24,23 @@ public:
     void envelopeChanged(float attackRate, float decayRate, float sustainLevel, float releaseRate);
     
 private:
-    Point<float> originPoint;
-    Point<float> attackPoint;
-    Point<float> decayPoint;
-    Point<float> releasePoint;
-    
-    float maxSegmentWidth;
+
     Rectangle<int> segmentView;
+
+    Point<float> originPoint;
     
-    double numAttackPixels;
+    Point<float> attackPoint;
     double attackCoefficient;
     double attackOffset;
     double attackTCO;
     
-    double numDecayPixels;
+    Point<float> decayPoint;
     double decayCoefficient;
     double decayOffset;
     double decayTCO;
     
-    double numReleasePixels;
+    Point<float> releasePoint;
     double releaseCoefficient;
     double releaseOffset;
     double releaseTCO;
-    
-    double sampleRate;  // TODO - figure out how to get this here
 };
