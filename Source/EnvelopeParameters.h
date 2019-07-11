@@ -17,7 +17,7 @@ enum EnvelopeParameters
     kEnvParam_Attack = 0,
     kEnvParam_Decay,
     kEnvParam_Sustain,
-    kEnvParam_Release,
+    kEnvParam_Release
 };
 
 static String envelopeParamIDPrefix = "Envelope_";

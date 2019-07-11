@@ -46,16 +46,22 @@ private:
     double output;
     
     // parameters
-    double attack;
-    double decay;
-    double sustain;
-    double release;
+    double attackRate;
+    double decayRate;
+    double sustainLevel;
+    double releaseRate;
     
-    double attackIncrement;
-    double decayIncrement;
-    double releaseIncrement;
+    double attackCoefficient;
+    double attackOffset;
+    double attackTCO;
     
-    void update();
+    double decayCoefficient;
+    double decayOffset;
+    double decayTCO;
+    
+    double releaseCoefficient;
+    double releaseOffset;
+    double releaseTCO;
 };
 
 using Env = Envelope;

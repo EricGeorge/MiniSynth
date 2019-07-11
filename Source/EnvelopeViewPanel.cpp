@@ -20,9 +20,21 @@ EnvelopeViewPanel::EnvelopeViewPanel()
     decayPoint(0, 0),
     releasePoint(0, 0),
     maxSegmentWidth(0),
-    segmentView(0, 0, 0, 0)
+    segmentView(0, 0, 0, 0),
+    numAttackPixels(0.0),
+    attackCoefficient(0.0),
+    attackOffset(0.0),
+    numDecayPixels(0.0),
+    decayCoefficient(0.0),
+    decayOffset(0.0),
+    numReleasePixels(0.0),
+    releaseCoefficient(0.0),
+    releaseOffset(0.0),
+    sampleRate(44100)
 {
-    
+    attackTCO = exp(-1.5);
+    decayTCO = exp(-4.95);
+    releaseTCO = decayTCO;
 }
 
 EnvelopeViewPanel::~EnvelopeViewPanel()
@@ -44,9 +56,30 @@ void EnvelopeViewPanel::paint(Graphics& g)
 
     Path envelopePath;
     envelopePath.startNewSubPath(originPoint);
-    envelopePath.lineTo(attackPoint);
-    envelopePath.lineTo(decayPoint);
-    envelopePath.lineTo(releasePoint);
+
+    float envelope = 0;
+    for (int sample = 0; sample < numAttackPixels; sample++)
+    {
+        envelope = attackOffset + envelope * attackCoefficient;
+        envelopePath.lineTo(sample, segmentView.getBottom() - envelope);
+    }
+    
+    for (int sample = numAttackPixels; sample < numAttackPixels + numDecayPixels; sample++)
+    {
+        envelope = decayOffset + envelope * decayCoefficient;
+        envelopePath.lineTo(sample, segmentView.getBottom() - envelope);
+    }
+    
+    for (int sample = numAttackPixels + numDecayPixels; sample < numAttackPixels + numDecayPixels + numReleasePixels; sample++)
+    {
+        envelope = releaseOffset + envelope * releaseCoefficient;
+        envelopePath.lineTo(sample, segmentView.getBottom() - envelope);
+    }
+    
+//    envelopePath.startNewSubPath(originPoint);
+//    envelopePath.lineTo(attackPoint);
+//    envelopePath.lineTo(decayPoint);
+//    envelopePath.lineTo(releasePoint);
     
     PathStrokeType strokeType(3.0f);
     g.strokePath(envelopePath, strokeType);
@@ -86,19 +119,31 @@ void EnvelopeViewPanel::resized()
     maxSegmentWidth = segmentView.getWidth() / 3;
 }
 
-void EnvelopeViewPanel::envelopeChanged(float attack, float decay, float sustain, float release)
+void EnvelopeViewPanel::envelopeChanged(float attackRate, float decayRate, float sustainLevel, float releaseRate)
 {
     originPoint.setX(segmentView.getBottomLeft().getX());
     originPoint.setY(segmentView.getBottomLeft().getY());
-    
-    attackPoint.setX(segmentView.getX() + convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attack, 0.5, 1000.0) * maxSegmentWidth);
+
+    attackPoint.setX(segmentView.getX() + convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attackRate, 0.5, 1000.0) * maxSegmentWidth);
     attackPoint.setY(segmentView.getY());
 
-    decayPoint.setX(attackPoint.getX() + convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decay, 0.5, 1000.0) * maxSegmentWidth);
-    decayPoint.setY(segmentView.getBottom() - sustain * segmentView.getHeight());
+    decayPoint.setX(attackPoint.getX() + convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decayRate, 0.5, 1000.0) * maxSegmentWidth);
+    decayPoint.setY(segmentView.getBottom() - sustainLevel * segmentView.getHeight());
 
-    releasePoint.setX(decayPoint.getX() + convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, release, 0.5, 1000.0) * maxSegmentWidth);
+    releasePoint.setX(decayPoint.getX() + convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, releaseRate, 0.5, 1000.0) * maxSegmentWidth);
     releasePoint.setY(segmentView.getBottom());
+
+    numAttackPixels = convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attackRate, 0.5, 1000.0) * maxSegmentWidth;
+    attackCoefficient = std::exp(-std::log((1.0 + attackTCO) / attackTCO) / numAttackPixels);
+    attackOffset = (segmentView.getHeight() + attackTCO) * (1.0 - attackCoefficient);
+
+    numDecayPixels = convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decayRate, 0.5, 1000.0) * maxSegmentWidth;
+    decayCoefficient = std::exp(-std::log((1.0 + decayTCO) / decayTCO) / numDecayPixels);
+    decayOffset = (segmentView.getHeight() * sustainLevel  - decayTCO) * (1.0 - decayCoefficient);
+    
+    numReleasePixels = convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, releaseRate, 0.5, 1000.0) * maxSegmentWidth;
+    releaseCoefficient = std::exp(-std::log((1.0 + releaseTCO) / releaseTCO) / numReleasePixels);
+    releaseOffset = -releaseTCO * (1.0 - releaseCoefficient);
     
     repaint();
 }

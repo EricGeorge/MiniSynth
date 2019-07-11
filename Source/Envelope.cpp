@@ -16,15 +16,20 @@ Envelope::Envelope(double sampleRate)
 :   sampleRate(sampleRate),
     state(Idle),
     output(0.0),
-    attack(envAttackInitialValue),
-    decay(envDecayInitialValue),
-    sustain(envSustainInitialValue),
-    release(envReleaseInitialValue),
-    attackIncrement(0.0),
-    decayIncrement(0.0),
-    releaseIncrement(0.0)
+    attackRate(envAttackInitialValue),
+    decayRate(envDecayInitialValue),
+    sustainLevel(envSustainInitialValue),
+    releaseRate(envReleaseInitialValue),
+    attackCoefficient(0.0),
+    attackOffset(0.0),
+    decayCoefficient(0.0),
+    decayOffset(0.0),
+    releaseCoefficient(0.0),
+    releaseOffset(0.0)
 {
-    update();
+    attackTCO = exp(-1.5);
+    decayTCO = exp(-4.95);
+    releaseTCO = decayTCO;
 }
 
 Envelope::~Envelope()
@@ -50,27 +55,34 @@ double Envelope::getNextSampleMod()
     switch (state)
     {
         case Idle:
+            output = 0.0;
             break;
         case Attack:
-            output += attackIncrement;
+            output = attackOffset + output * attackCoefficient;
             if (output >= 1.0)
             {
+                output = 1.0;
                 state = Decay;
             }
+            
             break;
         case Decay:
-            output -= decayIncrement;
-            if (output <= sustain)
+            output = decayOffset + output * decayCoefficient;
+            if (output <= sustainLevel)
             {
+                output = sustainLevel;
                 state = Sustain;
             }
             break;
         case Sustain:
+            output = sustainLevel;
+            
             break;
         case Release:
-            output -= releaseIncrement;
-            if (output <= .001)
+            output = releaseOffset + output * releaseCoefficient;
+            if (output <= 0.0)
             {
+                output = 0.0;
                 state = Idle;
             }
             break;
@@ -81,35 +93,40 @@ double Envelope::getNextSampleMod()
 
 void Envelope::setAttack(double newValue)
 {
-    attack = newValue;
-    update();
+    attackRate = newValue;
+    
+    double numSamples = attackRate / 1000.0 * sampleRate;
+    
+    attackCoefficient = std::exp(-std::log((1.0 + attackTCO) / attackTCO) / numSamples);
+    attackOffset = (1.0 + attackTCO) * (1.0 - attackCoefficient);
 }
 
 void Envelope::setDecay(double newValue)
 {
-    decay = newValue;
-    update();
+    decayRate = newValue;
+    
+    double numSamples = decayRate / 1000.0 * sampleRate;
+    
+    decayCoefficient = std::exp(-std::log((1.0 + decayTCO) / decayTCO) / numSamples);
+    decayOffset = (sustainLevel  - decayTCO) * (1.0 - decayCoefficient);
 }
 
 void Envelope::setSustain(double newValue)
 {
-    sustain = newValue;
+    sustainLevel = newValue;
 }
 
 void Envelope::setRelease(double newValue)
 {
-    release = newValue;
-    update();
+    releaseRate = newValue;
+    
+    double numSamples = releaseRate / 1000.0 * sampleRate;
+    
+    releaseCoefficient = std::exp(-std::log((1.0 + releaseTCO) / releaseTCO) / numSamples);
+    releaseOffset = -releaseTCO * (1.0 - releaseCoefficient);
 }
 
 Envelope::State Envelope::getState() const
 {
     return state;
-}
-
-void Envelope::update()
-{
-    attackIncrement = 1 / (attack / 1000 * sampleRate);
-    decayIncrement = 1 / (decay / 1000 * sampleRate);
-    releaseIncrement = 1 / (release / 1000 * sampleRate);
 }
