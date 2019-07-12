@@ -56,10 +56,20 @@ void EnvelopeViewPanel::paint(Graphics& g)
     g.setGradientFill(envelopeGradient);
     g.fillPath(envelopePath);
     
-    // control dots
+    // put in segment lines
+    float segmentDividerOpacity = 0.7f;
+    
     g.setColour(Colours::ghostwhite);
+    g.setOpacity(segmentDividerOpacity);
+    g.drawLine(attackPoint.getX(), attackPoint.getY(), attackPoint.getX(), segmentView.getBottom());
+    g.drawLine(decayPoint.getX(), decayPoint.getY(), decayPoint.getX(), segmentView.getBottom());
+
+    // control dots
     int radius = 8;
     int diameter = 2 * radius;
+
+    g.setColour(Colours::ghostwhite);
+    g.setOpacity(segmentDividerOpacity);
     g.fillEllipse(attackPoint.getX() - radius, segmentView.getY() - radius, diameter, diameter);
     g.fillEllipse(decayPoint.getX() - radius, decayPoint.getY() - radius, diameter, diameter);
     g.fillEllipse(releasePoint.getX() - radius, segmentView.getBottom() - radius, diameter, diameter);
