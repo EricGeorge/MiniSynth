@@ -65,6 +65,10 @@ private:
     
     double releaseCoefficient;
     double releaseOffset;
+    
+    void updateAttackCalculations();
+    void updateDecayCalculations();
+    void updateReleaseCalculations();
 };
 
 using Env = Envelope;

@@ -95,53 +95,77 @@ void Envelope::setAttack(double newValue)
 {
     attackRate = newValue;
     
-    double numSamples = attackRate / 1000.0 * sampleRate;
-    
-    attackCoefficient = std::exp(-std::log((1.0 + attackCurve) / attackCurve) / numSamples);
-    attackOffset = (1.0 + attackCurve) * (1.0 - attackCoefficient);
+    updateAttackCalculations();
 }
 
 void Envelope::setDecay(double newValue)
 {
     decayRate = newValue;
     
-    double numSamples = decayRate / 1000.0 * sampleRate;
-    
-    decayCoefficient = std::exp(-std::log((1.0 + decayCurve) / decayCurve) / numSamples);
-    decayOffset = (sustainLevel  - decayCurve) * (1.0 - decayCoefficient);
+    updateDecayCalculations();
 }
 
 void Envelope::setSustain(double newValue)
 {
     sustainLevel = newValue;
+    
+    updateDecayCalculations();
 }
 
 void Envelope::setRelease(double newValue)
 {
     releaseRate = newValue;
     
-    double numSamples = releaseRate / 1000.0 * sampleRate;
-    
-    releaseCoefficient = std::exp(-std::log((1.0 + releaseCurve) / releaseCurve) / numSamples);
-    releaseOffset = -releaseCurve * (1.0 - releaseCoefficient);
+    updateReleaseCalculations();
 }
 
 void Envelope::setAttackCurve(double newValue)
 {
     attackCurve = newValue;
+    
+    updateAttackCalculations();
 }
 
 void Envelope::setDecayCurve(double newValue)
 {
     decayCurve = newValue;
+    
+    updateDecayCalculations();
 }
 
 void Envelope::setReleaseCurve(double newValue)
 {
     releaseCurve = newValue;
+    
+    updateReleaseCalculations();
 }
 
 Envelope::State Envelope::getState() const
 {
     return state;
 }
+
+void Envelope::updateAttackCalculations()
+{
+    double numSamples = attackRate / 1000.0 * sampleRate;
+    
+    attackCoefficient = std::exp(-std::log((1.0 + attackCurve) / attackCurve) / numSamples);
+    attackOffset = (1.0 + attackCurve) * (1.0 - attackCoefficient);
+}
+
+void Envelope::updateDecayCalculations()
+{
+    double numSamples = decayRate / 1000.0 * sampleRate;
+    
+    decayCoefficient = std::exp(-std::log((1.0 + decayCurve) / decayCurve) / numSamples);
+    decayOffset = (sustainLevel  - decayCurve) * (1.0 - decayCoefficient);
+}
+
+void Envelope::updateReleaseCalculations()
+{
+    double numSamples = releaseRate / 1000.0 * sampleRate;
+    
+    releaseCoefficient = std::exp(-std::log((sustainLevel + releaseCurve) / releaseCurve) / numSamples);
+    releaseOffset = -releaseCurve * (1.0 - releaseCoefficient);
+}
+

@@ -153,6 +153,9 @@ void Synth::addParameterListeners(AudioProcessorValueTreeState& state)
     state.addParameterListener(envelope_ParamIDs[kEnvParam_Decay], this);
     state.addParameterListener(envelope_ParamIDs[kEnvParam_Sustain], this);
     state.addParameterListener(envelope_ParamIDs[kEnvParam_Release], this);
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_AttackCurve], this);
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_DecayCurve], this);
+    state.addParameterListener(envelope_ParamIDs[kEnvParam_ReleaseCurve], this);
 
     // amp
     state.addParameterListener(amplifier_ParamIDs[kAmpParam_Gain], this);
@@ -172,11 +175,14 @@ void Synth::removeParameterListeners(AudioProcessorValueTreeState& state)
     state.removeParameterListener(wavetable_ParamIDs[kWtbParam_Volume], this);
     
     // amp envelope
-    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Attack], this);
-    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Decay], this);
-    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Sustain], this);
-    state.removeParameterListener(envelope_ParamIDs[kEnvParam_Release], this);
-    
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_Attack], this);
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_Decay], this);
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_Sustain], this);
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_Release], this);
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_AttackCurve], this);
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_DecayCurve], this);
+     state.removeParameterListener(envelope_ParamIDs[kEnvParam_ReleaseCurve], this);
+
     // amp
     state.removeParameterListener(amplifier_ParamIDs[kAmpParam_Gain], this);
     state.removeParameterListener(amplifier_ParamIDs[kAmpParam_Pan], this);

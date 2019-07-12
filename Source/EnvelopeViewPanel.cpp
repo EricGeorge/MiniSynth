@@ -152,7 +152,7 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
     decayPoint.setX(attackPoint.getX() + numDecayPixels);
     decayPoint.setY(segmentView.getBottom() - sustainLevel * segmentView.getHeight());
 
-    decayCoefficient = std::exp(-std::log((1.0 + decayCurve) / decayCurve) / numDecayPixels);
+    decayCoefficient = std::exp(-std::log((1.0 - sustainLevel + decayCurve) / decayCurve) / numDecayPixels);
     decayOffset = (sustainLevel  - decayCurve) * (1.0 - decayCoefficient);
 
     // Release
@@ -160,7 +160,7 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
     releasePoint.setX(decayPoint.getX() + numReleasePixels);
     releasePoint.setY(segmentView.getBottom());
 
-    releaseCoefficient = std::exp(-std::log((1.0 + releaseCurve) / releaseCurve) / numReleasePixels);
+    releaseCoefficient = std::exp(-std::log((sustainLevel + releaseCurve) / releaseCurve) / numReleasePixels);
     releaseOffset = -releaseCurve * (1.0 - releaseCoefficient);
     
     repaint();
