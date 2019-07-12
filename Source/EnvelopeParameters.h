@@ -17,7 +17,10 @@ enum EnvelopeParameters
     kEnvParam_Attack = 0,
     kEnvParam_Decay,
     kEnvParam_Sustain,
-    kEnvParam_Release
+    kEnvParam_Release,
+    kEnvParam_AttackCurve,
+    kEnvParam_DecayCurve,
+    kEnvParam_ReleaseCurve
 };
 
 static String envelopeParamIDPrefix = "Envelope_";
@@ -26,7 +29,10 @@ static String envelope_ParamIDs[] =
     "Envelope_Attack",
     "Envelope_Decay",
     "Envelope_Sustain",
-    "Envelope_Release"
+    "Envelope_Release",
+    "Envelope_AttackCurve",
+    "Envelope_DecayCurve",
+    "Envelope_ReleaseCurve"
 };
 
 // milliseconds
@@ -34,9 +40,17 @@ const float envAttackMinValue = 1.0f;
 const float envAttackMaxValue = 20000.0f;
 const float envAttackInitialValue = 100.0f;
 
+const float envAttackCurveMinValue = 0.00001f;
+const float envAttackCurveMaxValue = 20.0f;
+const float envAttackCurveInitialValue = 0.3f;
+
 const float envDecayMinValue = 1.0f;
 const float envDecayMaxValue = 20000.0f;
 const float envDecayInitialValue = 100.0f;
+
+const float envDecayCurveMinValue = 0.00001f;
+const float envDecayCurveMaxValue = 20.0f;
+const float envDecayCurveInitialValue = 0.001f;
 
 const float envSustainMinValue = 0.0f;
 const float envSustainMaxValue = 1.0f;
@@ -45,3 +59,7 @@ const float envSustainInitialValue = 0.7f;
 const float envReleaseMinValue = 1.0f;
 const float envReleaseMaxValue = 20000.0f;
 const float envReleaseInitialValue = 100.0f;
+
+const float envReleaseCurveMinValue = 0.00001f;
+const float envReleaseCurveMaxValue = 20.0f;
+const float envReleaseCurveInitialValue = 0.001f;

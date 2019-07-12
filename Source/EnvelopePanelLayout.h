@@ -10,5 +10,5 @@
 
 #pragma once
 
-const int envelopeKnobWidth = 75;
+const int envelopeKnobWidth = 80;
 const int envelopeKnobSpacing = 20;

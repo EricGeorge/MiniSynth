@@ -19,6 +19,7 @@ const int panelLabelFontSize = 26;
 const int panelOutlineInset = 2;
 
 const int sliderLabelFontSize = 20;
+const int sliderLabelFontSizeSmall = 16;
 
 class CommonColours
 {

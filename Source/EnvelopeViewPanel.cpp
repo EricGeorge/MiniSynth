@@ -16,20 +16,18 @@
 
 EnvelopeViewPanel::EnvelopeViewPanel()
 :   segmentView(0, 0, 0, 0),
-    originPoint(0,0),
+    originPoint(0, 0),
     attackPoint(0, 0),
     attackCoefficient(0.0),
     attackOffset(0.0),
     decayPoint(0, 0),
     decayCoefficient(0.0),
     decayOffset(0.0),
+    sustainLevel(0),
     releasePoint(0, 0),
     releaseCoefficient(0.0),
     releaseOffset(0.0)
 {
-    attackTCO = exp(-1.5);
-    decayTCO = exp(-4.95);
-    releaseTCO = decayTCO;
 }
 
 EnvelopeViewPanel::~EnvelopeViewPanel()
@@ -59,6 +57,7 @@ void EnvelopeViewPanel::paint(Graphics& g)
     {
         double offset = 0.0;
         double coefficient = 0.0;
+        bool checkSustain = false;
         
         if (pixel < attackPoint.getX())
         {
@@ -69,6 +68,7 @@ void EnvelopeViewPanel::paint(Graphics& g)
         {
             offset = decayOffset;
             coefficient = decayCoefficient;
+            checkSustain = true;
         }
         else if (pixel < releasePoint.getX())
         {
@@ -77,6 +77,13 @@ void EnvelopeViewPanel::paint(Graphics& g)
         }
         
         envelope = offset + envelope * coefficient;
+        
+        if (checkSustain && envelope < sustainLevel)
+        {
+            envelope = sustainLevel;
+            checkSustain = false;
+        }
+        
         envelopePath.lineTo(pixel, segmentView.getBottom() - envelope * segmentView.getHeight());
     }
     
@@ -117,36 +124,44 @@ void EnvelopeViewPanel::resized()
     segmentView.removeFromBottom(4);
 }
 
-void EnvelopeViewPanel::envelopeChanged(float attackRate, float decayRate, float sustainLevel, float releaseRate)
+void EnvelopeViewPanel::envelopeChanged(float attackRate,
+                                        float decayRate,
+                                        float inSustainLevel,
+                                        float releaseRate,
+                                        float attackCurve,
+                                        float decayCurve,
+                                        float releaseCurve)
 {
     float maxSegmentWidth = segmentView.getWidth() / 3;
 
     originPoint.setX(segmentView.getBottomLeft().getX());
     originPoint.setY(segmentView.getBottomLeft().getY());
 
+    sustainLevel = inSustainLevel;
+    
     // Attack
     float numAttackPixels = convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attackRate, 0.5, 1000.0) * maxSegmentWidth;
     attackPoint.setX(segmentView.getX() + numAttackPixels);
     attackPoint.setY(segmentView.getY());
     
-    attackCoefficient = std::exp(-std::log((1.0 + attackTCO) / attackTCO) / numAttackPixels);
-    attackOffset = (1 + attackTCO) * (1.0 - attackCoefficient);
+    attackCoefficient = std::exp(-std::log((1.0 + attackCurve) / attackCurve) / numAttackPixels);
+    attackOffset = (1 + attackCurve) * (1.0 - attackCoefficient);
 
     // Decay
     float numDecayPixels = convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decayRate, 0.5, 1000.0) * maxSegmentWidth;
     decayPoint.setX(attackPoint.getX() + numDecayPixels);
     decayPoint.setY(segmentView.getBottom() - sustainLevel * segmentView.getHeight());
 
-    decayCoefficient = std::exp(-std::log((1.0 + decayTCO) / decayTCO) / numDecayPixels);
-    decayOffset = (sustainLevel  - decayTCO) * (1.0 - decayCoefficient);
+    decayCoefficient = std::exp(-std::log((1.0 + decayCurve) / decayCurve) / numDecayPixels);
+    decayOffset = (sustainLevel  - decayCurve) * (1.0 - decayCoefficient);
 
     // Release
     float numReleasePixels = convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, releaseRate, 0.5, 1000.0) * maxSegmentWidth;
     releasePoint.setX(decayPoint.getX() + numReleasePixels);
     releasePoint.setY(segmentView.getBottom());
 
-    releaseCoefficient = std::exp(-std::log((1.0 + releaseTCO) / releaseTCO) / numReleasePixels);
-    releaseOffset = -releaseTCO * (1.0 - releaseCoefficient);
+    releaseCoefficient = std::exp(-std::log((1.0 + releaseCurve) / releaseCurve) / numReleasePixels);
+    releaseOffset = -releaseCurve * (1.0 - releaseCoefficient);
     
     repaint();
 }

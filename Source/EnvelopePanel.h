@@ -37,22 +37,37 @@ private:
     EnvelopeViewPanel envelopeViewPanel;
     
     // attack
-    Label attackLabel{ {}, "ATTACK" };
+    Label attackLabel{ {}, "Attack" };
     Slider attackSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackAttachment;
     
     // decay
-    Label decayLabel{ {}, "DECAY" };
+    Label decayLabel{ {}, "Decay" };
     Slider decaySlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayAttachment;
     
     // sustain
-    Label sustainLabel{ {}, "SUSTAIN" };
+    Label sustainLabel{ {}, "Sustain" };
     Slider sustainSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainAttachment;
     
     // release
-    Label releaseLabel{ {}, "RELEASE" };
+    Label releaseLabel{ {}, "Release" };
     Slider releaseSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseAttachment;
+    
+    // attack curve
+    Label attackCurveLabel{ {}, "Attack Curve" };
+    Slider attackCurveSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackCurveAttachment;
+    
+    // decay curve
+    Label decayCurveLabel{ {}, "Decay Curve" };
+    Slider decayCurveSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decayCurveAttachment;
+    
+    // release curve
+    Label releaseCurveLabel{ {}, "Release Curve" };
+    Slider releaseCurveSlider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseCurveAttachment;
 };

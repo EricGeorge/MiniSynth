@@ -35,6 +35,9 @@ public:
     void setDecay(double newValue);
     void setSustain(double newValue);
     void setRelease(double newValue);
+    void setAttackCurve(double newValue);
+    void setDecayCurve(double newValue);
+    void setReleaseCurve(double newValue);
     
     // getters
     State getState() const;
@@ -50,18 +53,18 @@ private:
     double decayRate;
     double sustainLevel;
     double releaseRate;
+    double attackCurve;
+    double decayCurve;
+    double releaseCurve;
     
     double attackCoefficient;
     double attackOffset;
-    double attackTCO;
     
     double decayCoefficient;
     double decayOffset;
-    double decayTCO;
     
     double releaseCoefficient;
     double releaseOffset;
-    double releaseTCO;
 };
 
 using Env = Envelope;

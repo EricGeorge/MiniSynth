@@ -21,7 +21,13 @@ public:
     void paint(Graphics& g) override;
     void resized() override;
     
-    void envelopeChanged(float attackRate, float decayRate, float sustainLevel, float releaseRate);
+    void envelopeChanged(float attackRate,
+                         float decayRate,
+                         float sustainLevel,
+                         float releaseRate,
+                         float attackCurve,
+                         float decayCurve,
+                         float releaseCurve);
     
 private:
 
@@ -32,15 +38,14 @@ private:
     Point<float> attackPoint;
     double attackCoefficient;
     double attackOffset;
-    double attackTCO;
     
     Point<float> decayPoint;
     double decayCoefficient;
     double decayOffset;
-    double decayTCO;
+    
+    double sustainLevel;
     
     Point<float> releasePoint;
     double releaseCoefficient;
     double releaseOffset;
-    double releaseTCO;
 };

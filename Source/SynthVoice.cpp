@@ -88,6 +88,18 @@ void SynthVoice::envParameterChanged(const String &parameterID, float newValue)
     {
         env.setRelease(newValue);
     }
+    else if (parameterID == envelope_ParamIDs[kEnvParam_AttackCurve])
+    {
+        env.setAttackCurve(newValue);
+    }
+    else if (parameterID == envelope_ParamIDs[kEnvParam_DecayCurve])
+    {
+        env.setDecayCurve(newValue);
+    }
+    else if (parameterID == envelope_ParamIDs[kEnvParam_ReleaseCurve])
+    {
+        env.setReleaseCurve(newValue);
+    }
 }
 
 void SynthVoice::ampParameterChanged(const String &parameterID, float newValue)
