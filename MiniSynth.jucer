@@ -49,6 +49,8 @@
         <FILE id="jnk7kf" name="Amplifier.cpp" compile="1" resource="0" file="Source/Amplifier.cpp"/>
       </GROUP>
       <GROUP id="{716C19A8-00AC-D625-9057-C2FD23ABDE9A}" name="EnvelopeProcessor">
+        <FILE id="jKXU0q" name="EnvelopeHelpers.h" compile="0" resource="0"
+              file="Source/EnvelopeHelpers.h"/>
         <FILE id="MGMyEY" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
         <FILE id="JTPyph" name="Envelope.cpp" compile="1" resource="0" file="Source/Envelope.cpp"/>
       </GROUP>

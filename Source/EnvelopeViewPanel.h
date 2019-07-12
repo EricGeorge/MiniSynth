@@ -32,20 +32,21 @@ public:
 private:
 
     Rectangle<int> segmentView;
+    Path envelopePath;
 
     Point<float> originPoint;
     
     Point<float> attackPoint;
-    double attackCoefficient;
-    double attackOffset;
+//    double attackCoefficient;
+//    double attackOffset;
     
     Point<float> decayPoint;
-    double decayCoefficient;
-    double decayOffset;
+//    double decayCoefficient;
+//    double decayOffset;
     
-    double sustainLevel;
+//    double sustainLevel;
     
     Point<float> releasePoint;
-    double releaseCoefficient;
-    double releaseOffset;
+//    double releaseCoefficient;
+//    double releaseOffset;
 };

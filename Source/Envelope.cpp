@@ -10,6 +10,7 @@
 
 #include "Envelope.h"
 
+#include "EnvelopeHelpers.h"
 #include "EnvelopeParameters.h"
 
 Envelope::Envelope(double sampleRate)
@@ -147,25 +148,19 @@ Envelope::State Envelope::getState() const
 
 void Envelope::updateAttackCalculations()
 {
-    double numSamples = attackRate / 1000.0 * sampleRate;
-    
-    attackCoefficient = std::exp(-std::log((1.0 + attackCurve) / attackCurve) / numSamples);
-    attackOffset = (1.0 + attackCurve) * (1.0 - attackCoefficient);
+    attackCoefficient = calculateEnvCoefficient(1.0, attackCurve, attackRate / 1000.0 * sampleRate);
+    attackOffset = calculateEnvOffset(1.0, attackCurve, attackCoefficient);
 }
 
 void Envelope::updateDecayCalculations()
 {
-    double numSamples = decayRate / 1000.0 * sampleRate;
-    
-    decayCoefficient = std::exp(-std::log((1.0 + decayCurve) / decayCurve) / numSamples);
-    decayOffset = (sustainLevel  - decayCurve) * (1.0 - decayCoefficient);
+    decayCoefficient = calculateEnvCoefficient(1.0 - sustainLevel, decayCurve, decayRate / 1000.0 * sampleRate);
+    decayOffset = calculateEnvOffset(sustainLevel, -decayCurve, decayCoefficient);
 }
 
 void Envelope::updateReleaseCalculations()
 {
-    double numSamples = releaseRate / 1000.0 * sampleRate;
-    
-    releaseCoefficient = std::exp(-std::log((sustainLevel + releaseCurve) / releaseCurve) / numSamples);
-    releaseOffset = -releaseCurve * (1.0 - releaseCoefficient);
+    releaseCoefficient = calculateEnvCoefficient(sustainLevel, releaseCurve, releaseRate / 1000.0 * sampleRate);
+    releaseOffset = calculateEnvOffset(0.0, -releaseCurve, releaseCoefficient);
 }
 

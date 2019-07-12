@@ -10,23 +10,16 @@
 
 #include "EnvelopeViewPanel.h"
 
+#include "EnvelopeHelpers.h"
 #include "EnvelopeParameters.h"
 #include "PluginCommonStyling.h"
 #include "PluginHelpers.h"
 
 EnvelopeViewPanel::EnvelopeViewPanel()
 :   segmentView(0, 0, 0, 0),
-    originPoint(0, 0),
     attackPoint(0, 0),
-    attackCoefficient(0.0),
-    attackOffset(0.0),
     decayPoint(0, 0),
-    decayCoefficient(0.0),
-    decayOffset(0.0),
-    sustainLevel(0),
-    releasePoint(0, 0),
-    releaseCoefficient(0.0),
-    releaseOffset(0.0)
+    releasePoint(0, 0)
 {
 }
 
@@ -47,46 +40,7 @@ void EnvelopeViewPanel::paint(Graphics& g)
     
     // envelope
     g.setColour(getCommonColours().detailContrast);
-
-    Path envelopePath;
-    envelopePath.startNewSubPath(originPoint);
-
-    float envelope = 0;
-    
-    for (int pixel = originPoint.getX(); pixel < releasePoint.getX(); pixel++)
-    {
-        double offset = 0.0;
-        double coefficient = 0.0;
-        bool checkSustain = false;
-        
-        if (pixel < attackPoint.getX())
-        {
-            offset = attackOffset;
-            coefficient = attackCoefficient;
-        }
-        else if (pixel < decayPoint.getX())
-        {
-            offset = decayOffset;
-            coefficient = decayCoefficient;
-            checkSustain = true;
-        }
-        else if (pixel < releasePoint.getX())
-        {
-            offset = releaseOffset;
-            coefficient = releaseCoefficient;
-        }
-        
-        envelope = offset + envelope * coefficient;
-        
-        if (checkSustain && envelope < sustainLevel)
-        {
-            envelope = sustainLevel;
-            checkSustain = false;
-        }
-        
-        envelopePath.lineTo(pixel, segmentView.getBottom() - envelope * segmentView.getHeight());
-    }
-    
+   
     PathStrokeType strokeType(3.0f);
     g.strokePath(envelopePath, strokeType);
 
@@ -126,7 +80,7 @@ void EnvelopeViewPanel::resized()
 
 void EnvelopeViewPanel::envelopeChanged(float attackRate,
                                         float decayRate,
-                                        float inSustainLevel,
+                                        float sustainLevel,
                                         float releaseRate,
                                         float attackCurve,
                                         float decayCurve,
@@ -134,34 +88,68 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
 {
     float maxSegmentWidth = segmentView.getWidth() / 3;
 
+    // Origin
     originPoint.setX(segmentView.getBottomLeft().getX());
     originPoint.setY(segmentView.getBottomLeft().getY());
-
-    sustainLevel = inSustainLevel;
     
     // Attack
     float numAttackPixels = convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attackRate, 0.5, 1000.0) * maxSegmentWidth;
     attackPoint.setX(segmentView.getX() + numAttackPixels);
     attackPoint.setY(segmentView.getY());
     
-    attackCoefficient = std::exp(-std::log((1.0 + attackCurve) / attackCurve) / numAttackPixels);
-    attackOffset = (1 + attackCurve) * (1.0 - attackCoefficient);
+    double attackCoefficient = calculateEnvCoefficient(1.0, attackCurve, numAttackPixels);
+    double attackOffset = calculateEnvOffset(1.0, attackCurve, attackCoefficient);
 
     // Decay
     float numDecayPixels = convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decayRate, 0.5, 1000.0) * maxSegmentWidth;
     decayPoint.setX(attackPoint.getX() + numDecayPixels);
     decayPoint.setY(segmentView.getBottom() - sustainLevel * segmentView.getHeight());
 
-    decayCoefficient = std::exp(-std::log((1.0 - sustainLevel + decayCurve) / decayCurve) / numDecayPixels);
-    decayOffset = (sustainLevel  - decayCurve) * (1.0 - decayCoefficient);
+    double decayCoefficient = calculateEnvCoefficient(1.0 - sustainLevel, decayCurve, numDecayPixels);
+    double decayOffset = calculateEnvOffset(sustainLevel, -decayCurve, decayCoefficient);
 
     // Release
     float numReleasePixels = convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, releaseRate, 0.5, 1000.0) * maxSegmentWidth;
     releasePoint.setX(decayPoint.getX() + numReleasePixels);
     releasePoint.setY(segmentView.getBottom());
 
-    releaseCoefficient = std::exp(-std::log((sustainLevel + releaseCurve) / releaseCurve) / numReleasePixels);
-    releaseOffset = -releaseCurve * (1.0 - releaseCoefficient);
+    double releaseCoefficient = calculateEnvCoefficient(sustainLevel, releaseCurve, numReleasePixels);
+    double releaseOffset = calculateEnvOffset(0.0, -releaseCurve, releaseCoefficient);
+
+    // generate the new path:
+    envelopePath.clear();
+    envelopePath.startNewSubPath(originPoint);
+    
+    float envelope = 0;
+    
+    for (int pixel = originPoint.getX(); pixel < releasePoint.getX(); pixel++)
+    {
+        double offset = 0.0;
+        double coefficient = 0.0;
+        
+        if (pixel < attackPoint.getX())
+        {
+            offset = attackOffset;
+            coefficient = attackCoefficient;
+        }
+        else if (pixel < decayPoint.getX())
+        {
+            offset = decayOffset;
+            coefficient = decayCoefficient;
+        }
+        else if (pixel < releasePoint.getX())
+        {
+            offset = releaseOffset;
+            coefficient = releaseCoefficient;
+        }
+        
+        // note - since we're always sloping to the sustain point, I'm not checking for sustain value to show in the display
+        // if I were instead sloping to 0, then I would want to show sustain when decay was very linear.
+        
+        envelope = offset + envelope * coefficient;
+        
+        envelopePath.lineTo(pixel, segmentView.getBottom() - envelope * segmentView.getHeight());
+    }
     
     repaint();
 }
