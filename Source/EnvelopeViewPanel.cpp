@@ -103,7 +103,7 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
     originPoint.setY(segmentView.getBottomLeft().getY());
     
     // Attack
-    float numAttackPixels = convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attackRate, 0.5, 1000.0) * maxSegmentWidth;
+    float numAttackPixels = convertFromRangeWithAnchor(envAttackMinValue, envAttackMaxValue, attackRate, envAttackAnchorPoint, envAttackAnchorValue) * maxSegmentWidth;
     attackPoint.setX(segmentView.getX() + numAttackPixels);
     attackPoint.setY(segmentView.getY());
     
@@ -111,7 +111,7 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
     double attackOffset = calculateEnvOffset(1.0, attackCurve, attackCoefficient);
 
     // Decay
-    float numDecayPixels = convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decayRate, 0.5, 1000.0) * maxSegmentWidth;
+    float numDecayPixels = convertFromRangeWithAnchor(envDecayMinValue, envDecayMaxValue, decayRate, envDecayAnchorPoint, envDecayAnchorValue) * maxSegmentWidth;
     decayPoint.setX(attackPoint.getX() + numDecayPixels);
     decayPoint.setY(segmentView.getBottom() - sustainLevel * segmentView.getHeight());
 
@@ -119,7 +119,7 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
     double decayOffset = calculateEnvOffset(sustainLevel, -decayCurve, decayCoefficient);
 
     // Release
-    float numReleasePixels = convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, releaseRate, 0.5, 1000.0) * maxSegmentWidth;
+    float numReleasePixels = convertFromRangeWithAnchor(envReleaseMinValue, envReleaseMaxValue, releaseRate, envReleaseAnchorPoint, envReleaseAnchorValue) * maxSegmentWidth;
     releasePoint.setX(decayPoint.getX() + numReleasePixels);
     releasePoint.setY(segmentView.getBottom());
 
