@@ -38,7 +38,7 @@ static String envelope_ParamIDs[] =
 // milliseconds
 const float envAttackMinValue = 1.0f;
 const float envAttackMaxValue = 6000.0f;
-const float envAttackInitialValue = 100.0f;
+const float envAttackInitialValue = 600.0f;
 const float envAttackAnchorPoint = 0.5f;
 const float envAttackAnchorValue = 1000.0f;
 
@@ -48,7 +48,7 @@ const float envAttackCurveInitialValue = 0.3f;
 
 const float envDecayMinValue = 1.0f;
 const float envDecayMaxValue = 6000.0f;
-const float envDecayInitialValue = 100.0f;
+const float envDecayInitialValue = 600.0f;
 const float envDecayAnchorPoint = 0.5f;
 const float envDecayAnchorValue = 1000.0f;
 
@@ -62,7 +62,7 @@ const float envSustainInitialValue = 0.7f;
 
 const float envReleaseMinValue = 1.0f;
 const float envReleaseMaxValue = 6000.0f;
-const float envReleaseInitialValue = 100.0f;
+const float envReleaseInitialValue = 1000.0f;
 const float envReleaseAnchorPoint = 0.5f;
 const float envReleaseAnchorValue = 1000.0f;
 

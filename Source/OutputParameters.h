@@ -16,4 +16,4 @@ static const String outputGain_ParameterID =    "Output_Gain";
 
 const float outputGainMinValue = 0.0f;
 const float outputGainMaxValue = 1.0f;
-const float outputGainInitialValue = 1.0f;
+const float outputGainInitialValue = 0.7f;

@@ -18,7 +18,7 @@ public:
     Gain();
     ~Gain();
     
-    void setGain(float newValue) { gain = newValue; };
+    void setGain(float newValue);
     
     void process(juce::AudioBuffer<float>& buffer,
                  int inNumSamplesToRender);
@@ -26,6 +26,8 @@ public:
 private:
     // parameters
     double gain;
-    
+    double gainMapped;
     double gainSmoothed;
+    
+    void mapGain();
 };

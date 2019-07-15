@@ -16,6 +16,7 @@
 const int kNumVoices = 1;
 const double kParameterSmoothingCoeff_Fine = 0.005f;
 const double kMinimumDecibels = -24.0;
+const double kMaximumDecibels = 0.0;
 
 inline double getPitchFreqMod(double semitonesToShift)
 {
