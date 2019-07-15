@@ -138,6 +138,14 @@ void WavetableFrame::create(std::vector<float>& waveSamples)
         // the band limited sample data is only in the first half
         std::vector<float> blWaveformSamples(blFreqData.begin(), blFreqData.begin() + kSingleCycleWaveformSize);
         
+        auto max = max_element(std::begin(blWaveformSamples), std::end(blWaveformSamples));
+        if (*max > 1.0)
+        {
+            // FFT scaled up gain so we need to normalize it again here - INVESTIGATE THIS!!!
+            std::transform(blWaveformSamples.begin(), blWaveformSamples.end(), blWaveformSamples.begin(),
+                           std::bind(std::divides<float>(), std::placeholders::_1, *max));
+        }
+
         // make the wavetable
         BandLimitedWaveform blWaveform;
         blWaveform.create(blWaveformSamples, topFreq);

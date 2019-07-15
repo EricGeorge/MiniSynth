@@ -136,7 +136,7 @@ void Synth::createParameterLayout(AudioProcessorValueTreeState::ParameterLayout&
                                                                                                     "Output Gain",
                                                                                                     NormalisableRange<float> (outputGainMinValue,
                                                                                                                               outputGainMaxValue),
-                                                                                                    Decibels::decibelsToGain(outputGainInitialValue))));
+                                                                                                    outputGainInitialValue)));
 }
 
 void Synth::addParameterListeners(AudioProcessorValueTreeState& state)

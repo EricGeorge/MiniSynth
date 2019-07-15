@@ -14,20 +14,31 @@
 #include "PluginHelpers.h"
 
 Gain::Gain()
-:   gain(juce::Decibels::decibelsToGain(outputGainInitialValue)),
+:   gain(outputGainInitialValue),
+    gainMapped(gain),
     gainSmoothed(gain)
 {
+    mapGain();
 }
 
 Gain::~Gain()
 {
 }
 
+void Gain::setGain(float newValue)
+{
+    gain = newValue;
+    mapGain();
+}
+
+void Gain::mapGain()
+{
+    double gainInDB = juce::jmap(gain, 0.0, 1.0, kMinimumDecibels, kMaximumDecibels);
+    gainMapped = juce::Decibels::decibelsToGain(gainInDB, kMinimumDecibels);
+}
+
 void Gain::process(juce::AudioBuffer<float>& buffer, int numSamplesToProcess)
 {
-    double gainMapped = juce::jmap(gain, 0.0, 1.0, -24.0, 0.0);
-    gainMapped = juce::Decibels::decibelsToGain(gainMapped, kMinimumDecibels);
-    
     for (int index = 0; index < numSamplesToProcess; ++index)
     {
         gainSmoothed = gainSmoothed - kParameterSmoothingCoeff_Fine * (gainSmoothed - gainMapped);
