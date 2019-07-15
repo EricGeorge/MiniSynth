@@ -31,6 +31,9 @@ Envelope::Envelope(double sampleRate)
     releaseCoefficient(0.0),
     releaseOffset(0.0)
 {
+    updateAttackCalculations();
+    updateDecayCalculations();
+    updateReleaseCalculations();
 }
 
 Envelope::~Envelope()
