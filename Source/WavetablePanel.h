@@ -33,7 +33,7 @@ public:
     
     void setupAttachments(AudioProcessorValueTreeState& state);
     
-    void buttonClicked (Button* b) override;
+    void buttonClicked(Button* b) override;
     void comboBoxChanged(ComboBox* cb) override;
     void sliderValueChanged(Slider* slider) override;
 

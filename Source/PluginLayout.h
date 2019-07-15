@@ -26,7 +26,7 @@ const int bottomBarY = pluginEditorHeight - bottomBarHeight;
 const int centerPanelX = 0;
 const int centerPanelY = controlBarHeight;
 const int centerPanelWidth = pluginEditorWidth;
-const int centerPanelHeight = pluginEditorHeight - controlBarHeight - bottomBarHeight;
+const int centerPanelHeight = pluginEditorHeight - bottomBarHeight - controlBarHeight;
 
 const int midiKeyboardX = 0;
 const int midiKeyboardY = pluginEditorHeight - bottomBarHeight;
@@ -46,6 +46,11 @@ const int outputHeight = centerPanelHeight;
 
 const int oscillatorX = centerPanelX;
 const int oscillatorY = centerPanelY;
-const int oscillatorWidth = centerPanelWidth - outputWidth;
-const int oscillatorHeight = centerPanelHeight;
+const int oscillatorWidth = centerPanelWidth;
+const int oscillatorHeight = centerPanelHeight / 2;
+
+const int envelopeX = centerPanelX;
+const int envelopeY = oscillatorY + oscillatorHeight;
+const int envelopeWidth = centerPanelWidth;
+const int envelopeHeight = centerPanelHeight - oscillatorHeight;
 

@@ -13,7 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 #include "ControlBarPanel.h"
-#include "OscillatorPanel.h"
+#include "EnvelopePanel.h"
 #include "OutputPanel.h"
 #include "PluginProcessor.h"
 #include "ScopePanel.h"
@@ -39,11 +39,10 @@ private:
     MiniSynthAudioProcessor& processor;
     
     ControlBarPanel controlBarComponent;
+    EnvelopePanel envelopeComponent;
     MidiKeyboardComponent midiKeyboardComponent;
-    OutputPanel outputComponent;
-    OscillatorPanel oscillatorComponent;
-    WavetablePanel wavetableComponent;
     ScopePanel scopeComponent;
+    WavetablePanel wavetableComponent;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MiniSynthAudioProcessorEditor)

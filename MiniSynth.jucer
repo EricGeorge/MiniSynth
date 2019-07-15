@@ -12,6 +12,10 @@
         <FILE id="pf4Qb5" name="PluginLayout.h" compile="0" resource="0" file="Source/PluginLayout.h"/>
       </GROUP>
       <GROUP id="{2A21BA41-6655-215F-A822-1631B9D499F7}" name="Parameters">
+        <FILE id="WpHF53" name="AmplifierParameters.h" compile="0" resource="0"
+              file="Source/AmplifierParameters.h"/>
+        <FILE id="JoR0iq" name="EnvelopeParameters.h" compile="0" resource="0"
+              file="Source/EnvelopeParameters.h"/>
         <FILE id="BuTILn" name="OscillatorParameters.h" compile="0" resource="0"
               file="Source/OscillatorParameters.h"/>
         <FILE id="QkGBlo" name="OutputParameters.h" compile="0" resource="0"
@@ -40,6 +44,16 @@
       </GROUP>
     </GROUP>
     <GROUP id="{3EE8477B-9BED-6B30-96F7-C82E736C24C7}" name="Processors">
+      <GROUP id="{772FCF72-6A95-B411-82EA-BDC26B5AE60A}" name="AmplifierProcessor">
+        <FILE id="SwaVNH" name="Amplifier.h" compile="0" resource="0" file="Source/Amplifier.h"/>
+        <FILE id="jnk7kf" name="Amplifier.cpp" compile="1" resource="0" file="Source/Amplifier.cpp"/>
+      </GROUP>
+      <GROUP id="{716C19A8-00AC-D625-9057-C2FD23ABDE9A}" name="EnvelopeProcessor">
+        <FILE id="jKXU0q" name="EnvelopeHelpers.h" compile="0" resource="0"
+              file="Source/EnvelopeHelpers.h"/>
+        <FILE id="MGMyEY" name="Envelope.h" compile="0" resource="0" file="Source/Envelope.h"/>
+        <FILE id="JTPyph" name="Envelope.cpp" compile="1" resource="0" file="Source/Envelope.cpp"/>
+      </GROUP>
       <GROUP id="{F906826B-FEEF-34D0-2EC7-7974502AFEEB}" name="GainProcessor">
         <FILE id="MZTNbY" name="Gain.h" compile="0" resource="0" file="Source/Gain.h"/>
         <FILE id="gQgD4G" name="Gain.cpp" compile="1" resource="0" file="Source/Gain.cpp"/>
@@ -79,6 +93,19 @@
               file="Source/ControlBarPanel.h"/>
         <FILE id="gNmbDb" name="ControlBarPanel.cpp" compile="1" resource="0"
               file="Source/ControlBarPanel.cpp"/>
+      </GROUP>
+      <GROUP id="{7CE66BD7-212A-2EE9-59B6-789D44FBB170}" name="EnvelopePanel">
+        <FILE id="tUEm7T" name="EnvelopePanelLayout.h" compile="0" resource="0"
+              file="Source/EnvelopePanelLayout.h"/>
+        <FILE id="x0woEL" name="EnvelopePanel.h" compile="0" resource="0" file="Source/EnvelopePanel.h"/>
+        <FILE id="dpseMP" name="EnvelopePanel.cpp" compile="1" resource="0"
+              file="Source/EnvelopePanel.cpp"/>
+      </GROUP>
+      <GROUP id="{0BF0E0CE-CBA3-7E2E-0715-18F384454099}" name="EnvelopeViewPanel">
+        <FILE id="xq4E4b" name="EnvelopeViewPanel.h" compile="0" resource="0"
+              file="Source/EnvelopeViewPanel.h"/>
+        <FILE id="TBr4iJ" name="EnvelopeViewPanel.cpp" compile="1" resource="0"
+              file="Source/EnvelopeViewPanel.cpp"/>
       </GROUP>
       <GROUP id="{FF6FB97D-2763-1172-9000-32E9DB937789}" name="OscillatorPanel">
         <FILE id="wdpuaa" name="OscillatorPanelLayout.h" compile="0" resource="0"

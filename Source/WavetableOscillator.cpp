@@ -11,16 +11,17 @@
 #include "WavetableOscillator.h"
 
 #include "PluginHelpers.h"
+#include "WavetableParameters.h"
 
 WavetableOscillator::WavetableOscillator(double sampleRate, SynthSound& sound)
 :   sampleRate(sampleRate),
     frequency(0.0),
     sound(sound),
-    position(0.0),
-    interpolate(false),
-    semitones(0),
-    cents(0),
-    volume(1.0),
+    position(wtbPositionInitialValue),
+    interpolate(wtbInterpolateInitialValue),
+    semitones(wtbSemitonesInitialValue),
+    cents(wtbCentsInitialValue),
+    volume(wtbVolumeInitialValue),
     currentWaveformIndex(0),
     currentFrameIndex(-1),
     nextFrameIndex(-1),
@@ -95,7 +96,6 @@ void WavetableOscillator::reset(double inSampleRate)
 {
     sampleRate = inSampleRate;
     frequency = 0.0;
-    noteOn = false;
 }
 
 void WavetableOscillator::update()
@@ -114,53 +114,33 @@ void WavetableOscillator::update()
     }
 }
 
-void WavetableOscillator::start(double inFrequency)
+void WavetableOscillator::setFrequency(double inFrequency)
 {
-    if (currentFrameIndex < 0)
-    {
-        // not a valid frame - don't play anything
-        return;
-    }
-
     frequency = inFrequency;
-    
-    
     update();
-    
-    noteOn = true;
-}
-
-void WavetableOscillator::stop()
-{
-    noteOn = false;
 }
 
 float WavetableOscillator::getNextSample()
 {
-    float sample = 0.0f;
-    
-    if (noteOn)
-    {
-        float index = phaseAccumulator.getPhase() * currentWaveform().getNumSamples();
-        float frac = index - static_cast<int>(index);
-        sample = linear_interp(currentWaveform().getSample(static_cast<int>(index)),
-                               currentWaveform().getSample(static_cast<int>(index) + 1),
-                               frac);
+    float index = phaseAccumulator.getPhase() * currentWaveform().getNumSamples();
+    float frac = index - static_cast<int>(index);
+    float sample = linear_interp(currentWaveform().getSample(static_cast<int>(index)),
+                           currentWaveform().getSample(static_cast<int>(index) + 1),
+                           frac);
 
-        if (interpolate && (nextFrameIndex != currentFrameIndex))
-        {
-            // interpolate between frames
-            float frameFrac = trueFrameIndex - currentFrameIndex;
-            
-            float sampleNextFrame = linear_interp(nextFrameCurrentWaveform().getSample(static_cast<int>(index)),
-                                                  nextFrameCurrentWaveform().getSample(static_cast<int>(index) + 1),
-                                                  frac);
-            
-            sample = linear_interp(sample, sampleNextFrame, frameFrac);
-        }
+    if (interpolate && (nextFrameIndex != currentFrameIndex))
+    {
+        // interpolate between frames
+        float frameFrac = trueFrameIndex - currentFrameIndex;
         
-        phaseAccumulator.IncrementPhase();
+        float sampleNextFrame = linear_interp(nextFrameCurrentWaveform().getSample(static_cast<int>(index)),
+                                              nextFrameCurrentWaveform().getSample(static_cast<int>(index) + 1),
+                                              frac);
+        
+        sample = linear_interp(sample, sampleNextFrame, frameFrac);
     }
+    
+    phaseAccumulator.IncrementPhase();
     
     return sample * volume;
 }

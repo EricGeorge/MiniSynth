@@ -10,16 +10,19 @@
 
 #include "SynthVoice.h"
 
+#include "AmplifierParameters.h"
+#include "EnvelopeParameters.h"
 #include "OscillatorParameters.h"
-#include "SynthSound.h"
 #include "WavetableParameters.h"
+
+#include "SynthSound.h"
 
 SynthVoice::SynthVoice(Synth& synth)
 :   synth(synth),
     level(0.0f),
-    osc(getSampleRate()),
     wtb(getSampleRate(), synth.getSynthSound()),
-    lfo(getSampleRate())
+    env(getSampleRate()),
+    amp()
 {
 }
 
@@ -29,53 +32,17 @@ SynthVoice::~SynthVoice()
 
 void SynthVoice::parameterChanged (const String& parameterID, float newValue)
 {
-    if (parameterID.contains(oscillatorParamIDPrefix))
-    {
-        oscParameterChanged(parameterID, newValue);
-    }
-    else if (parameterID.contains(wavetableParamIDPrefix))
+    if (parameterID.contains(wavetableParamIDPrefix))
     {
         wtbParameterChanged(parameterID, newValue);
     }
-    else if (parameterID.contains(lfoParamIDPrefix))
+    else if (parameterID.contains(envelopeParamIDPrefix))
     {
-        lfoParameterChanged(parameterID, newValue);
+        envParameterChanged(parameterID, newValue);
     }
-}
-
-void SynthVoice::oscParameterChanged (const String& parameterID, float newValue)
-{
-    if (parameterID == oscillator_ParamIDs[kOscParam_WaveType])
+    else if (parameterID.contains(amplifierParamIDPrefix))
     {
-        osc.setWaveType(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Octave])
-    {
-        osc.setOctaves(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Semitone])
-    {
-        osc.setSemitones(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Cents])
-    {
-        osc.setCents(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_PulseWidth])
-    {
-        osc.setPulseWidth(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_PolyBLEPMix])
-    {
-        osc.setPolyBLEPMix(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_WaveShapeSaturation])
-    {
-        osc.setWaveShapeSaturation(newValue);
-    }
-    else if (parameterID == oscillator_ParamIDs[kOscParam_Volume])
-    {
-        osc.setVolume(newValue);
+        ampParameterChanged(parameterID, newValue);
     }
 }
 
@@ -103,50 +70,49 @@ void SynthVoice::wtbParameterChanged (const String& parameterID, float newValue)
     }
 }
 
-void SynthVoice::lfoParameterChanged (const String& parameterID, float newValue)
+void SynthVoice::envParameterChanged(const String &parameterID, float newValue)
 {
-    if (parameterID == lfo_ParamIDs[kLfoParam_WaveType])
+    if (parameterID == envelope_ParamIDs[kEnvParam_Attack])
     {
-        lfo.setWaveType(newValue);
+        env.setAttack(newValue);
     }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_RunState])
+    else if (parameterID == envelope_ParamIDs[kEnvParam_Decay])
     {
-        lfo.setRunState(newValue);     // TODO
+        env.setDecay(newValue);
     }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_PulseWidth])
+    else if (parameterID == envelope_ParamIDs[kEnvParam_Sustain])
     {
-        lfo.setPulseWidth(newValue);
+        env.setSustain(newValue);
     }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_PhaseOffset])
+    else if (parameterID == envelope_ParamIDs[kEnvParam_Release])
     {
-        lfo.setPhaseOffset(newValue);  // TODO
+        env.setRelease(newValue);
     }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Amount])
+    else if (parameterID == envelope_ParamIDs[kEnvParam_AttackCurve])
     {
-        lfo.setAmount(newValue);
+        env.setAttackCurve(newValue);
     }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_PolarityOffset])
+    else if (parameterID == envelope_ParamIDs[kEnvParam_DecayCurve])
     {
-        lfo.setPolarityOffset(newValue);   // TODO
+        env.setDecayCurve(newValue);
     }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Rate])
+    else if (parameterID == envelope_ParamIDs[kEnvParam_ReleaseCurve])
     {
-        lfo.setRate(newValue);     // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Sync])
-    {
-        lfo.setSync(newValue);     //TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_FadeInTime])
-    {
-        lfo.setFadeInTime(newValue);   // TODO
-    }
-    else if (parameterID == lfo_ParamIDs[kLfoParam_Delay])
-    {
-        lfo.setDelay(newValue);    // TODO
+        env.setReleaseCurve(newValue);
     }
 }
 
+void SynthVoice::ampParameterChanged(const String &parameterID, float newValue)
+{
+    if (parameterID == amplifier_ParamIDs[kAmpParam_Gain])
+    {
+        amp.setGain(newValue);
+    }
+    else if (parameterID == amplifier_ParamIDs[kAmpParam_Pan])
+    {
+        amp.setPan(newValue);
+    }
+}
 
 bool SynthVoice::canPlaySound(SynthesiserSound* sound)
 {
@@ -156,17 +122,20 @@ bool SynthVoice::canPlaySound(SynthesiserSound* sound)
 void SynthVoice::startNote(int midiNoteNumber, float velocity,
                            SynthesiserSound* sound, int currentPitchWheelPosition)
 {
-    level = velocity * 0.25;
+    level = velocity;
 
-    osc.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
-    wtb.start(MidiMessage::getMidiNoteInHertz (midiNoteNumber));
+    wtb.setFrequency(MidiMessage::getMidiNoteInHertz(midiNoteNumber));
+    env.start();
 }
 
 void SynthVoice::stopNote(float velocity, bool allowTailOff)
 {
-    osc.stop();
-    wtb.stop();
-    clearCurrentNote();
+    env.end();
+    
+    if (!allowTailOff)
+    {
+        clearCurrentNote();
+    }
 }
 
 void SynthVoice::pitchWheelMoved(int newPitchWheelValue)
@@ -179,14 +148,23 @@ void SynthVoice::controllerMoved(int controllerNumber, int newControllerValue)
 
 void SynthVoice::renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
 {
-    for (int index = 0; index < numSamples; ++index)
+    if (env.getState() != Envelope::State::Idle)
     {
-        double sample1 = osc.getNextSample() * level;
-        double sample2 = wtb.getNextSample() * level;
-        for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+        for (int index = 0; index < numSamples; ++index)
         {
-            outputBuffer.addSample(channel, startSample, sample1 + sample2);
+            double sample = wtb.getNextSample() * level;
+            double envMod = env.getNextSampleMod();
+            
+            for (int channel = 0; channel < outputBuffer.getNumChannels(); ++channel)
+            {
+                double processedSample = amp.processSample(sample, channel, envMod);
+                outputBuffer.addSample(channel, startSample, processedSample);
+            }
+            ++startSample;
         }
-        ++startSample;
+    }
+    else if (isVoiceActive())
+    {
+        clearCurrentNote();
     }
 }
