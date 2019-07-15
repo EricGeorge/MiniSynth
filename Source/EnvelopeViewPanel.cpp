@@ -163,3 +163,4 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
     
     repaint();
 }
+

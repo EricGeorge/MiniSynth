@@ -37,16 +37,6 @@ private:
     Point<float> originPoint;
     
     Point<float> attackPoint;
-//    double attackCoefficient;
-//    double attackOffset;
-    
     Point<float> decayPoint;
-//    double decayCoefficient;
-//    double decayOffset;
-    
-//    double sustainLevel;
-    
     Point<float> releasePoint;
-//    double releaseCoefficient;
-//    double releaseOffset;
 };

@@ -10,14 +10,16 @@
 
 #include "EnvelopePanel.h"
 
+#include "EnvelopeHelpers.h"
 #include "EnvelopePanelLayout.h"
 #include "EnvelopeParameters.h"
 #include "PluginCommonStyling.h"
 
 
-EnvelopePanel::EnvelopePanel(const String panelName, const String* parameterList)
+EnvelopePanel::EnvelopePanel(const String panelName, const String* parameterList, double sampleRate)
 :   panelName(panelName),
-    parameterList(parameterList)
+    parameterList(parameterList),
+    sampleRate(sampleRate)
 {
     addAndMakeVisible(envelopeViewPanel);
     addAndMakeVisible(attackSlider);
@@ -27,6 +29,7 @@ EnvelopePanel::EnvelopePanel(const String panelName, const String* parameterList
     addAndMakeVisible(attackCurveSlider);
     addAndMakeVisible(decayCurveSlider);
     addAndMakeVisible(releaseCurveSlider);
+    addAndMakeVisible(exportEnvelopeButton);
 
     attackLabel.attachToComponent(&attackSlider, false);
     attackLabel.setFont(Font(sliderLabelFontSizeSmall));
@@ -91,6 +94,12 @@ EnvelopePanel::EnvelopePanel(const String panelName, const String* parameterList
     releaseCurveSlider.setColour(Slider::textBoxTextColourId, getCommonColours().detail);
     releaseCurveSlider.setColour(Slider::thumbColourId, getCommonColours().detail);
 
+    exportEnvelopeButton.setButtonText("Export");
+    exportEnvelopeButton.setColour(TextButton::textColourOffId,  getCommonColours().detail);
+    exportEnvelopeButton.setColour(TextButton::textColourOnId,   getCommonColours().panelBackground);
+    exportEnvelopeButton.setColour(TextButton::buttonColourId,   getCommonColours().panelBackground);
+    exportEnvelopeButton.setColour(TextButton::buttonOnColourId, getCommonColours().detail);
+    
     attackSlider.addListener(this);
     decaySlider.addListener(this);
     sustainSlider.addListener(this);
@@ -98,6 +107,7 @@ EnvelopePanel::EnvelopePanel(const String panelName, const String* parameterList
     attackCurveSlider.addListener(this);
     decayCurveSlider.addListener(this);
     releaseCurveSlider.addListener(this);
+    exportEnvelopeButton.addListener(this);
 }
 
 EnvelopePanel::~EnvelopePanel()
@@ -109,6 +119,7 @@ EnvelopePanel::~EnvelopePanel()
     attackCurveSlider.removeListener(this);
     decayCurveSlider.removeListener(this);
     releaseCurveSlider.removeListener(this);
+    exportEnvelopeButton.removeListener(this);
 }
 
 void EnvelopePanel::setupAttachments(AudioProcessorValueTreeState& state)
@@ -193,13 +204,8 @@ void EnvelopePanel::resized()
     buttonsArea.removeFromLeft(envelopeKnobSpacing);
     releaseCurveSlider.setBounds(buttonsArea.removeFromLeft(envelopeKnobWidth));
     
-//    interpolateButton.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth, wavetableKnobWidth / 2.5);
-//
-//    buttonsArea.removeFromLeft(wavetableKnobWidth + wavetableKnobSpacing);
-//    exportWavetableButton.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth, wavetableKnobWidth / 2.5);
-//
-//    buttonsArea.removeFromLeft(wavetableKnobWidth + wavetableKnobSpacing);
-//    wavetableSelector.setBounds(buttonsArea.getX(), buttonsArea.getY(), wavetableKnobWidth * 3, wavetableKnobWidth / 2.5);
+    buttonsArea.removeFromLeft(envelopeKnobSpacing);
+    exportEnvelopeButton.setBounds(buttonsArea.getX(), buttonsArea.getY(), envelopeKnobWidth, envelopeKnobWidth / 2.5);
     
     sliderArea.reduced(8);
     sliderArea.removeFromTop(40);
@@ -243,3 +249,14 @@ void EnvelopePanel::sliderValueChanged(Slider* slider)
                                       releaseCurveSlider.getValue());
 }
 
+void EnvelopePanel::buttonClicked (Button* b)
+{
+    writeEnvelopeToWaveFile(attackSlider.getValue(),
+                            decaySlider.getValue(),
+                            sustainSlider.getValue(),
+                            releaseSlider.getValue(),
+                            attackCurveSlider.getValue(),
+                            decayCurveSlider.getValue(),
+                            releaseCurveSlider.getValue(),
+                            sampleRate);
+    }

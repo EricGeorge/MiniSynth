@@ -15,10 +15,12 @@
 #include "EnvelopeViewPanel.h"
 
 class EnvelopePanel:    public Component,
-                        public Slider::Listener
+                        public Slider::Listener,
+                        public Button::Listener
+
 {
 public:
-    EnvelopePanel(const String panelName, const String* parameterList);
+    EnvelopePanel(const String panelName, const String* parameterList, double sampleRate);
     ~EnvelopePanel();
     
     void paint(Graphics& g) override;
@@ -27,10 +29,13 @@ public:
     void setupAttachments(AudioProcessorValueTreeState& state);
     
     void sliderValueChanged(Slider* slider) override;
-    
+    void buttonClicked(Button* b) override;
+
 private:
     const String panelName;
     const String* parameterList;
+    double sampleRate;
+    
     const String ms = " ms";
     const String s = " s";
     
@@ -70,4 +75,8 @@ private:
     Label releaseCurveLabel{ {}, "Release Curve" };
     Slider releaseCurveSlider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseCurveAttachment;
+    
+    // export envelope
+    TextButton exportEnvelopeButton;
+
 };

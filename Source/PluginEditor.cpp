@@ -21,7 +21,7 @@ MiniSynthAudioProcessorEditor::MiniSynthAudioProcessorEditor (MiniSynthAudioProc
 :   AudioProcessorEditor (&processor),
     processor (processor),
     controlBarComponent(),
-    envelopeComponent("Amp Envelope", envelope_ParamIDs),
+    envelopeComponent("Amp Envelope", envelope_ParamIDs, processor.getSampleRate()),
     midiKeyboardComponent(processor.getMidiKeyboardstate(), MidiKeyboardComponent::horizontalKeyboard),
     scopeComponent(processor.getAudioBufferQueue()),
     wavetableComponent("Wavetable Oscillator", wavetable_ParamIDs, processor.getSynth().getSynthSound())
