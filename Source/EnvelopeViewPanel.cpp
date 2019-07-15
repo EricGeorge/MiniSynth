@@ -137,26 +137,47 @@ void EnvelopeViewPanel::envelopeChanged(float attackRate,
         double offset = 0.0;
         double coefficient = 0.0;
         
-        if (pixel < attackPoint.getX())
+        if (pixel <= attackPoint.getX())
         {
             offset = attackOffset;
             coefficient = attackCoefficient;
+            envelope = offset + envelope * coefficient;
+            if (envelope > 1.0)
+            {
+                envelope = 1.0;
+            }
         }
-        else if (pixel < decayPoint.getX())
+        else if (pixel <= decayPoint.getX())
         {
             offset = decayOffset;
             coefficient = decayCoefficient;
+            envelope = offset + envelope * coefficient;
+            if (envelope < sustainLevel)
+            {
+                envelope = sustainLevel;
+            }
         }
-        else if (pixel < releasePoint.getX())
+        else
         {
             offset = releaseOffset;
             coefficient = releaseCoefficient;
+            envelope = offset + envelope * coefficient;
+            if (envelope < 0.0)
+            {
+                envelope = 0.0;
+            }
         }
         
-        // note - since we're always sloping to the sustain point, I'm not checking for sustain value to show in the display
-        // if I were instead sloping to 0, then I would want to show sustain when decay was very linear.
+        // correction for when segment points coincide
+        if (pixel == static_cast<int>(decayPoint.getX()))
+        {
+            envelope = sustainLevel;
+        }
         
-        envelope = offset + envelope * coefficient;
+        if (pixel == static_cast<int>(releasePoint.getX()))
+        {
+            envelope = 0.0;
+        }
         
         envelopePath.lineTo(pixel, segmentView.getBottom() - envelope * segmentView.getHeight());
     }
