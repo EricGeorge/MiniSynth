@@ -93,7 +93,7 @@ WavetablePanel::WavetablePanel(const String panelName, const String* parameterLi
     populateWavetableSelector();
     
     // default to wavetable for ease of testing
-    wavetableSelector.setSelectedId(8);
+    wavetableSelector.setSelectedId(1);
 }
 
 WavetablePanel::~WavetablePanel()
@@ -150,7 +150,7 @@ void WavetablePanel::buttonClicked (Button* b)
 
 void WavetablePanel::comboBoxChanged(ComboBox* cb)
 {
-    if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected())
+    if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected() && wavetableSelector.getText() != "")
     {
         String wavetableFilePath = (File::getSpecialLocation(File::userHomeDirectory)).getFullPathName() + wavetableFolderLocation + wavetableSelector.getText() + wavetableExtension;
         sound.setWavetableFile(wavetableFilePath);
@@ -246,7 +246,7 @@ void WavetablePanel::populateWavetableSelector()
 
 void WavetablePanel::handleExportWavetableFrame()
 {
-    if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected())
+    if (wavetableSelector.getText() != wavetableSelector.getTextWhenNothingSelected() && wavetableSelector.getText() != "")
     {
         int numFrames = sound.getWavetable().getNumFrames();
         int displayValue = numFrames * positionSlider.getValue();

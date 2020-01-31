@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="mlOIfD" name="MiniSynth" projectType="audioplug" jucerVersion="5.4.3"
+<JUCERPROJECT id="mlOIfD" name="MiniSynth" projectType="audioplug" jucerVersion="5.4.5"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn"
               pluginFormats="buildAU,buildStandalone" pluginName="MiniSynth">
   <MAINGROUP id="KGzO72" name="MiniSynth">
